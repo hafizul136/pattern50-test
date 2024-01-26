@@ -124,10 +124,10 @@ export class ExceptionHelper {
     }
     passwordValidation(message: boolean | any[]): void {
         this.postForbiddenException("Bad request");
-        // throw {
-        //     statusCode: HttpStatus.BAD_REQUEST,
-        //     message: message,
-        // };
+        throw {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: message,
+        };
     }
 
     propertyNotMatch(): void {

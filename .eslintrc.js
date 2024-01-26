@@ -17,7 +17,8 @@ module.exports = {
     ignorePatterns: ['.eslintrc.js'],
     rules: {
         'unused-imports/no-unused-imports': 'warn',
-        'no-unused-vars': 'off',
+        'no-unused-vars': 'warn',
+        // "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
         '@typescript-eslint/no-unused-vars': 'warn',
         '@typescript-eslint/explicit-function-return-type': 'warn',
         '@typescript-eslint/explicit-module-boundary-types': 'warn',

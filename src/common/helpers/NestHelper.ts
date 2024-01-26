@@ -15,7 +15,7 @@ export class NestHelper {
             await callback(array[index], index, array);
         }
     }
-    async isNumberAndNotEmpty(value:unknown): Promise<boolean> {
+    async isNumberAndNotEmpty(value: unknown): Promise<boolean> {
         // Check if the value is a number and not NaN
         if (typeof value === 'number' && !isNaN(value)) {
             // Check if the value is not empty (undefined or null)
@@ -24,7 +24,7 @@ export class NestHelper {
 
         return false;
     }
-    async isNumber(value): Promise<boolean> {
+    async isNumber(value: unknown): Promise<boolean> {
         // Check if the value is a number and not NaN
         return typeof value === 'number' && !isNaN(value);
     }
@@ -77,7 +77,7 @@ export class NestHelper {
     hashData(password: string) {
         return AuthHelper.hashPassword(password);
     }
-    getNumberValue(text: any) {
+    getNumberValue(text: any): number | null {
         let value = text;
         if (typeof (text) == 'string') {
             value = parseInt(text);

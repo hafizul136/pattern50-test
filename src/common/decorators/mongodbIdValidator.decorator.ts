@@ -1,8 +1,8 @@
 import { ValidationArguments, ValidationOptions, registerDecorator } from "class-validator";
 import { Types } from "mongoose";
 
-export function IsMongoId(validationOptions?: ValidationOptions) {
-    return function (object: Object, propertyName: string) {
+export function IsMongoId(validationOptions?: ValidationOptions):(object: Object, propertyName: string) => void {
+    return function (object: Object, propertyName: string):void {
         registerDecorator({
             name: 'isMongoId',
             target: object.constructor,

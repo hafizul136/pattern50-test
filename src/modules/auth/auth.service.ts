@@ -85,6 +85,7 @@ export class AuthService {
         })
 
       }
+  
       const tokens = await this.getTokens(newUser);
       newUser['scopes'] = permissions
       delete newUser.password
