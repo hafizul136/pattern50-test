@@ -10,7 +10,7 @@ schema
     .has(/\d{1}|[#?!@$%^&*-]{1}/, 'Should have at least one number or one special character');
 
 export function IsStrongPassword(validationOptions?: ValidationOptions) {
-    return function (object: object, propertyName: string) {
+    return function (object: object, propertyName: string) :void{
         registerDecorator({
             name: 'isStrongPassword',
             target: object.constructor,
