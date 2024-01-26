@@ -13,7 +13,7 @@ export class NotEmptyStringArrayAndMongoidsConstraint implements ValidatorConstr
             return false;
         }
 
-        const isValidString = (item: any) => typeof item === 'string' && item.trim() !== '';
+        const isValidString = (item: any): boolean => typeof item === 'string' && item.trim() !== '';
         // const isValidMongoid = (item: any) => mongoose.Types.ObjectId.isValid(item);
 
         return value.every((item) => isValidString(item));
