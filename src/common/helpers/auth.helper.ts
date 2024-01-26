@@ -26,8 +26,6 @@ export class AuthHelper {
         company: string = null
     ): { accessToken: string; refreshToken: string; user: IUser } => {
         delete user.password;
-        delete user.resetCode;
-
 
         const accessToken = AuthHelper.getInstance().generateAccessToken(user, jwt, company);
         const refreshToken = AuthHelper.getInstance().generateRefreshToken(user, jwt, company);

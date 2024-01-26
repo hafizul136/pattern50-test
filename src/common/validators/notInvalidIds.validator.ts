@@ -9,7 +9,7 @@ import mongoose from 'mongoose';
 
 @ValidatorConstraint({ name: 'notEmptyStringArrayAndMongoids', async: false })
 export class NotEmptyStringArrayAndMongoidsConstraint implements ValidatorConstraintInterface {
-    validate(value: any[], args: ValidationArguments) {
+    validate(value: any[]): boolean {
         if (!value || !Array.isArray(value)) {
             return false;
         }
@@ -19,12 +19,12 @@ export class NotEmptyStringArrayAndMongoidsConstraint implements ValidatorConstr
         return value.every((item) => isValidMongoid(item));
     }
 
-    defaultMessage(args: ValidationArguments) {
+    defaultMessage(args: ValidationArguments): string {
         return `invalid id`;
     }
 }
 
-export function NotInvalidMongoids(validationOptions?: ValidationOptions) {
+export function NotInvalidMongoids(validationOptions?: ValidationOptions): (object: Object, propertyName: string) => void {
     return function (object: Object, propertyName: string) {
         registerDecorator({
             target: object.constructor,

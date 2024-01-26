@@ -1,7 +1,7 @@
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
 import { IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 import mongoose from "mongoose";
-import { userTypeEnum } from "../enum/index.enum";
+import { UserTypeEnum } from "../enum/index.enum";
 
 export class CreateUserDto {
     @IsNotEmpty()
@@ -26,7 +26,7 @@ export class CreateUserDto {
     password: string;
 
     @IsOptional()
-    @IsEnum(userTypeEnum)
+    @IsEnum(UserTypeEnum)
     userType?: string;
 
     @IsOptional()

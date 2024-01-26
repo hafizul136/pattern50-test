@@ -1,5 +1,6 @@
 // jwt-auth.guard.ts
 import { AuthService } from '@modules/auth/auth.service';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { UsersService } from '@modules/users/user.service';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -18,7 +19,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
         if (!NestHelper.getInstance().isEmpty(au)) {
             const token = au.split('Bearer ');
             const payload: any = this.jwtService.decode(token[1]);
-            const user = await this.userService.findOneByEmail(payload?.username, payload?.clientId)
+            const user: IUser = await this.userService.findOneByEmail(payload?.username, payload?.clientId)
             if (!user) {
                 return false; // User is not authenticated; deny access
             }

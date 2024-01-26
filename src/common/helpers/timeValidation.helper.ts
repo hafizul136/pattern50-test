@@ -1,10 +1,10 @@
 import { NestHelper } from '@common/helpers/NestHelper';
 import { HttpStatus } from "@nestjs/common";
-import { ExceptionHelper } from "./ExceptionHelper";
 import { Date } from 'mongoose';
+import { ExceptionHelper } from "./ExceptionHelper";
 
 export class TimeValidationHelper {
-    static validateStartAndEndTime(startTime, endTime): void {
+    static validateStartAndEndTime(startTime: Date, endTime: Date): void {
         const start = this.convertTo24HourFormat(startTime);
         const end = this.convertTo24HourFormat(endTime);
 
@@ -20,7 +20,7 @@ export class TimeValidationHelper {
         }
     }
 
-    static convertTo24HourFormat(time) {
+    static convertTo24HourFormat(time): string {
         const match = time?.match(/^(\d+):(\d+)([APap][Mm])$/);
 
         if (NestHelper.getInstance().isEmpty(match)) {
@@ -44,7 +44,7 @@ export class TimeValidationHelper {
         return `${String(hours24).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
 
-    static convertTo24HourFormatTrimmed(time) {
+    static convertTo24HourFormatTrimmed(time): string {
         const match = time?.match(/^(\d+):(\d+)([APap][Mm])$/);
 
         if (NestHelper.getInstance().isEmpty(match)) {
@@ -68,7 +68,7 @@ export class TimeValidationHelper {
         return `${String(hours24)}:${String(minutes)}`;
     }
 
-    static isTimeInRange(startTime, endTime, givenTime) {
+    static isTimeInRange(startTime, endTime, givenTime): boolean {
         const convertTo24HourFormat = (time12h) => {
             const [time, period] = time12h.split(/([APap][Mm])/);
             let [hours, minutes] = time.split(":");

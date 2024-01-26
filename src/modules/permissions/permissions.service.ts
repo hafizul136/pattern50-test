@@ -16,15 +16,15 @@ export class PermissionsService {
     private permissionModel: Model<PermissionDocument>
   ) { }
 
-  async create(createPermissionDto: CreatePermissionDto) {
+  async create(createPermissionDto: CreatePermissionDto): Promise<IPermission> {
     return await this.permissionModel.create(createPermissionDto);
   }
 
-  findAll() {
-    return this.permissionModel.find().lean().exec();
+  async findAll(): Promise<IPermission[]> {
+    return await this.permissionModel.find().lean().exec();
   }
 
-  async createPermissions(body: { permissions: string[], clientId: string }): Promise<any> {
+  async createPermissions(body: { permissions: string[], clientId: string }): Promise<string> {
     const permissions = body?.permissions;
     let num = 0;
 
@@ -44,11 +44,10 @@ export class PermissionsService {
         console.log(num++);
       }
     }
-
     return "created permissions";
   }
 
-  async findAllByIds(findPermissionsByIds: mongoose.Types.ObjectId[], user) {
+  async findAllByIds(findPermissionsByIds: mongoose.Types.ObjectId[], user): Promise<IPermission[]> {
     if (NestHelper.getInstance().isEmpty(user?.clientId)) {
       ExceptionHelper.getInstance().defaultError(
         'client id does not exist',
@@ -67,8 +66,7 @@ export class PermissionsService {
     }
   }
 
-  async findOne(id: any) {
-    console.log({ id })
+  async findOne(id: any): Promise<IPermission> {
     if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid permission id',
@@ -76,7 +74,7 @@ export class PermissionsService {
         HttpStatus.NOT_FOUND
       );
     }
-    return this.permissionModel.findOne({ _id: id }).lean().exec();
+    return await this.permissionModel.findOne({ _id: id }).lean().exec();
   }
 
   async findOneByName(permissionName: string): Promise<IPermission> {
@@ -84,11 +82,11 @@ export class PermissionsService {
     return NestHelper.getInstance().arrayFirstOrNull(permissions);
   }
 
-  update(id: string, updatePermissionDto: UpdatePermissionDto) {
-    return this.permissionModel.findByIdAndUpdate(id, updatePermissionDto, { new: true }).exec();
+  async update(id: string, updatePermissionDto: UpdatePermissionDto): Promise<IPermission> {
+    return await this.permissionModel.findByIdAndUpdate(id, updatePermissionDto, { new: true }).exec();
   }
 
-  remove(id: string) {
-    return this.permissionModel.findByIdAndRemove(id).exec();
+  async remove(id: string): Promise<IPermission> {
+    return await this.permissionModel.findByIdAndRemove(id).exec();
   }
 }

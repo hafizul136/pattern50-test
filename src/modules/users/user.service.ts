@@ -70,7 +70,7 @@ export class UsersService {
   // }
 
   async findOneData(id: any) {
-    const objId =await MongooseHelper.getInstance().makeMongooseId(id);
+    const objId = await MongooseHelper.getInstance().makeMongooseId(id);
     if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid role id',
@@ -96,9 +96,9 @@ export class UsersService {
     const result = NestHelper.getInstance().arrayFirstOrNull(res);
     return result;
   }
-  async findOneByEmail(email: string, clientId?) {
+  async findOneByEmail(email: string, clientId?: mongoose.Types.ObjectId): Promise<IUser> {
     // !Change clientId
-    const doc = await this.userModel.findOne({ email, clientId: clientId }).lean();
+    const doc = (await this.userModel.findOne({ email, clientId: clientId }).lean()).toObject();
     if (!doc) ExceptionHelper.getInstance().noDataFound()
     return doc
   }
@@ -123,7 +123,7 @@ export class UsersService {
     return res.toObject();
   }
 
-  async makeAllObjectId(){
+  async makeAllObjectId() {
     const user = await this.userModel.find();
     user.forEach(async (user) => {
       const userToUpdate = {

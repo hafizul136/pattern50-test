@@ -2,7 +2,7 @@ import { Utils } from '@common/helpers/utils';
 import { mainServiceRoles } from '@common/rolePermissions';
 import { RolesService } from '@modules/roles/roles.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
-import { userTypeEnum } from '@modules/users/enum/index.enum';
+import { UserTypeEnum } from '@modules/users/enum/index.enum';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { BadRequestException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -60,32 +60,31 @@ export class AuthService {
 
       let permissions = [];
       let permissionsObject
-      if (createUserDto.userType == userTypeEnum.companyAdmin) {
-        permissionsObject = await mainServiceRoles().filter(role => role.roleName == userTypeEnum.companyAdmin);
+      if (createUserDto.userType == UserTypeEnum.companyAdmin) {
+        permissionsObject = await mainServiceRoles().filter(role => role.roleName == UserTypeEnum.companyAdmin);
         permissions = permissionsObject[0].permissions
         // add role and user
         setTimeout(async () => {
-          await this.addScopes(newUser, createUserDto, userTypeEnum.companyAdmin, clientId, permissions);
+          await this.addScopes(newUser, createUserDto, UserTypeEnum.companyAdmin, clientId, permissions);
         })
 
-      } else if (createUserDto.userType == userTypeEnum.driver) {
-        permissionsObject = await mainServiceRoles().filter(role => role.roleName == userTypeEnum.driver);
+      } else if (createUserDto.userType == UserTypeEnum.driver) {
+        permissionsObject = await mainServiceRoles().filter(role => role.roleName == UserTypeEnum.driver);
         permissions = permissionsObject[0].permissions
         // add role and user
         setTimeout(async () => {
-          await this.addScopes(newUser, createUserDto, userTypeEnum.driver, clientId, permissions);
+          await this.addScopes(newUser, createUserDto, UserTypeEnum.driver, clientId, permissions);
         })
 
       } else {
-        permissionsObject = await mainServiceRoles().filter(role => role.roleName == userTypeEnum.admin);
+        permissionsObject = await mainServiceRoles().filter(role => role.roleName == UserTypeEnum.admin);
         permissions = permissionsObject[0].permissions
         // add role and user
         setTimeout(async () => {
-          await this.addScopes(newUser, createUserDto, userTypeEnum.admin, clientId, permissions);
+          await this.addScopes(newUser, createUserDto, UserTypeEnum.admin, clientId, permissions);
         })
 
       }
-  
       const tokens = await this.getTokens(newUser);
       newUser['scopes'] = permissions
       delete newUser.password
@@ -99,13 +98,13 @@ export class AuthService {
     }
   }
 
-  async getStripeSecretKey(user: IUser): Promise<string> {
+  async getStripeSecretKey(): Promise<string> {
     // todo: get stripe secret key by user client id and client secret from stripe auth
     const stripeSecretKey = appConfig.stripeSecret;
     return stripeSecretKey;
   }
 
-  private async addScopes(user: any, createUserDto: CreateUserDto, userType: userTypeEnum, clientId: mongoose.Types.ObjectId, permissions: string[]) {
+  private async addScopes(user: any, createUserDto: CreateUserDto, userType: UserTypeEnum, clientId: mongoose.Types.ObjectId, permissions: string[]): Promise<void> {
     const role = await this.roleService.findOneByName(userType, clientId, permissions);
 
     const userRoleData = {
@@ -119,7 +118,7 @@ export class AuthService {
     await this.usersService.update(user._id, { userRoleId, clientId: createUserDto.clientId });
   }
 
-  async signIn(data: AuthDto, clientId, userType = userTypeEnum.admin) {
+  async signIn(data: AuthDto, clientId): Promise<{ auth: { accessToken: string; refreshToken: string; }, user: IUser }> {
     let user;
     if (data.grantType === GrantType.password) {
       // Check if user exists
@@ -223,7 +222,7 @@ export class AuthService {
 
     return res;
   }
-  async getPermissionsByUserRoleId(user) {
+  async getPermissionsByUserRoleId(user: mongoose.Types.ObjectId) {
     if (NestHelper.getInstance().isEmpty(user) && !isValidObjectId(user)) {
       ExceptionHelper.getInstance().defaultError(
         'user does not exist',

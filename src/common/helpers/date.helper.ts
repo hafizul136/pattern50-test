@@ -78,16 +78,16 @@ export class DateHelper {
     startOfToday(zone: string): string {
         return DateTime.now().setZone(zone).startOf('day').toISO();
     }
-    startOfDate(date: Date, zone: string):Date {
+    startOfDate(date: Date, zone: string): Date {
         return DateTime.fromJSDate(date).setZone(zone).startOf('day').toJSDate();
     }
-    startOfDateString(date: Date, zone: string) {
+    startOfDateString(date: Date, zone: string): Date {
         return DateTime.fromJSDate(date).setZone(zone).startOf('day').toISO();
     }
-    endOfDate(date: Date, zone: string) {
+    endOfDate(date: Date, zone: string): Date {
         return DateTime.fromJSDate(date).setZone(zone).endOf('day').toJSDate();
     }
-    endOfDateString(date: Date, zone: string) {
+    endOfDateString(date: Date, zone: string): Date {
         return DateTime.fromJSDate(date).setZone(zone).endOf('day').toISO();
     }
 
@@ -121,12 +121,6 @@ export class DateHelper {
         return DateTime.fromISO(date2).toMillis();
     }
 
-    compareDates(date1: string, date2: string) {
-        const date1InString = new Date(date1).setHours(0, 0, 0, 0);
-        const date2InString = new Date(date2).setHours(0, 0, 0, 0);
-
-
-    }
 
     getNowInISOString(): string {
         return DateTime.now().setZone('UTC').toJSDate().toISOString();
@@ -248,7 +242,7 @@ export class DateHelper {
         const zone = luxonDateTime.zoneName;
         return zone;
     }
-    isDateInRange(currentDate, startDate, endDate) {
+    isDateInRange(currentDate, startDate, endDate): boolean {
         // Check if currentDate is greater than or equal to startDate
         // and currentDate is less than or equal to endDate
         console.log({ currentDate, startDate, endDate });
@@ -256,7 +250,7 @@ export class DateHelper {
     }
 
 
-    getCurrentMonthName() {
+    getCurrentMonthName(): string {
         const months = [
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
@@ -268,7 +262,7 @@ export class DateHelper {
         return currentMonth;
     }
 
-    getPreviousMonthName() {
+    getPreviousMonthName(): string {
         const months = [
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
@@ -282,7 +276,7 @@ export class DateHelper {
         return previousMonth;
     }
 
-    getTimeInNext24Hours(now: string) {
+    getTimeInNext24Hours(now: string): string {
         const next24Hours = new Date(new Date(now).getTime() + 24 * 60 * 60 * 1000).toISOString();
 
         return next24Hours;

@@ -19,8 +19,8 @@ export class Permission {
     @Prop({ type: String, default: '' })
     details: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Client", required: true, index: true })
-    clientId: mongoose.Schema.Types.ObjectId;
+    @Prop({ type: mongoose.Types.ObjectId, ref: "Client", required: true, index: true })
+    clientId: mongoose.Types.ObjectId;
 
 }
 

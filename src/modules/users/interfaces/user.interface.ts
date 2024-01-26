@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { userTypeEnum } from "../enum/index.enum";
+import mongoose, { Document } from "mongoose";
+import { UserTypeEnum } from "../enum/index.enum";
 
 export interface UserModel {
     name: string;
@@ -12,7 +12,7 @@ export interface IUserKey {
     id: string;
 }
 
-export interface IUser {
+export interface IUser extends Document {
     _id?: mongoose.Types.ObjectId;
     firstName?: string;
     lastName?: string;
@@ -37,7 +37,13 @@ export interface IUser {
     userId?: mongoose.Types.ObjectId;
     phone?: string;
     stripeCustomerId?: string;
-    userType?: userTypeEnum
+    userType?: UserTypeEnum
+    userRoleId?: mongoose.Types.ObjectId;
+}
+
+
+export interface IAuthUSer {
+    userId?: mongoose.Types.ObjectId;
 }
 
 

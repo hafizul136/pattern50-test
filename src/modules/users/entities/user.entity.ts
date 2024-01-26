@@ -1,7 +1,7 @@
 import { StatusEnum } from '@common/enums/status.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { registrationTypeEnum, userTypeEnum } from '../enum/index.enum';
+import { RegistrationTypeEnum, UserTypeEnum } from '../enum/index.enum';
 
 export type UserDocument = User & Document;
 
@@ -25,10 +25,10 @@ export class User {
     @Prop({ type: String, default: '' })
     verificationCode: string;
 
-    @Prop({ type: String, enum: registrationTypeEnum, default: registrationTypeEnum.password })
-    registrationType: string;
+    @Prop({ type: String, enum: RegistrationTypeEnum, default: RegistrationTypeEnum.password })
+    registrationType: RegistrationTypeEnum;
 
-    @Prop({ type: String, enum: userTypeEnum, default: userTypeEnum.admin })
+    @Prop({ type: String, enum: UserTypeEnum, default: UserTypeEnum.admin })
     userType: string;
 
     @Prop({

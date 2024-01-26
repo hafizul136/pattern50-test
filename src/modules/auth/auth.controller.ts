@@ -1,6 +1,6 @@
 import { ClientIDGetHelper } from '@common/helpers/getClientId.helper';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
-import { userTypeEnum } from '@modules/users/enum/index.enum';
+import { UserTypeEnum } from '@modules/users/enum/index.enum';
 import {
     Body,
     Controller,
@@ -38,7 +38,7 @@ export class AuthController {
     async signInDriver(@Body() data: AuthDto, @Req() req) {
         const clientId = await ClientIDGetHelper.getClientIdFromRequest(req);
         const clientObjId = new mongoose.Types.ObjectId(clientId);
-        return await this.authService.signIn(data, clientObjId, userTypeEnum.driver);
+        return await this.authService.signIn(data, clientObjId);
     }
     @Post('signup/driver')
     @UseGuards(ClientCredentialsGuard)
@@ -48,13 +48,13 @@ export class AuthController {
         const clientObjId = new mongoose.Types.ObjectId(clientId);
         const name = createUserDto?.firstName;
         const { firstName, lastName } = this.splitFullName(name);
-        const createDriverDTO = { ...createUserDto, clientObjId, firstName, lastName, userType: userTypeEnum.driver }
+        const createDriverDTO = { ...createUserDto, clientObjId, firstName, lastName, userType: UserTypeEnum.driver }
         return this.authService.signUp(createDriverDTO, clientId);
     }
 
     @Get('get-permissions')
     getPermissions() {
-        return this.authService.getPermissionsByUserRoleId("6501900e2f99c0a2f71035b9");
+        return this.authService.getPermissionsByUserRoleId(new mongoose.Types.ObjectId("6501900e2f99c0a2f71035b9"));
     }
 
     splitFullName(fullName) {

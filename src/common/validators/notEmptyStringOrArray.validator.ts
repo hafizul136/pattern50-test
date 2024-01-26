@@ -8,7 +8,7 @@ import {
 
 @ValidatorConstraint({ name: 'notEmptyStringArrayAndMongoids', async: false })
 export class NotEmptyStringArrayAndMongoidsConstraint implements ValidatorConstraintInterface {
-    validate(value: any[], args: ValidationArguments) {
+    validate(value: any[]): boolean {
         if (!value || !Array.isArray(value)) {
             return false;
         }
@@ -19,12 +19,12 @@ export class NotEmptyStringArrayAndMongoidsConstraint implements ValidatorConstr
         return value.every((item) => isValidString(item));
     }
 
-    defaultMessage(args: ValidationArguments) {
+    defaultMessage(args: ValidationArguments): string {
         return `${args.property} name is empty`;
     }
 }
 
-export function NotEmptyStringArrayAndMongoids(validationOptions?: ValidationOptions) {
+export function NotEmptyStringArrayAndMongoids(validationOptions?: ValidationOptions): (object: Object, propertyName: string) => void {
     return function (object: Object, propertyName: string) {
         registerDecorator({
             target: object.constructor,
