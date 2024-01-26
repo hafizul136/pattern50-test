@@ -1,0 +1,9 @@
+{
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "endOfLine":"auto",
+  "tabWidth": 4,
+  "semi": true,
+  "indent_style": "italic",
+  "printWidth": 120
+}
