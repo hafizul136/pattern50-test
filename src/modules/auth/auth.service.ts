@@ -19,6 +19,7 @@ import { UserRoleService } from '../../modules/user-role/user-role.service';
 import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
 import { GrantType } from './enum/auth.enum';
+import { IAuthResponse, IAuthToken } from './interface/auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +31,7 @@ export class AuthService {
     private readonly permissionsService: PermissionsService,
     private readonly roleService: RolesService
   ) { }
-  async signUp(createUserDto: CreateUserDto, clientId: mongoose.Types.ObjectId): Promise<any> {
+  async signUp(createUserDto: CreateUserDto, clientId: mongoose.Types.ObjectId): Promise<IAuthResponse> {
     //validity check
     const vp = await this.validatePassword(createUserDto.password);
     if (!NestHelper.getInstance().isEmpty(vp)) {
@@ -118,7 +119,7 @@ export class AuthService {
     await this.usersService.update(user._id, { userRoleId, clientId: createUserDto.clientId });
   }
 
-  async signIn(data: AuthDto, clientId): Promise<{ auth: { accessToken: string; refreshToken: string; }, user: IUser }> {
+  async signIn(data: AuthDto, clientId): Promise<IAuthResponse> {
     let user;
     if (data.grantType === GrantType.password) {
       // Check if user exists
@@ -149,11 +150,11 @@ export class AuthService {
     return { auth: authToken, user };
   }
 
-  hashData(password: string) {
+  hashData(password: string): Promise<string> {
     return AuthHelper.hashPassword(password);
   }
 
-  async getTokens(user: any) {
+  async getTokens(user: any): Promise<IAuthToken>{
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.sign(
         {
@@ -201,7 +202,7 @@ export class AuthService {
     const res = validator.validate(password, { list: true, details: true });
     return res;
   }
-  async getPermissionsByUserRoleIdSignup(user, roleId) {
+  async getPermissionsByUserRoleIdSignup(user, roleId):Promise<string[]> {
     if (NestHelper.getInstance().isEmpty(user) && !isValidObjectId(user)) {
       ExceptionHelper.getInstance().defaultError(
         'user does not exist',
@@ -222,7 +223,7 @@ export class AuthService {
 
     return res;
   }
-  async getPermissionsByUserRoleId(user: mongoose.Types.ObjectId) {
+  async getPermissionsByUserRoleId(user: mongoose.Types.ObjectId): Promise<string[]> {
     if (NestHelper.getInstance().isEmpty(user) && !isValidObjectId(user)) {
       ExceptionHelper.getInstance().defaultError(
         'user does not exist',

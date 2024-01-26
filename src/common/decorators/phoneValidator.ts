@@ -12,8 +12,8 @@ export class IsPhoneNumberConstraint implements ValidatorConstraintInterface {
     }
 }
 
-export function IsPhoneNumber(validationOptions?: ValidationOptions): (object: Object, propertyName: string) => void {
-    return function (object: Object, propertyName: string) {
+export function IsPhoneNumber(validationOptions?: ValidationOptions): (object: object, propertyName: string) => void {
+    return function (object: object, propertyName: string) {
         registerDecorator({
             name: 'isPhoneNumber',
             target: object.constructor,

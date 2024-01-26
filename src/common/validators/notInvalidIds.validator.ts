@@ -14,18 +14,18 @@ export class NotEmptyStringArrayAndMongoidsConstraint implements ValidatorConstr
             return false;
         }
 
-        const isValidMongoid = (item: any) => mongoose.Types.ObjectId.isValid(item);
+        const isValidMongoid = (item: any): boolean => mongoose.Types.ObjectId.isValid(item);
 
         return value.every((item) => isValidMongoid(item));
     }
 
-    defaultMessage(args: ValidationArguments): string {
+    defaultMessage(): string {
         return `invalid id`;
     }
 }
 
-export function NotInvalidMongoids(validationOptions?: ValidationOptions): (object: Object, propertyName: string) => void {
-    return function (object: Object, propertyName: string) {
+export function NotInvalidMongoids(validationOptions?: ValidationOptions): (object: object, propertyName: string) => void {
+    return function (object: object, propertyName: string) {
         registerDecorator({
             target: object.constructor,
             propertyName: propertyName,
