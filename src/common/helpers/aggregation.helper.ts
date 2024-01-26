@@ -13,7 +13,7 @@ export class AggregationHelper {
         )
     }
 
-    static unsetAField(aggregate: any[], field: string):void {
+    static unsetAField(aggregate: any[], field: string): void {
         aggregate.push({
             $unset: field
         })
@@ -27,7 +27,7 @@ export class AggregationHelper {
         })
     }
 
-    static lookupForIdForeignKey(aggregate: any[], from: string, localField: string, asName: string):void {
+    static lookupForIdForeignKey(aggregate: any[], from: string, localField: string, asName: string): void {
         aggregate.push(
             {
                 $lookup: {
@@ -39,7 +39,7 @@ export class AggregationHelper {
             });
     }
 
-    static lookupForIdLocalKey(aggregate: any[], from: string, foreignField: string, asName: string):void {
+    static lookupForIdLocalKey(aggregate: any[], from: string, foreignField: string, asName: string): void {
         aggregate.push(
             {
                 $lookup: {
@@ -51,7 +51,7 @@ export class AggregationHelper {
             });
     }
 
-    static lookupForCustomFields(aggregate: any[], from: string, localField: any, foreignField: any, asName: string):void {
+    static lookupForCustomFields(aggregate: any[], from: string, localField: any, foreignField: any, asName: string): void {
         aggregate.push(
             {
                 $lookup: {
@@ -63,19 +63,19 @@ export class AggregationHelper {
             });
     }
 
-    static sortBy(aggregate: any[], sortBy: any):void {
+    static sortBy(aggregate: any[], sortBy: string): void {
         aggregate.push({
             $sort: sortBy
         })
     }
 
-    static unwindWithPreserveNullAndEmptyArrays(aggregate: any[], path: string):void {
+    static unwindWithPreserveNullAndEmptyArrays(aggregate: any[], path: string): void {
         aggregate.push({
             $unwind: { path: `$${path}`, preserveNullAndEmptyArrays: true }
         });
     }
 
-    static getCountAndDataByFacet(aggregate: any[], page: number, size: number):void {
+    static getCountAndDataByFacet(aggregate: any[], page: number, size: number): void {
         aggregate.push({
             $facet: {
                 total: [{ $count: 'total' }],
@@ -98,7 +98,7 @@ export class AggregationHelper {
             })
     }
 
-    static projectFields(aggregate: any[], fields: string[]):void {
+    static projectFields(aggregate: any[], fields: string[]): void {
         const projectFields = ConstructObjectsFromArrays.getFieldsToProjectFromArray(fields);
 
         aggregate.push({
@@ -108,7 +108,7 @@ export class AggregationHelper {
         })
     }
 
-    static modifyTimeToSplit(aggregate: any[]):void {
+    static modifyTimeToSplit(aggregate: any[]): void {
         aggregate.push({
             "$addFields": {
                 startTimeForSplit: {
@@ -139,7 +139,7 @@ export class AggregationHelper {
         });
     }
 
-    static splitStartAndEndTime(aggregate: any[]):void {
+    static splitStartAndEndTime(aggregate: any[]): void {
         aggregate.push({
             $addFields: {
                 startTimeParts: {
@@ -152,7 +152,7 @@ export class AggregationHelper {
         });
     }
 
-    static getSplittedTimeInInteger(aggregate):void {
+    static getSplittedTimeInInteger(aggregate): void {
         aggregate.push({
             $addFields: {
                 startHour: {
@@ -186,7 +186,7 @@ export class AggregationHelper {
 
     }
 
-    static getTimeIn24HourFormat(aggregate: any[]):void {
+    static getTimeIn24HourFormat(aggregate: any[]): void {
         aggregate.push({
             "$addFields": {
                 startTimeInHours: {
