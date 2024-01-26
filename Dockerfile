@@ -12,9 +12,6 @@ RUN npm run build
 
 FROM node:16.15-alpine3.15 As production
 
-# ARG NODE_ENV=${NODE_ENV}
-# ENV NODE_ENV=${NODE_ENV}
-
 WORKDIR /usr/src/app-server
 
 COPY package*.json ./

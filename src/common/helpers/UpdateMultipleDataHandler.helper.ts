@@ -1,5 +1,5 @@
 export class UpdateMultipleDataHandler {
-    static findDataToUpdate(existingData: any[], newData: any[]) {
+    static findDataToUpdate(existingData: any[], newData: any[]): unknown {
         // find the common data by comparing both existing and new data arrays existing charger are object ids and newData are string arrays
         const existingDataSet = new Set(existingData.map(item => item.toString()));
 

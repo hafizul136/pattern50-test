@@ -75,13 +75,9 @@ export class AuthController {
         }
     }
 
-    // // Example usage:
-    // const fullName = "John William Smith"; // Replace with your full name
-    // try {
-    //     const { firstName, lastName } = splitFullName(fullName);
-    //     console.log("First Name:", firstName);
-    //     console.log("Last Name:", lastName);
-    // } catch (error) {
-    //     console.log(error.message);
-    // }
+    @Get('test')
+    async test() {
+        return "Health is okay"
+    }
+
 }

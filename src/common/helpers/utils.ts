@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 export class Utils {
     static specialCharactersRegex = /^[!@#$%^&*(),.?":{}|<>\\/]+$/;
 
-    static getDefaultValueForDto(value, defaultValue) {
+    static getDefaultValueForDto(value, defaultValue): boolean | string {
         return value !== '' && value !== undefined ? value : defaultValue;
     }
 
