@@ -15,7 +15,7 @@ export class NestHelper {
             await callback(array[index], index, array);
         }
     }
-    async isNumberAndNotEmpty(value): Promise<boolean> {
+    async isNumberAndNotEmpty(value:unknown): Promise<boolean> {
         // Check if the value is a number and not NaN
         if (typeof value === 'number' && !isNaN(value)) {
             // Check if the value is not empty (undefined or null)

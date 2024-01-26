@@ -1,9 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Req } from '@nestjs/common';
+import { Request } from 'express';
 
 @Injectable()
 export class ClientIDGetHelper {
 
-    static async getClientIdFromRequest(request): Promise<string | null> {
+    static async getClientIdFromRequest(@Req() request: Request): Promise<string | null> {
 
         const authHeader = request.headers['authorization'];
 

@@ -1,7 +1,7 @@
 import { ConstructObjectsFromArrays } from "./constructObjectsFromArrays";
 
 export class AggregationHelper {
-    static filterByMatchAndQueriesAll(aggregate: any[], queries: any[]) {
+    static filterByMatchAndQueriesAll(aggregate: any[], queries: any[]): void {
         aggregate.push({
             $match:
             {
@@ -13,13 +13,13 @@ export class AggregationHelper {
         )
     }
 
-    static unsetAField(aggregate: any[], field: string) {
+    static unsetAField(aggregate: any[], field: string):void {
         aggregate.push({
             $unset: field
         })
     }
 
-    static unwindAField(aggregate: any[], field: string, preserveNullAndEmpty: boolean) {
+    static unwindAField(aggregate: any[], field: string, preserveNullAndEmpty: boolean): void {
         aggregate.push({
             $unwind: {
                 path: `$${field}`, preserveNullAndEmptyArrays: preserveNullAndEmpty
@@ -27,7 +27,7 @@ export class AggregationHelper {
         })
     }
 
-    static lookupForIdForeignKey(aggregate: any[], from: string, localField: string, asName: string) {
+    static lookupForIdForeignKey(aggregate: any[], from: string, localField: string, asName: string):void {
         aggregate.push(
             {
                 $lookup: {
@@ -39,7 +39,7 @@ export class AggregationHelper {
             });
     }
 
-    static lookupForIdLocalKey(aggregate: any[], from: string, foreignField: string, asName: string) {
+    static lookupForIdLocalKey(aggregate: any[], from: string, foreignField: string, asName: string):void {
         aggregate.push(
             {
                 $lookup: {
@@ -51,7 +51,7 @@ export class AggregationHelper {
             });
     }
 
-    static lookupForCustomFields(aggregate: any[], from: string, localField: any, foreignField: any, asName: string) {
+    static lookupForCustomFields(aggregate: any[], from: string, localField: any, foreignField: any, asName: string):void {
         aggregate.push(
             {
                 $lookup: {
@@ -63,19 +63,19 @@ export class AggregationHelper {
             });
     }
 
-    static sortBy(aggregate: any[], sortBy: any) {
+    static sortBy(aggregate: any[], sortBy: any):void {
         aggregate.push({
             $sort: sortBy
         })
     }
 
-    static unwindWithPreserveNullAndEmptyArrays(aggregate: any[], path: string) {
+    static unwindWithPreserveNullAndEmptyArrays(aggregate: any[], path: string):void {
         aggregate.push({
             $unwind: { path: `$${path}`, preserveNullAndEmptyArrays: true }
         });
     }
 
-    static getCountAndDataByFacet(aggregate: any[], page: number, size: number) {
+    static getCountAndDataByFacet(aggregate: any[], page: number, size: number):void {
         aggregate.push({
             $facet: {
                 total: [{ $count: 'total' }],
@@ -98,7 +98,7 @@ export class AggregationHelper {
             })
     }
 
-    static projectFields(aggregate: any[], fields: string[]) {
+    static projectFields(aggregate: any[], fields: string[]):void {
         const projectFields = ConstructObjectsFromArrays.getFieldsToProjectFromArray(fields);
 
         aggregate.push({
@@ -108,7 +108,7 @@ export class AggregationHelper {
         })
     }
 
-    static modifyTimeToSplit(aggregate: any[]) {
+    static modifyTimeToSplit(aggregate: any[]):void {
         aggregate.push({
             "$addFields": {
                 startTimeForSplit: {
@@ -139,7 +139,7 @@ export class AggregationHelper {
         });
     }
 
-    static splitStartAndEndTime(aggregate: any[]) {
+    static splitStartAndEndTime(aggregate: any[]):void {
         aggregate.push({
             $addFields: {
                 startTimeParts: {
@@ -152,7 +152,7 @@ export class AggregationHelper {
         });
     }
 
-    static getSplittedTimeInInteger(aggregate) {
+    static getSplittedTimeInInteger(aggregate):void {
         aggregate.push({
             $addFields: {
                 startHour: {
@@ -186,7 +186,7 @@ export class AggregationHelper {
 
     }
 
-    static getTimeIn24HourFormat(aggregate: any[]) {
+    static getTimeIn24HourFormat(aggregate: any[]):void {
         aggregate.push({
             "$addFields": {
                 startTimeInHours: {

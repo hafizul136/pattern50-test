@@ -78,7 +78,7 @@ export class DateHelper {
     startOfToday(zone: string): string {
         return DateTime.now().setZone(zone).startOf('day').toISO();
     }
-    startOfDate(date: Date, zone: string) {
+    startOfDate(date: Date, zone: string):Date {
         return DateTime.fromJSDate(date).setZone(zone).startOf('day').toJSDate();
     }
     startOfDateString(date: Date, zone: string) {

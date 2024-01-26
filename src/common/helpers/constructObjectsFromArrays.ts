@@ -1,4 +1,3 @@
-import { IUser } from "@modules/users/interfaces/user.interface";
 
 export class ConstructObjectsFromArrays {
     // static constructPricingScheduleObjects(createPricingScheduleDto: any, user: IUser): any[] {
@@ -7,7 +6,7 @@ export class ConstructObjectsFromArrays {
     //     })
     // }
 
-    static getFieldsToProjectFromArray(projectionFields: string[]) {
+    static getFieldsToProjectFromArray(projectionFields: string[]): Record<string, number> {
         const fields: Record<string, number> = {};
 
         projectionFields.forEach(field => {

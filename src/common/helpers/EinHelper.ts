@@ -35,7 +35,7 @@ export class EINSecureHelper {
         return decryptedText?.toString();
     }
 
-    static async getEinHashed(ein: string) {
+    static async getEinHashed(ein: string): Promise<string> {
         try {
             return await EINSecureHelper.encrypt(
                 ein,

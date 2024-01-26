@@ -1,9 +1,10 @@
 import { NestHelper } from '@common/helpers/NestHelper';
 import { HttpStatus } from "@nestjs/common";
 import { ExceptionHelper } from "./ExceptionHelper";
+import { Date } from 'mongoose';
 
 export class TimeValidationHelper {
-    static validateStartAndEndTime(startTime, endTime) {
+    static validateStartAndEndTime(startTime, endTime): void {
         const start = this.convertTo24HourFormat(startTime);
         const end = this.convertTo24HourFormat(endTime);
 

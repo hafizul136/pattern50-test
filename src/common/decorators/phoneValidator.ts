@@ -7,7 +7,7 @@ import {
 
 @ValidatorConstraint({ name: 'phoneNumber', async: false })
 export class IsPhoneNumberConstraint implements ValidatorConstraintInterface {
-    validate(value: any) {
+    validate(value: any): boolean {
         return /^\d+$/.test(value);
     }
 }
