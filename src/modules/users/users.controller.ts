@@ -1,7 +1,7 @@
 import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
-import mongoose from 'mongoose';
+import mongoose, { FlattenMaps } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser } from './interfaces/user.interface';
@@ -28,7 +28,7 @@ export class UsersController {
 
   @Get('/me')
   @Permissions("user.edit")
-  async userProfile(@GetUser() user: IUser) {
+  async userProfile(@GetUser() user: IUser): Promise<FlattenMaps<IUser>> {
     return await this.usersService.userProfile(user);
   }
 
@@ -44,7 +44,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: mongoose.Schema.Types.ObjectId, @Body() updateUserDto: UpdateUserDto): Promise<IUser> {
+  async update(@Param('id') id: mongoose.Types.ObjectId, @Body() updateUserDto: UpdateUserDto): Promise<IUser> {
     return await this.usersService.update(id, updateUserDto);
   }
 }

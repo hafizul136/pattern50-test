@@ -23,7 +23,7 @@ export class RolePermissionController {
     return await this.rolePermissionService.findAll();
   }
   @Get("by-role/:roleId")
-  async findAllByRoleId(@GetUser() user, @Param('roleId') roleId: mongoose.Schema.Types.ObjectId) {
+  async findAllByRoleId(@GetUser() user, @Param('roleId') roleId: mongoose.Types.ObjectId) {
     return await this.rolePermissionService.findAllByRoleId(roleId, user);
   }
   @Get(':id')

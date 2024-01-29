@@ -92,7 +92,7 @@ export class RolePermissionService {
     return await this.rolePermissionModel.findOne({ _id: id }).lean().exec();
   }
 
-  async findAllByRoleId(roleId: mongoose.Schema.Types.ObjectId, user) {
+  async findAllByRoleId(roleId: mongoose.Types.ObjectId, user) {
     if (NestHelper.getInstance().isEmpty(roleId) && !isValidObjectId(roleId)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid role id',

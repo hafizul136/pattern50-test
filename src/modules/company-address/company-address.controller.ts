@@ -21,12 +21,12 @@ export class CompanyAddressController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: mongoose.Schema.Types.ObjectId): Promise<IAddress> {
+  findOne(@Param('id') id: mongoose.Types.ObjectId): Promise<IAddress> {
     return this.companyAddressService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: mongoose.Schema.Types.ObjectId, @Body() updateCompanyAddressDto: UpdateCompanyAddressDto): Promise<IAddress> {
+  update(@Param('id') id: mongoose.Types.ObjectId, @Body() updateCompanyAddressDto: UpdateCompanyAddressDto): Promise<IAddress> {
     return this.companyAddressService.update(id, updateCompanyAddressDto);
   }
 

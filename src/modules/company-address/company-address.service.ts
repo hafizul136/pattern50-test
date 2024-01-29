@@ -30,7 +30,7 @@ export class CompanyAddressService {
     return await this.companyAddressModel.find().lean().exec();
   }
 
-  async findOne(id: mongoose.Schema.Types.ObjectId): Promise<IAddress> {
+  async findOne(id: mongoose.Types.ObjectId): Promise<IAddress> {
     const companyAddress = await this.companyAddressModel.findOne({ _id: id }).lean().exec();
     if (NestHelper.getInstance().isEmpty(companyAddress)) {
       ExceptionHelper.getInstance().defaultError(
@@ -40,7 +40,7 @@ export class CompanyAddressService {
     return companyAddress
   }
 
-  async update(id: mongoose.Schema.Types.ObjectId, updateCompanyAddressDto: UpdateCompanyAddressDto): Promise<IAddress> {
+  async update(id: mongoose.Types.ObjectId, updateCompanyAddressDto: UpdateCompanyAddressDto): Promise<IAddress> {
     const company = await this.companyAddressModel.findOne({ _id: id }).lean().exec();
     if (!company) ExceptionHelper.getInstance().noDataFound()
     return await this.companyAddressModel.findByIdAndUpdate(id, updateCompanyAddressDto, { new: true }).lean();

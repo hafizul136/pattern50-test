@@ -19,8 +19,8 @@ export class User {
     @Prop({ type: String, required: true })
     password: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "UserRole", default: null })
-    userRoleId: mongoose.Schema.Types.ObjectId;
+    @Prop({ type: mongoose.Types.ObjectId, ref: "UserRole", default: null })
+    userRoleId: mongoose.Types.ObjectId;
 
     @Prop({ type: String, default: '' })
     verificationCode: string;
@@ -29,7 +29,7 @@ export class User {
     registrationType: RegistrationTypeEnum;
 
     @Prop({ type: String, enum: UserTypeEnum, default: UserTypeEnum.admin })
-    userType: string;
+    userType: UserTypeEnum;
 
     @Prop({
         type: String,
@@ -38,8 +38,8 @@ export class User {
     })
     status: string
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Client" })
-    clientId: mongoose.Schema.Types.ObjectId;
+    @Prop({ type: mongoose.Types.ObjectId, ref: "Client" })
+    clientId: mongoose.Types.ObjectId;
 
     @Prop({ type: Boolean, default: true })
     isRegistered: boolean;
