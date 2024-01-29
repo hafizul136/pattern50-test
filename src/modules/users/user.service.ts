@@ -17,8 +17,8 @@ export class UsersService {
     private userModel: Model<UserDocument>
   ) { }
 
-  async create(createUserDto: CreateUserDto) {
-    return await this.userModel.create(createUserDto);
+  async create(createUserDto: CreateUserDto): Promise<IUser> {
+    return (await this.userModel.create(createUserDto)).toJSON();
   }
 
   async findAll() {
@@ -121,16 +121,5 @@ export class UsersService {
   async update(id: mongoose.Schema.Types.ObjectId, updateUserDto: UpdateUserDto): Promise<IUser> {
     const res = await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true, projection: { password: 0 } }).exec();
     return res.toObject();
-  }
-
-  async makeAllObjectId() {
-    const user = await this.userModel.find();
-    user.forEach(async (user) => {
-      const userToUpdate = {
-        ...user,
-      }
-      await this.userModel.findByIdAndUpdate(user?._id, userToUpdate)
-    })
-    return user;
   }
 }

@@ -12,13 +12,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body() createUserDto: CreateUserDto): Promise<IUser> {
     return await this.usersService.create(createUserDto);
-  }
-
-  @Post("update-objectid")
-  async updateObjectIds() {
-    return await this.usersService.makeAllObjectId();
   }
 
   @Get('test')
@@ -51,10 +46,5 @@ export class UsersController {
   @Patch(':id')
   async update(@Param('id') id: mongoose.Schema.Types.ObjectId, @Body() updateUserDto: UpdateUserDto): Promise<IUser> {
     return await this.usersService.update(id, updateUserDto);
-  }
-
-  @Post("update-object-id")
-  async makeAllObjectId() {
-    return await this.usersService.makeAllObjectId();
   }
 }

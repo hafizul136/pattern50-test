@@ -11,7 +11,6 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role, RoleDocument } from './entities/role.entity';
 import { roleStatusEnum } from './enum/index.enum';
 import { IRole } from './interfaces/role.interface';
-import { RolePermissionService } from '@modules/role-permission/role-permission.service';
 import { IPermission } from '@modules/permissions/interfaces/permission.interface';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 @Injectable()

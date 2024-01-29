@@ -35,3 +35,8 @@ export interface IAuthResponse {
     auth: IAuthToken;
     user: IUser;
 }
+
+export interface IFullName {
+    firstName: string,
+    lastName: string,
+}
