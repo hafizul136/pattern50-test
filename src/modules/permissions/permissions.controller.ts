@@ -15,7 +15,7 @@ export class PermissionsController {
   }
 
   @Post("script-create")
-  async createPermission(@Body() body: any): Promise<string> {
+  async createPermission(@Body() body: { permissions: string[], clientId: string }): Promise<string> {
     return this.permissionsService.createPermissions(body)
   }
 

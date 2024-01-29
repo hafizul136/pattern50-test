@@ -69,7 +69,7 @@ describe('RolePermissionService', () => {
 
       jest.spyOn(model, "create").mockImplementationOnce(() => Promise.resolve(permission))
 
-      const res = await service.create(
+      await service.create(
         permissionDto as CreateRolePermissionDto
       )
 

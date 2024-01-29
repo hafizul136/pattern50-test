@@ -100,8 +100,6 @@ describe('PermissionsService', () => {
     })
 
     it("Should throw an exception when id is empty", async () => {
-      const id = "61c0ccf11d7bf83d153d7c06";
-
       await expect(service.findOne("")).rejects.toThrowError();
     })
 

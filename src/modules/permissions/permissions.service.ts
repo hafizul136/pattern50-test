@@ -8,6 +8,7 @@ import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { Permission, PermissionDocument } from './entities/permission.entity';
 import { IPermission } from './interfaces/permission.interface';
+import { IUser } from '@modules/users/interfaces/user.interface';
 
 @Injectable()
 export class PermissionsService {
@@ -47,7 +48,7 @@ export class PermissionsService {
     return "created permissions";
   }
 
-  async findAllByIds(findPermissionsByIds: mongoose.Types.ObjectId[], user): Promise<IPermission[]> {
+  async findAllByIds(findPermissionsByIds: mongoose.Types.ObjectId[], user:IUser): Promise<IPermission[]> {
     if (NestHelper.getInstance().isEmpty(user?.clientId)) {
       ExceptionHelper.getInstance().defaultError(
         'client id does not exist',

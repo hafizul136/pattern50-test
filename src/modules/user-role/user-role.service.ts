@@ -6,7 +6,7 @@ import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
 import { RolesService } from '../../modules/roles/roles.service';
 import { UsersService } from '../../modules/users/user.service';
-import { CreateUserRoleDto, IENV } from './dto/create-user-role.dto';
+import { CreateUserRoleDto, IEnvironment } from './dto/create-user-role.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UserRole, UserRoleDocument } from './entities/user-role.entity';
 import { IUserRole } from './interfaces/user-role.interface';
@@ -99,7 +99,7 @@ export class UserRoleService {
     return await {};
   }
 
-  async getEnvs(): Promise<IENV> {
+  async getEnvs(): Promise<IEnvironment> {
     let envs = {
       NODE_ENV: process?.env?.NODE_ENV ?? "",
       DEBUG: process?.env?.DEBUG ?? "",

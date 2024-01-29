@@ -1,4 +1,6 @@
 import { Permission, PermissionDocument } from '@modules/permissions/entities/permission.entity';
+import { IPermission } from '@modules/permissions/interfaces/permission.interface';
+import { PermissionsService } from '@modules/permissions/permissions.service';
 import { RolePermission, RolePermissionDocument } from '@modules/role-permission/entities/role-permission.entity';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,8 +13,6 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role, RoleDocument } from './entities/role.entity';
 import { roleStatusEnum } from './enum/index.enum';
 import { IRole } from './interfaces/role.interface';
-import { IPermission } from '@modules/permissions/interfaces/permission.interface';
-import { PermissionsService } from '@modules/permissions/permissions.service';
 @Injectable()
 export class RolesService {
   constructor(
@@ -23,7 +23,7 @@ export class RolesService {
     @InjectModel(RolePermission.name)
     private rolePermissionModel: Model<RolePermissionDocument>,
     private readonly permissionService: PermissionsService,
-    ) { }
+  ) { }
 
   async create(createRoleDto: CreateRoleDto) {
     try {
@@ -43,7 +43,7 @@ export class RolesService {
 
   async getPermissionsByRoleName(roleName: string) {
     const roleNames = ['admin', 'companyAdmin', 'driver']
-    let permissionsdata = [];
+    let permissionsData = [];
     for (const roleName of roleNames) {
       const role = await this.roleModel.findOne({ name: roleName }).lean();
       const rolePermissionIds = (await this.rolePermissionModel.find({ roleId: role?._id })).map(e => e?.permissionId);
@@ -52,11 +52,11 @@ export class RolesService {
         roleName,
         permissions
       }
-      permissionsdata.push(obj)
+      permissionsData.push(obj)
     }
-    this.writeArrayToFile(permissionsdata, 'scopes')
+    this.writeArrayToFile(permissionsData, 'scopes')
 
-    return permissionsdata;
+    return permissionsData;
   }
 
   async findOne(id: mongoose.Types.ObjectId): Promise<IRole> {
@@ -70,7 +70,7 @@ export class RolesService {
     return await this.roleModel.findOne({ _id: id }).lean();
   }
 
-  async findOneByName(name: string, clientId: mongoose.Types.ObjectId, permissions:string[]) {
+  async findOneByName(name: string, clientId: mongoose.Types.ObjectId, permissions: string[]) {
     let role = await this.roleModel.findOne({ name, clientId }).lean();
     if (NestHelper.getInstance().isEmpty(role)) {
       const roleCreateData = {
@@ -81,7 +81,7 @@ export class RolesService {
       }
       role = await this.create(roleCreateData)
       // assign permissions to new roleID
-      await this.assignPermissionToNewRole(permissions, clientId,role?._id)
+      await this.assignPermissionToNewRole(permissions, clientId, role?._id)
     }
     return role
   }

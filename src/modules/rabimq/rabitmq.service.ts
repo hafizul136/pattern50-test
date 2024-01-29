@@ -17,7 +17,7 @@ export class RabbitMQService {
         });
     }
 
-    sendToAccounting(data: any) {
+    sendToAccounting() {
         return lastValueFrom(this.client.send({ cmd: 'accounting_connect' }, { name: "joy" }));
     }
 }

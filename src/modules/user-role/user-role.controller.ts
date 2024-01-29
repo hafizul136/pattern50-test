@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 
-import { CreateUserRoleDto, IENV } from './dto/create-user-role.dto';
+import { CreateUserRoleDto, IEnvironment } from './dto/create-user-role.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { IUserRole } from './interfaces/user-role.interface';
 import { UserRoleService } from './user-role.service';
@@ -11,7 +11,7 @@ export class UserRoleController {
   constructor(private readonly userRoleService: UserRoleService) { }
 
   @Get('envs')
-  async getEnvs(): Promise<IENV> {
+  async getEnvs(): Promise<IEnvironment> {
     return await this.userRoleService.getEnvs();
   }
 
