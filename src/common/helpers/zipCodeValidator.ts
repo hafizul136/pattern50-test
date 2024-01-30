@@ -1,10 +1,9 @@
 import { HttpStatus } from "@nestjs/common";
+import * as zipcodes from "zipcodes";
 import { ExceptionHelper } from "./ExceptionHelper";
 
-const zipcodes = require('zipcodes');
-
 export class ZipCodeValidator {
-    static async validate(zip) {
+    static async validate(zip: string): Promise<void> {
         const zipcodeData = await zipcodes.lookup(zip);
         if (
             zip &&

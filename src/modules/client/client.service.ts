@@ -29,8 +29,8 @@ export class ClientService {
     }
   }
 
-  async create(createClientDto: CreateClientDto) {
-    const secret = await this.getSecret();
+  async create(createClientDto: CreateClientDto): Promise<IClient>{
+    const secret:string = await this.getSecret();
     const clientObj = {
       ...createClientDto,
       secret: secret
@@ -46,16 +46,16 @@ export class ClientService {
     }
   }
 
-  async getSecret() {
+  async getSecret():Promise<string> {
     const id = uuidv4();
     return id;
   }
 
-  async findAll() {
+  async findAll(): Promise<IClient[]> {
     return await this.clientModel.find().exec();
   }
 
-  async findOne(id: mongoose.Types.ObjectId | string) {
+  async findOne(id: mongoose.Types.ObjectId | string): Promise<IClient> {
     await MongooseHelper.getInstance().isValidMongooseId(id);
     const client = await this.clientModel.findById(id).lean()
 
@@ -78,7 +78,7 @@ export class ClientService {
     return client
   }
 
-  async update(id: any, updateClientDto: UpdateClientDto) {
+  async update(id: any, updateClientDto: UpdateClientDto): Promise<IClient> {
     await MongooseHelper.getInstance().isValidMongooseId(id);
 
     const client = await this.findOne(id);
@@ -91,9 +91,5 @@ export class ClientService {
     }
 
     return await this.clientModel.findByIdAndUpdate(id, { marketPlacePayment: updateClientDto?.marketPlacePayment }, { new: true }).lean();
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} client`;
   }
 }
