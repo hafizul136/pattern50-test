@@ -54,11 +54,6 @@ export class AuthController {
         return this.authService.signUp(createDriverDTO, clientId);
     }
 
-    @Get('get-permissions')
-    async getPermissions(): Promise<string[]> {
-        return await this.authService.getPermissionsByUserRoleId(new mongoose.Types.ObjectId("6501900e2f99c0a2f71035b9"));
-    }
-
     async splitFullName(fullName: string): Promise<IFullName> {
         const nameParts = fullName.split(" "); // Split the full name by space
 

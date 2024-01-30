@@ -10,6 +10,7 @@ import { CreateUserRoleDto, IEnvironment } from './dto/create-user-role.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UserRole, UserRoleDocument } from './entities/user-role.entity';
 import { IUserRole } from './interfaces/user-role.interface';
+import { IUser } from '@modules/users/interfaces/user.interface';
 dotenv.config();
 @Injectable()
 export class UserRoleService {
@@ -50,7 +51,7 @@ export class UserRoleService {
   }
 
 
-  async find(user): Promise<IUserRole> {
+  async find(user: IUser): Promise<IUserRole> {
     try {
       const userRoleId = new mongoose.Types.ObjectId(user?.userRoleId)
       const userRoles = await this.userRoleModel.find({ _id: userRoleId, clientId: user?.clientId }).lean()
