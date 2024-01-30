@@ -4,7 +4,7 @@ import { Date } from 'mongoose';
 import { ExceptionHelper } from "./ExceptionHelper";
 
 export class TimeValidationHelper {
-    static validateStartAndEndTime(startTime: Date, endTime: Date): void {
+    static validateStartAndEndTime(startTime: string, endTime: string): void {
         const start = this.convertTo24HourFormat(startTime);
         const end = this.convertTo24HourFormat(endTime);
 
@@ -20,7 +20,7 @@ export class TimeValidationHelper {
         }
     }
 
-    static convertTo24HourFormat(time): string {
+    static convertTo24HourFormat(time:string): string {
         const match = time?.match(/^(\d+):(\d+)([APap][Mm])$/);
 
         if (NestHelper.getInstance().isEmpty(match)) {
@@ -44,7 +44,7 @@ export class TimeValidationHelper {
         return `${String(hours24).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
 
-    static convertTo24HourFormatTrimmed(time): string {
+    static convertTo24HourFormatTrimmed(time:string): string {
         const match = time?.match(/^(\d+):(\d+)([APap][Mm])$/);
 
         if (NestHelper.getInstance().isEmpty(match)) {
@@ -68,8 +68,8 @@ export class TimeValidationHelper {
         return `${String(hours24)}:${String(minutes)}`;
     }
 
-    static isTimeInRange(startTime, endTime, givenTime): boolean {
-        const convertTo24HourFormat = (time12h) => {
+    static isTimeInRange(startTime:string, endTime:string, givenTime:string): boolean {
+        const convertTo24HourFormat = (time12h):string => {
             const [time, period] = time12h.split(/([APap][Mm])/);
             let [hours, minutes] = time.split(":");
             hours = parseInt(hours, 10);

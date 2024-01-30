@@ -21,7 +21,7 @@ export class UserRoleService {
     private readonly rolesService: RolesService
   ) { }
 
-  async create(createUserRoleDto: CreateUserRoleDto): Promise<any> {
+  async create(createUserRoleDto: CreateUserRoleDto): Promise<IUserRole> {
     const userId = new mongoose.Types.ObjectId(createUserRoleDto?.userId)
     const roleId = new mongoose.Types.ObjectId(createUserRoleDto?.roleId)
 
@@ -81,11 +81,7 @@ export class UserRoleService {
     return await this.userRoleModel.findOne({ _id: new mongoose.Types.ObjectId(id) }).lean().exec();
   }
 
-  async update(id: number, updateUserRoleDto: UpdateUserRoleDto): Promise<IUserRole> {
-    return await {};
-  }
-
-  async makeAllObjectId() {
+  async makeAllObjectId(): Promise<IUserRole[]> {
     const userRoles = await this.userRoleModel.find();
     userRoles.forEach(async (role) => {
       const roleToUpdate = {
@@ -96,9 +92,6 @@ export class UserRoleService {
     return userRoles;
   }
 
-  async remove(id: number): Promise<IUserRole> {
-    return await {};
-  }
 
   async getEnvs(): Promise<IEnvironment> {
     let envs = {

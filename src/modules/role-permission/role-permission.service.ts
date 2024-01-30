@@ -8,8 +8,8 @@ import { NestHelper } from '../../common/helpers/NestHelper';
 import { PermissionsService } from '../permissions/permissions.service';
 import { RolesService } from '../roles/roles.service';
 import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
-import { UpdateRolePermissionDto } from './dto/update-role-permission.dto';
 import { RolePermission, RolePermissionDocument } from './entities/role-permission.entity';
+import { IRolePermission } from './interfaces/rolePermission.interface';
 
 @Injectable()
 export class RolePermissionService {
@@ -21,7 +21,7 @@ export class RolePermissionService {
     private readonly userRoleService: UserRoleService,
   ) { }
 
-  async create(createRolePermissionDto: CreateRolePermissionDto) {
+  async create(createRolePermissionDto: CreateRolePermissionDto): Promise<IRolePermission> {
     const permission = await this.permissionsService.findOne(createRolePermissionDto?.permissionId)
     const roleId = new mongoose.Types.ObjectId(createRolePermissionDto?.roleId)
     const role = await this.rolesService.findOne(roleId);
@@ -33,10 +33,10 @@ export class RolePermissionService {
       );
     }
 
-    return this.rolePermissionModel.create(createRolePermissionDto);
+    return await this.rolePermissionModel.create(createRolePermissionDto);
   }
 
-  async assignPermissionToCompanyAdmin(userRoleId: string, body) {
+  async assignPermissionToCompanyAdmin(userRoleId: string, body): Promise<void> {
     const userRole = await this.userRoleService.findOne(userRoleId);
     for (let i = 0; i < body?.permissions?.length; i++) {
       this.rolePermissionModel.create({
@@ -47,7 +47,7 @@ export class RolePermissionService {
     }
   }
 
-  async assignUserPermissions(userRoleId: string, body: { permissions: string[], clientId: string }) {
+  async assignUserPermissions(userRoleId: string, body: { permissions: string[], clientId: string }): Promise<string> {
     const userRole = await this.userRoleService.findOne(userRoleId);
 
     if (NestHelper.getInstance().isEmpty(userRole)) {
@@ -77,11 +77,11 @@ export class RolePermissionService {
     return "permission assignment successful"
   }
 
-  async findAll() {
+  async findAll(): Promise<IRolePermission[]> {
     return this.rolePermissionModel.find().lean().exec();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<IRolePermission> {
     if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid role permission id',
@@ -92,7 +92,7 @@ export class RolePermissionService {
     return await this.rolePermissionModel.findOne({ _id: id }).lean().exec();
   }
 
-  async findAllByRoleId(roleId: mongoose.Types.ObjectId, user) {
+  async findAllByRoleId(roleId: mongoose.Types.ObjectId, user): Promise<IRolePermission[]> {
     if (NestHelper.getInstance().isEmpty(roleId) && !isValidObjectId(roleId)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid role id',
@@ -119,15 +119,15 @@ export class RolePermissionService {
 
   }
 
-  async update(id: number, updateRolePermissionDto: UpdateRolePermissionDto) {
-    return `This action updates a #${id} rolePermission`;
-  }
+  // async update(id: number, updateRolePermissionDto: UpdateRolePermissionDto) {
+  //   return `This action updates a #${id} rolePermission`;
+  // }
 
-  async remove(id: number) {
-    return `This action removes a #${id} rolePermission`;
-  }
+  // async remove(id: number) {
+  //   return `This action removes a #${id} rolePermission`;
+  // }
 
-  async makeAllObjectId() {
+  async makeAllObjectId(): Promise<IRolePermission[]> {
     const rolePermissions = await this.rolePermissionModel.find();
     rolePermissions.forEach(async (rolePermission) => {
       const rolePermissionToUpdate = {

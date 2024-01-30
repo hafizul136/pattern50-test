@@ -20,6 +20,7 @@ import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
+import { IRole } from '@modules/roles/interfaces/role.interface';
 
 @Injectable()
 export class AuthService {
@@ -106,7 +107,7 @@ export class AuthService {
   }
 
   private async addScopes(user: any, createUserDto: CreateUserDto, userType: UserTypeEnum, clientId: mongoose.Types.ObjectId, permissions: string[]): Promise<void> {
-    const role = await this.roleService.findOneByName(userType, clientId, permissions);
+    const role:IRole = await this.roleService.findOneByName(userType, clientId, permissions);
 
     const userRoleData = {
       userId: new mongoose.Types.ObjectId(user._id),

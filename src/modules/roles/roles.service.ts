@@ -12,7 +12,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role, RoleDocument } from './entities/role.entity';
 import { roleStatusEnum } from './enum/index.enum';
-import { IRole } from './interfaces/role.interface';
+import { IPermissionData, IRole } from './interfaces/role.interface';
 @Injectable()
 export class RolesService {
   constructor(
@@ -25,9 +25,9 @@ export class RolesService {
     private readonly permissionService: PermissionsService,
   ) { }
 
-  async create(createRoleDto: CreateRoleDto) {
+  async create(createRoleDto: CreateRoleDto) :Promise<IRole>{
     try {
-      return await this.roleModel.create(createRoleDto);
+      return await (await this.roleModel.create(createRoleDto)).toObject();
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,
@@ -37,11 +37,11 @@ export class RolesService {
     }
   }
 
-  findAll() {
-    return this.roleModel.find().lean().exec();
+  async findAll(): Promise<IRole> {
+    return await this.roleModel.find().lean();
   }
 
-  async getPermissionsByRoleName(roleName: string) {
+  async getPermissionsByRoleName(roleName: string) :Promise<IPermissionData[]>{
     const roleNames = ['admin', 'companyAdmin', 'driver']
     let permissionsData = [];
     for (const roleName of roleNames) {
@@ -70,8 +70,8 @@ export class RolesService {
     return await this.roleModel.findOne({ _id: id }).lean();
   }
 
-  async findOneByName(name: string, clientId: mongoose.Types.ObjectId, permissions: string[]) {
-    let role = await this.roleModel.findOne({ name, clientId }).lean();
+  async findOneByName(name: string, clientId: mongoose.Types.ObjectId, permissions: string[]):Promise<IRole> {
+    let role:IRole = await this.roleModel.findOne({ name, clientId }).lean();
     if (NestHelper.getInstance().isEmpty(role)) {
       const roleCreateData = {
         name: name,
@@ -86,14 +86,14 @@ export class RolesService {
     return role
   }
 
-  update(id: string, updateRoleDto: UpdateRoleDto): any {
-    return this.roleModel.findByIdAndUpdate(id, updateRoleDto, { new: true }).exec();
+  async update(id: string, updateRoleDto: UpdateRoleDto): Promise<IRole> {
+    return await this.roleModel.findByIdAndUpdate(id, updateRoleDto, { new: true }).lean();
   }
 
-  remove(id: string) {
-    return this.roleModel.findByIdAndRemove(id).exec();
+  async remove(id: string): Promise<IRole> {
+    return await this.roleModel.findByIdAndRemove(id).lean();
   }
-  async assignPermissionToNewRole(permissions: string[], clientId: mongoose.Types.ObjectId, roleId: mongoose.Types.ObjectId) {
+  async assignPermissionToNewRole(permissions: string[], clientId: mongoose.Types.ObjectId, roleId: mongoose.Types.ObjectId):Promise<void> {
     permissions.forEach(async (permission) => {
       const permissionObj: IPermission = await this.permissionService.findOneByName(permission);
 

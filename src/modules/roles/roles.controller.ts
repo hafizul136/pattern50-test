@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { Permissions } from 'common/decorators/permissions.decorator';
 import mongoose from 'mongoose';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { IRole } from './interfaces/role.interface';
+import { IPermissionData, IRole } from './interfaces/role.interface';
 import { RolesService } from './roles.service';
 
 @Controller('roles')
@@ -14,17 +14,17 @@ export class RolesController {
 
   @Post()
   @Permissions('role.create')
-  async create(@Body() createRoleDto: CreateRoleDto) {
+  async create(@Body() createRoleDto: CreateRoleDto): Promise<IRole> {
     return await this.rolesService.create(createRoleDto);
   }
 
   @Get()
-  findAll() {
-    return this.rolesService.findAll();
+  async findAll(): Promise<IRole> {
+    return await this.rolesService.findAll();
   }
 
   @Get('generate-permissions-json')
-  getPermissionsByRoleName() {
+  getPermissionsByRoleName(): Promise<IPermissionData[]> {
     return this.rolesService.getPermissionsByRoleName('admin');
   }
 
@@ -39,12 +39,12 @@ export class RolesController {
   // }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.update(id, updateRoleDto);
+  async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto): Promise<IRole> {
+    return await this.rolesService.update(id, updateRoleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rolesService.remove(id);
+  async remove(@Param('id') id: string): Promise<IRole> {
+    return await this.rolesService.remove(id);
   }
 }

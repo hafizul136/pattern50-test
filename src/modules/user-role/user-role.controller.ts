@@ -30,18 +30,8 @@ export class UserRoleController {
     return await this.userRoleService.findOne(id);
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserRoleDto: UpdateUserRoleDto): Promise<IUserRole> {
-    return await this.userRoleService.update(+id, updateUserRoleDto);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<IUserRole> {
-    return await this.userRoleService.remove(+id);
-  }
-
   @Post("update-object-id")
-  async updateALLUserRoleWithObjectId() {
+  async updateALLUserRoleWithObjectId(): Promise<IUserRole[]>{
     return await this.userRoleService.makeAllObjectId();
   }
 

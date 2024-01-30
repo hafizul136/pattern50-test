@@ -4,50 +4,51 @@ import { GetUser } from '../../common/decorators/getUser.decorator';
 import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
 import { UpdateRolePermissionDto } from './dto/update-role-permission.dto';
 import { RolePermissionService } from './role-permission.service';
+import { IRolePermission } from './interfaces/rolePermission.interface';
 
 @Controller('role-permission')
 export class RolePermissionController {
   constructor(private readonly rolePermissionService: RolePermissionService) { }
 
   @Post()
-  async create(@Body() createRolePermissionDto: CreateRolePermissionDto) {
+  async create(@Body() createRolePermissionDto: CreateRolePermissionDto): Promise<IRolePermission> {
     return await this.rolePermissionService.create(createRolePermissionDto);
   }
   @Post("update-object-id")
-  async makeAllObjectId() {
+  async makeAllObjectId(): Promise<IRolePermission[]>{
     return await this.rolePermissionService.makeAllObjectId();
   }
 
   @Get()
-  async findAll() {
+  async findAll(): Promise<IRolePermission[]> {
     return await this.rolePermissionService.findAll();
   }
   @Get("by-role/:roleId")
-  async findAllByRoleId(@GetUser() user, @Param('roleId') roleId: mongoose.Types.ObjectId) {
+  async findAllByRoleId(@GetUser() user, @Param('roleId') roleId: mongoose.Types.ObjectId): Promise<IRolePermission[]> {
     return await this.rolePermissionService.findAllByRoleId(roleId, user);
   }
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<IRolePermission>{
     return await this.rolePermissionService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRolePermissionDto: UpdateRolePermissionDto) {
-    return this.rolePermissionService.update(+id, updateRolePermissionDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateRolePermissionDto: UpdateRolePermissionDto) {
+  //   return this.rolePermissionService.update(+id, updateRolePermissionDto);
+  // }
 
   @Post("assign-permission/:userRoleId")
-  async assignPermissions(@Param() param: { userRoleId: string }, @Body() body) {
+  async assignPermissions(@Param() param: { userRoleId: string }, @Body() body): Promise<void> {
     return await this.rolePermissionService.assignPermissionToCompanyAdmin(param.userRoleId, body);
   }
 
   @Post("script-assign-permissions/:userRoleId")
-  async assignUserPermissions(@Param() param: { userRoleId: string }, @Body() body) {
+  async assignUserPermissions(@Param() param: { userRoleId: string }, @Body() body):Promise<string> {
     return await this.rolePermissionService.assignUserPermissions(param.userRoleId, body);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rolePermissionService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.rolePermissionService.remove(+id);
+  // }
 }
