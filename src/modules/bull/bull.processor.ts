@@ -5,13 +5,9 @@ import { Job } from "bull";
 @Processor("bull-queue")
 export class BullProcessor {
     private readonly logger = new Logger(BullProcessor.name);
-    constructor(
-
-    ) { }
-
 
     @Process('jobName1')
-    async checkRedisTask(job: Job) {
+    async checkRedisTask(job: Job): Promise<void> {
         console.log("BullProcessor  is called .....")
         console.log({ job: job.data })
 

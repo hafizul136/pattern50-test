@@ -16,7 +16,7 @@ export class MongooseHelper {
         MongooseHelper.instance = MongooseHelper.instance || new MongooseHelper();
         return MongooseHelper.instance;
     }
-    async isValidMongooseId(id: any): Promise<void> {
+    async isValidMongooseId(id: mongoose.Types.ObjectId): Promise<void> {
         let isValidMongooseId = mongoose.Types.ObjectId.isValid(id);
         if (!isValidMongooseId) {
             ExceptionHelper.getInstance().defaultError("Invalid id", "invalid_id", HttpStatus.BAD_REQUEST)

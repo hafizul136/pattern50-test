@@ -55,7 +55,7 @@ export class ClientService {
     return await this.clientModel.find().exec();
   }
 
-  async findOne(id: mongoose.Types.ObjectId | string): Promise<IClient> {
+  async findOne(id: mongoose.Types.ObjectId): Promise<IClient> {
     await MongooseHelper.getInstance().isValidMongooseId(id);
     const client = await this.clientModel.findById(id).lean()
 
@@ -78,7 +78,7 @@ export class ClientService {
     return client
   }
 
-  async update(id: any, updateClientDto: UpdateClientDto): Promise<IClient> {
+  async update(id: mongoose.Types.ObjectId, updateClientDto: UpdateClientDto): Promise<IClient> {
     await MongooseHelper.getInstance().isValidMongooseId(id);
 
     const client = await this.findOne(id);

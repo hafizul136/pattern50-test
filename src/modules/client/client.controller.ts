@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import mongoose from 'mongoose';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -20,12 +20,12 @@ export class ClientController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string | mongoose.Types.ObjectId): Promise<IClient> {
+  async findOne(@Param('id') id:mongoose.Types.ObjectId): Promise<IClient> {
     return await this.clientService.findOne(id);
   }
 
   @Post('toggle-marketplace-payment/:id')
-  async update(@Param('id') id: any, @Body() updateClientDto: UpdateClientDto): Promise<IClient>{
+  async update(@Param('id') id: mongoose.Types.ObjectId, @Body() updateClientDto: UpdateClientDto): Promise<IClient>{
     return await this.clientService.update(id, updateClientDto);
   }
 }

@@ -2,7 +2,7 @@ import { HttpStatus } from "@nestjs/common";
 import { ExceptionHelper } from "./ExceptionHelper";
 
 export class ValidationHelper {
-    static validateAccessCompanyData(dataCompanyId, userCompanyId) {
+    static validateAccessCompanyData(dataCompanyId, userCompanyId): void {
         if (dataCompanyId?.toString() !== userCompanyId?.toString()) {
             ExceptionHelper.getInstance().defaultError(
                 "You are not authorized to access",
