@@ -17,12 +17,12 @@ export class UsersController {
   }
 
   @Get('test')
-  async test() {
+  async test(): Promise<string> {
     return 'test';
   }
 
   @Get()
-  async findAll() {
+  async findAll(): Promise<IUser[]> {
     return await this.usersService.findAll();
   }
 
@@ -39,7 +39,7 @@ export class UsersController {
   // }
 
   @Get(':id')
-  async findOne(@Param('id') id: mongoose.Types.ObjectId) {
+  async findOne(@Param('id') id: mongoose.Types.ObjectId): Promise<IUser> {
     return await this.usersService.findOne(id);
   }
 

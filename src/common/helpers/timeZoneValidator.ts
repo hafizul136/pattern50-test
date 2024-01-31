@@ -4,7 +4,7 @@ import { ExceptionHelper } from "./ExceptionHelper";
 
 
 export class TimeZoneValidator {
-    static async validate(dtoZone): Promise<void> {
+    static async validate(dtoZone: string): Promise<void> {
         const zone = moment.tz.zone(dtoZone)
         if (zone === null) {
             ExceptionHelper.getInstance().defaultError(

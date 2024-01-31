@@ -13,7 +13,7 @@ export function TrimAndValidateString(validationOptions?: ValidationOptions) {
             constraints: [],
             options: validationOptions,
             validator: {
-                async validate(value: any, args: ValidationArguments) {
+                async validate(value: any): Promise<boolean> {
                     if (typeof value === 'string') {
                         const trimmedValue = value.trim();
                         // Validate the trimmed value as per your criteria.
@@ -24,7 +24,7 @@ export function TrimAndValidateString(validationOptions?: ValidationOptions) {
                     }
                     return true;
                 },
-                defaultMessage(args: ValidationArguments) {
+                defaultMessage(args: ValidationArguments): string {
                     return `${args.property} contains only whitespace characters`;
                 },
             },

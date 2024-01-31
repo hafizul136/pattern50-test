@@ -21,7 +21,7 @@ export class UsersService {
     return (await this.userModel.create(createUserDto)).toJSON();
   }
 
-  async findAll() {
+  async findAll(): Promise<IUser[]> {
     return await this.userModel.find();
   }
 
