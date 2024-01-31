@@ -2,7 +2,7 @@ import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface,
 
 @ValidatorConstraint({ name: 'isIsoDate', async: false })
 export class IsIsoDateConstraint implements ValidatorConstraintInterface {
-    validate(value: any): boolean {
+    validate(value: string): boolean {
         if (typeof value !== 'string') {
             return false;
         }

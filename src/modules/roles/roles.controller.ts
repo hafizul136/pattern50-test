@@ -25,7 +25,7 @@ export class RolesController {
 
   @Get('generate-permissions-json')
   getPermissionsByRoleName(): Promise<IPermissionData[]> {
-    return this.rolesService.getPermissionsByRoleName('admin');
+    return this.rolesService.getPermissionsByRoleName();
   }
 
   @Get(':id')

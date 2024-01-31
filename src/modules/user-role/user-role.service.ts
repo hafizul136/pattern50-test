@@ -7,7 +7,6 @@ import { NestHelper } from '../../common/helpers/NestHelper';
 import { RolesService } from '../../modules/roles/roles.service';
 import { UsersService } from '../../modules/users/user.service';
 import { CreateUserRoleDto, IEnvironment } from './dto/create-user-role.dto';
-import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UserRole, UserRoleDocument } from './entities/user-role.entity';
 import { IUserRole } from './interfaces/user-role.interface';
 import { IUser } from '@modules/users/interfaces/user.interface';

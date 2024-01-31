@@ -1,3 +1,4 @@
+import { IRolePermission } from '@modules/role-permission/interfaces/rolePermission.interface';
 import { appConfig } from 'configuration/app.config';
 import mongoose from "mongoose";
 import { nanoid } from 'nanoid';
@@ -5,7 +6,7 @@ import { nanoid } from 'nanoid';
 export class Utils {
     static specialCharactersRegex = /^[!@#$%^&*(),.?":{}|<>\\/]+$/;
 
-    static getDefaultValueForDto(value, defaultValue): boolean | string {
+    static getDefaultValueForDto(value:string, defaultValue:string): boolean | string {
         return value !== '' && value !== undefined ? value : defaultValue;
     }
 
@@ -20,7 +21,7 @@ export class Utils {
         return this.specialCharactersRegex.test(inputString);
     }
 
-    static async extractIdsFromRolePermissions(rolePermissions): Promise<mongoose.Types.ObjectId[]> {
+    static async extractIdsFromRolePermissions(rolePermissions: IRolePermission[]): Promise<mongoose.Types.ObjectId[]> {
         const idsArray = [];
         for (const rolePermission of rolePermissions) {
             if (rolePermission.permissionId) {

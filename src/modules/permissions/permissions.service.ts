@@ -67,7 +67,7 @@ export class PermissionsService {
     }
   }
 
-  async findOne(id: any): Promise<IPermission> {
+  async findOne(id: string): Promise<IPermission> {
     if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid permission id',

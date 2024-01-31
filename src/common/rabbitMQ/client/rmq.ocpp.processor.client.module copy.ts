@@ -1,7 +1,6 @@
+import { appConfig } from 'configuration/app.config';
 import { Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { appConfig } from 'configuration/app.config';
-
 @Global() // Add the @Global() decorator to make the module global
 @Module({
     imports: [

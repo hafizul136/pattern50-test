@@ -1,11 +1,10 @@
+import mongoose from 'mongoose';
 import {
     ValidationOptions,
     ValidatorConstraint,
     ValidatorConstraintInterface,
     registerDecorator,
 } from 'class-validator';
-import mongoose from 'mongoose';
-
 @ValidatorConstraint({ name: 'notEmptyStringArrayAndMongoIds', async: false })
 export class NotEmptyStringArrayAndMongoIdsConstraint implements ValidatorConstraintInterface {
     validate(value: any[]): boolean {

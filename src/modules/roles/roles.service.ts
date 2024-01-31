@@ -16,17 +16,18 @@ import { IPermissionData, IRole } from './interfaces/role.interface';
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectModel(Role.name)
-    private roleModel: Model<RoleDocument>,
     @InjectModel(Permission.name)
     private permissionModel: Model<PermissionDocument>,
+    @InjectModel(Role.name)
+    private roleModel: Model<RoleDocument>,
     @InjectModel(RolePermission.name)
     private rolePermissionModel: Model<RolePermissionDocument>,
     private readonly permissionService: PermissionsService,
   ) { }
 
-  async create(createRoleDto: CreateRoleDto) :Promise<IRole>{
+  async create(createRoleDto: CreateRoleDto): Promise<IRole> {
     try {
+
       return await (await this.roleModel.create(createRoleDto)).toObject();
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
@@ -41,7 +42,7 @@ export class RolesService {
     return await this.roleModel.find().lean();
   }
 
-  async getPermissionsByRoleName(roleName: string) :Promise<IPermissionData[]>{
+  async getPermissionsByRoleName(): Promise<IPermissionData[]> {
     const roleNames = ['admin', 'companyAdmin', 'driver']
     let permissionsData = [];
     for (const roleName of roleNames) {
@@ -70,8 +71,8 @@ export class RolesService {
     return await this.roleModel.findOne({ _id: id }).lean();
   }
 
-  async findOneByName(name: string, clientId: mongoose.Types.ObjectId, permissions: string[]):Promise<IRole> {
-    let role:IRole = await this.roleModel.findOne({ name, clientId }).lean();
+  async findOneByName(name: string, clientId: mongoose.Types.ObjectId, permissions: string[]): Promise<IRole> {
+    let role: IRole = await this.roleModel.findOne({ name, clientId }).lean();
     if (NestHelper.getInstance().isEmpty(role)) {
       const roleCreateData = {
         name: name,
@@ -93,7 +94,7 @@ export class RolesService {
   async remove(id: string): Promise<IRole> {
     return await this.roleModel.findByIdAndRemove(id).lean();
   }
-  async assignPermissionToNewRole(permissions: string[], clientId: mongoose.Types.ObjectId, roleId: mongoose.Types.ObjectId):Promise<void> {
+  async assignPermissionToNewRole(permissions: string[], clientId: mongoose.Types.ObjectId, roleId: mongoose.Types.ObjectId): Promise<void> {
     permissions.forEach(async (permission) => {
       const permissionObj: IPermission = await this.permissionService.findOneByName(permission);
 
