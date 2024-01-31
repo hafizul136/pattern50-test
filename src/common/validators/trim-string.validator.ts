@@ -4,7 +4,7 @@ import {
     registerDecorator
 } from 'class-validator';
 
-export function TrimAndValidateString(validationOptions?: ValidationOptions) {
+export function TrimAndValidateString(validationOptions?: ValidationOptions): (object: Record<string, any>, propertyName: string) => void {
     return (object: Record<string, any>, propertyName: string) => {
         registerDecorator({
             name: 'trimAndValidateString',

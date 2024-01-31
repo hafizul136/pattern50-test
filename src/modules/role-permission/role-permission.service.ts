@@ -36,16 +36,16 @@ export class RolePermissionService {
     return await this.rolePermissionModel.create(createRolePermissionDto);
   }
 
-  async assignPermissionToCompanyAdmin(userRoleId: string, body): Promise<void> {
-    const userRole = await this.userRoleService.findOne(userRoleId);
-    for (let i = 0; i < body?.permissions?.length; i++) {
-      this.rolePermissionModel.create({
-        permissionId: body?.permissions[i],
-        roleId: userRole?.roleId,
-        clientId: "650307ae3b81447e5d793425"
-      })
-    }
-  }
+  // async assignPermissionToCompanyAdmin(userRoleId: string, body): Promise<void> {
+  //   const userRole = await this.userRoleService.findOne(userRoleId);
+  //   for (let i = 0; i < body?.permissions?.length; i++) {
+  //     this.rolePermissionModel.create({
+  //       permissionId: body?.permissions[i],
+  //       roleId: userRole?.roleId,
+  //       clientId: "650307ae3b81447e5d793425"
+  //     })
+  //   }
+  // }
 
   async assignUserPermissions(userRoleId: string, body: { permissions: string[], clientId: string }): Promise<string> {
     const userRole = await this.userRoleService.findOne(userRoleId);

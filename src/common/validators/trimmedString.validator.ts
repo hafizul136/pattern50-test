@@ -1,7 +1,6 @@
 import {
-    ValidationArguments,
     ValidationOptions,
-    registerDecorator,
+    registerDecorator
 } from 'class-validator';
 
 export function TrimmedString(
@@ -14,14 +13,14 @@ export function TrimmedString(
             propertyName,
             options: validationOptions,
             validator: {
-                validate(value: any, args: ValidationArguments) {
+                validate(value: any): boolean {
                     if (typeof value === 'string') {
                         const trimmedValue = value.trim();
                         return trimmedValue.length >= 6 && trimmedValue.length <= 40;
                     }
                     return true;
                 },
-                defaultMessage(args: ValidationArguments) {
+                defaultMessage(): string {
                     return 'The displayId must be a trimmed string with a length between 6 and 40 characters.';
                 },
             },

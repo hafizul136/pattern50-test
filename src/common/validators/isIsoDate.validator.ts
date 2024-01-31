@@ -2,7 +2,7 @@ import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface,
 
 @ValidatorConstraint({ name: 'isIsoDate', async: false })
 export class IsIsoDateConstraint implements ValidatorConstraintInterface {
-    validate(value: any, args: ValidationArguments) {
+    validate(value: any): boolean {
         if (typeof value !== 'string') {
             return false;
         }
@@ -10,12 +10,12 @@ export class IsIsoDateConstraint implements ValidatorConstraintInterface {
         return !isNaN(Date.parse(value));
     }
 
-    defaultMessage(args: ValidationArguments) {
+    defaultMessage(args: ValidationArguments): string {
         return `${args.property} must be a valid ISO date string`;
     }
 }
 
-export function IsIsoDate(validationOptions?: { message?: string }) {
+export function IsIsoDate(validationOptions?: { message?: string }): (object: Record<string, any>, propertyName: string) => void {
     return function (object: Record<string, any>, propertyName: string) {
         registerDecorator({
             target: object.constructor,

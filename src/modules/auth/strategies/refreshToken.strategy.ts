@@ -4,7 +4,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { appConfig } from 'configuration/app.config';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-
+import { JwtPayload } from './accessToken.strategy';
+interface RefreshTokenValidateRes extends JwtPayload {
+    refreshToken: string
+}
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
     Strategy,
@@ -19,7 +22,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
     }
 
-    validate(req: Request, payload: any) {
+    validate(req: Request, payload: JwtPayload): RefreshTokenValidateRes {
         const refreshToken = req.get('Authorization').replace('Bearer', '').trim();
         const jwtObject = this.jwtService.verify(refreshToken, { secret: appConfig.jwtAccessToken });
         if (jwtObject) {
