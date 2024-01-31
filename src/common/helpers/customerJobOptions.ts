@@ -1,5 +1,5 @@
 import { JobOptions } from "bull";
 
-export interface CustomJobOptions extends JobOptions {
+export interface ICustomJobOptions extends JobOptions {
     queueName?: string;
 }
