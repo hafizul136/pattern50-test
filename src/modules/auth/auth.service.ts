@@ -34,9 +34,9 @@ export class AuthService {
   ) { }
   async signUp(createUserDto: CreateUserDto, clientId: mongoose.Types.ObjectId): Promise<IAuthResponse> {
     //validity check
-    const vp = await this.validatePassword(createUserDto.password);
-    if (!NestHelper.getInstance().isEmpty(vp)) {
-      ExceptionHelper.getInstance().passwordValidation(vp);
+    const validatePassword = await this.validatePassword(createUserDto.password);
+    if (!NestHelper.getInstance().isEmpty(validatePassword)) {
+      ExceptionHelper.getInstance().passwordValidation(validatePassword);
     }
     // Check if user exists
     const userExists = await this.usersService.findOneByEmailSignup(
@@ -58,7 +58,7 @@ export class AuthService {
         password: hash,
         clientId
       }
-      const newUser: any = (await this.usersService.create(userObj)).toObject();
+      const newUser: any = await this.usersService.create(userObj)
 
       let permissions = [];
       let permissionsObject
@@ -70,16 +70,8 @@ export class AuthService {
           await this.addScopes(newUser, createUserDto, UserTypeEnum.companyAdmin, clientId, permissions);
         })
 
-      } else if (createUserDto.userType == UserTypeEnum.driver) {
-        permissionsObject = await mainServiceRoles().filter(role => role.roleName == UserTypeEnum.driver);
-        permissions = permissionsObject[0].permissions
-        // add role and user
-        setTimeout(async () => {
-          await this.addScopes(newUser, createUserDto, UserTypeEnum.driver, clientId, permissions);
-        })
-
-      } else {
-        permissionsObject = await mainServiceRoles().filter(role => role.roleName == UserTypeEnum.admin);
+      }else {
+        permissionsObject = mainServiceRoles().filter(role => role.roleName == UserTypeEnum.admin);
         permissions = permissionsObject[0].permissions
         // add role and user
         setTimeout(async () => {

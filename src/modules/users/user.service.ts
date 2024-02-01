@@ -82,7 +82,7 @@ export class UsersService {
   }
   async findOneByEmail(email: string, clientId?: mongoose.Types.ObjectId): Promise<IUser> {
     // !Change clientId
-    const doc = (await this.userModel.findOne({ email, clientId: clientId }).lean()).toObject();
+    const doc = await this.userModel.findOne({ email, clientId: clientId }).lean()
     if (!doc) ExceptionHelper.getInstance().noDataFound()
     return doc
   }

@@ -43,12 +43,12 @@ export class RolesService {
   }
 
   async getPermissionsByRoleName(): Promise<IPermissionData[]> {
-    const roleNames = ['admin', 'companyAdmin', 'driver']
+    const roleNames = ['admin', 'companyAdmin']
     let permissionsData = [];
     for (const roleName of roleNames) {
       const role = await this.roleModel.findOne({ name: roleName }).lean();
       const rolePermissionIds = (await this.rolePermissionModel.find({ roleId: role?._id })).map(e => e?.permissionId);
-      const permissions = await (await this.permissionModel.find({ _id: { $in: rolePermissionIds } }, { name: 1 })).map(e => e.name)
+      const permissions = (await this.permissionModel.find({ _id: { $in: rolePermissionIds } }, { name: 1 })).map(e => e.name)
       const obj = {
         roleName,
         permissions

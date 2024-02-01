@@ -6,6 +6,5 @@ export enum RegistrationTypeEnum {
 
 export enum UserTypeEnum {
     admin = "admin",
-    companyAdmin = "companyAdmin",
-    driver = "driver"
+    companyAdmin = "companyAdmin"
 }

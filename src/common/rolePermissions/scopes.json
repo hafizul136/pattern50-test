@@ -4,7 +4,8 @@
     "permissions": [
       "company.create",
       "company.update",
-      "company.view"
+      "company.view",
+      "company.list"
     ]
   },
   {
@@ -12,7 +13,8 @@
     "permissions": [
       "address.create",
       "address.view",
-      "address.edit"
+      "address.update",
+      "address.list"
     ]
   }
 ]

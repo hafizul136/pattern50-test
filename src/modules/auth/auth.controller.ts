@@ -28,31 +28,32 @@ export class AuthController {
         return this.authService.signUp(createUserDto, clientObjId);
     }
 
-    @Post('signin')
+    @Post('sign-in')
     @UseGuards(ClientCredentialsGuard)
     async signIn(@Body() data: AuthDto, @Req() req: Request): Promise<IAuthResponse> {
         const clientId = await ClientIDGetHelper.getClientIdFromRequest(req);
         const clientObjId = new mongoose.Types.ObjectId(clientId);
         return await this.authService.signIn(data, clientObjId);
     }
-    @Post('signin/driver')
-    @UseGuards(ClientCredentialsGuard)
-    async signInDriver(@Body() data: AuthDto,  @Req() req:Request): Promise<IAuthResponse> {
-        const clientId = await ClientIDGetHelper.getClientIdFromRequest(req);
-        const clientObjId = new mongoose.Types.ObjectId(clientId);
-        return await this.authService.signIn(data, clientObjId);
-    }
-    @Post('signup/driver')
-    @UseGuards(ClientCredentialsGuard)
-    async signupDriver(@Body() createUserDto: CreateUserDto,  @Req() req:Request): Promise<IAuthResponse> {
-        const clientIdTemp = await ClientIDGetHelper.getClientIdFromRequest(req);
-        const clientId = new mongoose.Types.ObjectId(clientIdTemp)
-        const clientObjId = new mongoose.Types.ObjectId(clientId);
-        const name = createUserDto?.firstName;
-        const { firstName, lastName }: IFullName = await this.splitFullName(name);
-        const createDriverDTO = { ...createUserDto, clientObjId, firstName, lastName, userType: UserTypeEnum.driver }
-        return this.authService.signUp(createDriverDTO, clientId);
-    }
+    // @Post('sign-in/driver')
+    // @UseGuards(ClientCredentialsGuard)
+    // async signInDriver(@Body() data: AuthDto,  @Req() req:Request): Promise<IAuthResponse> {
+    //     const clientId = await ClientIDGetHelper.getClientIdFromRequest(req);
+    //     const clientObjId = new mongoose.Types.ObjectId(clientId);
+    //     return await this.authService.signIn(data, clientObjId);
+    // }
+    
+    // @Post('signup/driver')
+    // @UseGuards(ClientCredentialsGuard)
+    // async signupDriver(@Body() createUserDto: CreateUserDto,  @Req() req:Request): Promise<IAuthResponse> {
+    //     const clientIdTemp = await ClientIDGetHelper.getClientIdFromRequest(req);
+    //     const clientId = new mongoose.Types.ObjectId(clientIdTemp)
+    //     const clientObjId = new mongoose.Types.ObjectId(clientId);
+    //     const name = createUserDto?.firstName;
+    //     const { firstName, lastName }: IFullName = await this.splitFullName(name);
+    //     const createDriverDTO = { ...createUserDto, clientObjId, firstName, lastName, userType: UserTypeEnum.driver }
+    //     return this.authService.signUp(createDriverDTO, clientId);
+    // }
 
     async splitFullName(fullName: string): Promise<IFullName> {
         const nameParts = fullName.split(" "); // Split the full name by space
