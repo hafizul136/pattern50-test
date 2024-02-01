@@ -51,7 +51,7 @@ export class AggregationHelper {
             });
     }
 
-    static lookupForCustomFields(aggregate: any[], from: string, localField: any, foreignField: any, asName: string): void {
+    static lookupForCustomFields(aggregate: any[], from: string, localField: string, foreignField: string, asName: string): void {
         aggregate.push(
             {
                 $lookup: {

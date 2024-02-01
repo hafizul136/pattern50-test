@@ -242,7 +242,7 @@ export class DateHelper {
         const zone = luxonDateTime.zoneName;
         return zone;
     }
-    isDateInRange(currentDate, startDate, endDate): boolean {
+    isDateInRange(currentDate: string, startDate: string, endDate: string): boolean {
         // Check if currentDate is greater than or equal to startDate
         // and currentDate is less than or equal to endDate
         console.log({ currentDate, startDate, endDate });

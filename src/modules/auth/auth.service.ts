@@ -3,7 +3,6 @@ import { mainServiceRoles } from '@common/rolePermissions';
 import { RolesService } from '@modules/roles/roles.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UserTypeEnum } from '@modules/users/enum/index.enum';
-import { IUser } from '@modules/users/interfaces/user.interface';
 import { BadRequestException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import mongoose, { isValidObjectId } from 'mongoose';
@@ -21,6 +20,7 @@ import { AuthDto } from './dto/auth.dto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
 import { IRole } from '@modules/roles/interfaces/role.interface';
+import { IUser } from '@modules/users/interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -112,7 +112,7 @@ export class AuthService {
     await this.usersService.update(user._id, { userRoleId, clientId: createUserDto.clientId });
   }
 
-  async signIn(data: AuthDto, clientId): Promise<IAuthResponse> {
+  async signIn(data: AuthDto, clientId:mongoose.Types.ObjectId): Promise<IAuthResponse> {
     let user;
     if (data.grantType === GrantType.password) {
       // Check if user exists
@@ -147,7 +147,7 @@ export class AuthService {
     return AuthHelper.hashPassword(password);
   }
 
-  async getTokens(user: any): Promise<IAuthToken>{
+  async getTokens(user: IUser): Promise<IAuthToken>{
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.sign(
         {

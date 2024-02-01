@@ -77,8 +77,8 @@ export class NestHelper {
     hashData(password: string): Promise<string> {
         return AuthHelper.hashPassword(password);
     }
-    getNumberValue(text: any): number | null {
-        let value = text;
+    getNumberValue(text: string): number | null {
+        let value:number;
         if (typeof (text) == 'string') {
             value = parseInt(text);
         }

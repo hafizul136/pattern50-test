@@ -69,11 +69,11 @@ export class ClientService {
 
     return client
   }
-  async getClientById(id: any): Promise<IClient> {
-    id = await MongooseHelper.getInstance().makeMongooseId(id);
+  async getClientById(id: string): Promise<IClient> {
+    let oid:mongoose.Types.ObjectId = await MongooseHelper.getInstance().makeMongooseId(id);
     let client: IClient = null;
-    if (!NestHelper.getInstance().isEmpty(id)) {
-      client = await this.clientModel.findById(id).lean();
+    if (!NestHelper.getInstance().isEmpty(oid)) {
+      client = await this.clientModel.findById(oid).lean();
     }
     return client
   }

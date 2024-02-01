@@ -8,7 +8,7 @@ import { Queue } from 'bull';
 export class BullMQService {
     constructor(@InjectQueue('bull-queue') private readonly queue: Queue) { }
 
-    async addJobWithDelay(jobName: string, data: any, delay: number): Promise<void> {
+    async addJobWithDelay(jobName: string, data: unknown, delay: number): Promise<void> {
         try {
             await this.queue.add(jobName, data, { delay, attempts: 20});
             console.log("Job added successfully");

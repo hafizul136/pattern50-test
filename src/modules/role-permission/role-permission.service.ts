@@ -10,6 +10,7 @@ import { RolesService } from '../roles/roles.service';
 import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
 import { RolePermission, RolePermissionDocument } from './entities/role-permission.entity';
 import { IRolePermission } from './interfaces/rolePermission.interface';
+import { IUser } from '@modules/users/interfaces/user.interface';
 
 @Injectable()
 export class RolePermissionService {
@@ -92,7 +93,7 @@ export class RolePermissionService {
     return await this.rolePermissionModel.findOne({ _id: id }).lean().exec();
   }
 
-  async findAllByRoleId(roleId: mongoose.Types.ObjectId, user): Promise<IRolePermission[]> {
+  async findAllByRoleId(roleId: mongoose.Types.ObjectId, user:IUser): Promise<IRolePermission[]> {
     if (NestHelper.getInstance().isEmpty(roleId) && !isValidObjectId(roleId)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid role id',

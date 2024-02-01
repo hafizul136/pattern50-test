@@ -39,6 +39,7 @@ export interface IUser extends Document {
     stripeCustomerId?: string;
     userType?: UserTypeEnum
     userRoleId?: mongoose.Types.ObjectId;
+    userRole?:any
 }
 
 
