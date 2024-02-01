@@ -36,6 +36,6 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(port);
   logger.log("ENV: serverType", appConfig?.serverType);
-  logger.log(`EV Main Service (${appConfig.serverType}) is listening on port ${port}`);
+  logger.log(`Pattern50 Main Service (${appConfig.serverType}) is listening on port ${port}`);
 }
 bootstrap();

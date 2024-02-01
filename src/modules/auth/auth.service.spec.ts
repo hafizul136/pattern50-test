@@ -47,8 +47,8 @@
 //         },
 //         "user": {
 //             "_id": "6502ba04886417510186ad6a",
-//             "firstName": "pattern50",
-//             "lastName": "ev",
+//             "firstName": "pattern",
+//             "lastName": "50",
 //             "email": "pattern50@gmail.com",
 //             "userRoleId": "6501900e2f99c0a2f71035b9",
 //             "verificationCode": "",
@@ -72,8 +72,8 @@
 //         "_id": {
 //             "$oid": "6502ba04886417510186ad6a"
 //         },
-//         "firstName": "pattern50",
-//         "lastName": "ev",
+//         "firstName": "pattern",
+//         "lastName": "50",
 //         "email": "pattern50@gmail.com",
 //         "password": "$2a$10$oekQIdVqr/R9V9WGM7ZcLuAs59mcTGY/yGM7TDbhPqM3OU8mRB9ym",
 //         "userRoleId": "6501900e2f99c0a2f71035b9",

@@ -11,7 +11,7 @@ describe('PermissionsService', () => {
   let model: Model<Permission>;
   const demoUser = {
     "_id": "6502c85a9817005ad7e0a071",
-    "firstName": "pattern50 ev",
+    "firstName": "pattern50",
     "lastName": "company admin",
     "email": "pattern50_company@gmail.com",
     "userRoleId": "6501902d2f99c0a2f71035bd",
