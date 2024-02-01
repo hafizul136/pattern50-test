@@ -11,8 +11,6 @@ import { NestHelper } from '../../common/helpers/NestHelper';
 import { AuthHelper } from '../../common/helpers/auth.helper';
 import { DateHelper } from '../../common/helpers/date.helper';
 import { appConfig } from '../../configuration/app.config';
-import { PermissionsService } from '../../modules/permissions/permissions.service';
-import { RolePermissionService } from '../../modules/role-permission/role-permission.service';
 import { UserRoleService } from '../../modules/user-role/user-role.service';
 import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';

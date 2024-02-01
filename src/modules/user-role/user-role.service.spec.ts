@@ -17,9 +17,9 @@ describe('UserRoleService', () => {
   });
 
   describe('findOne', () => {
-    it('should return a user role by id', () => {
+    // it('should return a user role by id', () => {
 
-    })
+    // })
   })
 
 });

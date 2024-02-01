@@ -24,8 +24,8 @@ export class NotEmptyStringArrayAndMongoIdsConstraint implements ValidatorConstr
     }
 }
 
-export function NotEmptyStringArrayAndMongoIds(validationOptions?: ValidationOptions): (object: Object, propertyName: string) => void {
-    return function (object: Object, propertyName: string) {
+export function NotEmptyStringArrayAndMongoIds(validationOptions?: ValidationOptions): (object: object, propertyName: string) => void {
+    return function (object: object, propertyName: string) {
         registerDecorator({
             target: object.constructor,
             propertyName: propertyName,
