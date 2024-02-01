@@ -1,6 +1,5 @@
 import { ClientIDGetHelper } from '@common/helpers/getClientId.helper';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
-import { UserTypeEnum } from '@modules/users/enum/index.enum';
 import {
     Body,
     Controller,

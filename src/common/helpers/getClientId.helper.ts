@@ -10,7 +10,9 @@ export class ClientIDGetHelper {
 
         if (!authHeader) {
             throw new UnauthorizedException('Authorization header is missing');
+            
         }
+
         const authParts = authHeader.split(' ');
         if (authParts.length !== 2 || authParts[0].toLowerCase() !== 'basic') {
             throw new UnauthorizedException('Invalid Authorization header format');
