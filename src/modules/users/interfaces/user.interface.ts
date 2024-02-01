@@ -1,7 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import { UserTypeEnum } from "../enum/index.enum";
 
-export interface UserModel {
+export interface IUserModel {
     name: string;
     status: string;
     details: string;

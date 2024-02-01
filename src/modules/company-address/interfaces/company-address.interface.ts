@@ -1,4 +1,4 @@
-export interface CompanyAddressModel {
+export interface ICompanyAddressModel {
     name: string;
     status: string;
     details: string; 

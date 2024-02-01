@@ -1,11 +1,10 @@
-import { Utils } from '@common/helpers/utils';
 import { mainServiceRoles } from '@common/rolePermissions';
 import { RolesService } from '@modules/roles/roles.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UserTypeEnum } from '@modules/users/enum/index.enum';
 import { BadRequestException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import mongoose, { isValidObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 import * as passwordValidator from 'password-validator';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
@@ -28,8 +27,6 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private readonly userRoleService: UserRoleService,
-    private readonly rolePermissionService: RolePermissionService,
-    private readonly permissionsService: PermissionsService,
     private readonly roleService: RolesService
   ) { }
   async signUp(createUserDto: CreateUserDto, clientId: mongoose.Types.ObjectId): Promise<IAuthResponse> {

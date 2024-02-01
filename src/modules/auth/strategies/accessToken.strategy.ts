@@ -5,14 +5,14 @@ import { appConfig } from 'configuration/app.config';
 import mongoose from 'mongoose';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-export interface JwtPayload  {
+export interface IJwtPayload {
     sub: string;
     username: string;
 };
 
-export interface AccessTokenStrategyRes extends JwtPayload{
-    firstName:string;
-    lastName:string;
+export interface IAccessTokenStrategyRes extends IJwtPayload {
+    firstName: string;
+    lastName: string;
     stripeCustomerId: string
 }
 
@@ -24,7 +24,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
             secretOrKey: appConfig.jwtAccessToken,
         });
     }
-    async validate(payload: JwtPayload): Promise<AccessTokenStrategyRes> {
+    async validate(payload: IJwtPayload): Promise<IAccessTokenStrategyRes> {
         let user = await this.userService.findOne(new mongoose.Types.ObjectId(payload['userId']))
         return {
             ...payload,
