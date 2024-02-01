@@ -152,7 +152,7 @@ export class AggregationHelper {
         });
     }
 
-    static getSplittedTimeInInteger(aggregate): void {
+    static getSplittedTimeInInteger(aggregate:unknown[]): void {
         aggregate.push({
             $addFields: {
                 startHour: {

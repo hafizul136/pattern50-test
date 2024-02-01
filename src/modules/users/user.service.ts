@@ -53,7 +53,7 @@ export class UsersService {
     return userInfo
   }
 
-  async findOneData(id: any): Promise<IUser> {
+  async findOneData(id: string): Promise<IUser> {
     const objId = await MongooseHelper.getInstance().makeMongooseId(id);
     if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
       ExceptionHelper.getInstance().defaultError(

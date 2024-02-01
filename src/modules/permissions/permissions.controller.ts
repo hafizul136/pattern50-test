@@ -5,6 +5,7 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { IPermission } from './interfaces/permission.interface';
 import { PermissionsService } from './permissions.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
+import mongoose from 'mongoose';
 
 @Controller('permissions')
 export class PermissionsController {
@@ -26,7 +27,7 @@ export class PermissionsController {
   }
 
   @Get("by-ids")
-  async findAllByIds(@GetUser() user:IUser, @Body() findPermissionsByIdsDto): Promise<IPermission[]> {
+  async findAllByIds(@GetUser() user: IUser, @Body() findPermissionsByIdsDto: mongoose.Types.ObjectId[]): Promise<IPermission[]> {
     return await this.permissionsService.findAllByIds(findPermissionsByIdsDto, user);
   }
 

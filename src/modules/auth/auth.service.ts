@@ -195,25 +195,25 @@ export class AuthService {
     const res = validator.validate(password, { list: true, details: true });
     return res;
   }
-  async getPermissionsByUserRoleIdSignup(user, roleId):Promise<string[]> {
-    if (NestHelper.getInstance().isEmpty(user) && !isValidObjectId(user)) {
-      ExceptionHelper.getInstance().defaultError(
-        'user does not exist',
-        'user_does_not_exist',
-        HttpStatus.NOT_FOUND
-      );
-    }
-    // const userRole = await this.userRoleService.find(user);
-    let rolePermissions = [];
-    if (!NestHelper.getInstance().isEmpty(roleId)) {
-      rolePermissions = await this.rolePermissionService.findAllByRoleId(roleId, user)
-    }
-    const rolePermissionIds: mongoose.Types.ObjectId[] = await Utils.extractIdsFromRolePermissions(rolePermissions);
-    const res = (
-      await this.permissionsService.findAllByIds(
-        rolePermissionIds, user
-      )).map(e => e.name);
+  // async getPermissionsByUserRoleIdSignup(user, roleId):Promise<string[]> {
+  //   if (NestHelper.getInstance().isEmpty(user) && !isValidObjectId(user)) {
+  //     ExceptionHelper.getInstance().defaultError(
+  //       'user does not exist',
+  //       'user_does_not_exist',
+  //       HttpStatus.NOT_FOUND
+  //     );
+  //   }
+  //   // const userRole = await this.userRoleService.find(user);
+  //   let rolePermissions = [];
+  //   if (!NestHelper.getInstance().isEmpty(roleId)) {
+  //     rolePermissions = await this.rolePermissionService.findAllByRoleId(roleId, user)
+  //   }
+  //   const rolePermissionIds: mongoose.Types.ObjectId[] = await Utils.extractIdsFromRolePermissions(rolePermissions);
+  //   const res = (
+  //     await this.permissionsService.findAllByIds(
+  //       rolePermissionIds, user
+  //     )).map(e => e.name);
 
-    return res;
-  }
+  //   return res;
+  // }
 }
