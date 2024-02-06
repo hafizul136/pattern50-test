@@ -1,11 +1,15 @@
 import { mainServiceRoles } from '@common/rolePermissions';
+import { IRole } from '@modules/roles/interfaces/role.interface';
 import { RolesService } from '@modules/roles/roles.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UserTypeEnum } from '@modules/users/enum/index.enum';
-import { BadRequestException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { IUser } from '@modules/users/interfaces/user.interface';
+import { BadRequestException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ClientRMQ } from '@nestjs/microservices';
 import mongoose from 'mongoose';
 import * as passwordValidator from 'password-validator';
+import { lastValueFrom } from 'rxjs';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
 import { AuthHelper } from '../../common/helpers/auth.helper';
@@ -16,8 +20,6 @@ import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
-import { IRole } from '@modules/roles/interfaces/role.interface';
-import { IUser } from '@modules/users/interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +27,9 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private readonly userRoleService: UserRoleService,
-    private readonly roleService: RolesService
+    private readonly roleService: RolesService,
+    @Inject('ACCOUNTING_SERVICE_RMQ')
+    private readonly accountingServiceRMQClient: ClientRMQ
   ) { }
   async signUp(createUserDto: CreateUserDto, clientId: mongoose.Types.ObjectId): Promise<IAuthResponse> {
     //validity check
@@ -65,7 +69,7 @@ export class AuthService {
           await this.addScopes(newUser, createUserDto, UserTypeEnum.companyAdmin, clientId, permissions);
         })
 
-      }else {
+      } else {
         permissionsObject = mainServiceRoles().filter(role => role.roleName == UserTypeEnum.admin);
         permissions = permissionsObject[0].permissions
         // add role and user
@@ -94,7 +98,7 @@ export class AuthService {
   }
 
   private async addScopes(user: any, createUserDto: CreateUserDto, userType: UserTypeEnum, clientId: mongoose.Types.ObjectId, permissions: string[]): Promise<void> {
-    const role:IRole = await this.roleService.findOneByName(userType, clientId, permissions);
+    const role: IRole = await this.roleService.findOneByName(userType, clientId, permissions);
 
     const userRoleData = {
       userId: new mongoose.Types.ObjectId(user._id),
@@ -107,7 +111,7 @@ export class AuthService {
     await this.usersService.update(user._id, { userRoleId, clientId: createUserDto.clientId });
   }
 
-  async signIn(data: AuthDto, clientId:mongoose.Types.ObjectId): Promise<IAuthResponse> {
+  async signIn(data: AuthDto, clientId: mongoose.Types.ObjectId): Promise<IAuthResponse> {
     let user;
     if (data.grantType === GrantType.password) {
       // Check if user exists
@@ -142,7 +146,7 @@ export class AuthService {
     return AuthHelper.hashPassword(password);
   }
 
-  async getTokens(user: IUser): Promise<IAuthToken>{
+  async getTokens(user: IUser): Promise<IAuthToken> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.sign(
         {
@@ -211,4 +215,14 @@ export class AuthService {
 
   //   return res;
   // }
+
+  async test(): Promise<string> {
+    console.log('Calling Acc')
+    const data = {
+      name: "Hafiz"
+    }
+    const a = await lastValueFrom(this.accountingServiceRMQClient.send('payment.create', data))
+    console.log({ a })
+    return a
+  }
 }

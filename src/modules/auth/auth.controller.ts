@@ -74,7 +74,7 @@ export class AuthController {
 
     @Get('test')
     async test(): Promise<string> {
-        return "Health is okay"
+        return await this.authService.test()
     }
 
 }
