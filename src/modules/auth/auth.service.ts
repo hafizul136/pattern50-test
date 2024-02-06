@@ -1,4 +1,4 @@
-import { mainServiceRoles } from '@common/rolePermissions';
+import { mainServiceRolePermissions } from '@common/rolePermissions';
 import { IRole } from '@modules/roles/interfaces/role.interface';
 import { RolesService } from '@modules/roles/roles.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
@@ -62,7 +62,7 @@ export class AuthService {
       let permissions = [];
       let permissionsObject
       if (createUserDto.userType == UserTypeEnum.companyAdmin) {
-        permissionsObject = await mainServiceRoles().filter(role => role.roleName == UserTypeEnum.companyAdmin);
+        permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == UserTypeEnum.companyAdmin);
         permissions = permissionsObject[0].permissions
         // add role and user
         setTimeout(async () => {
@@ -70,7 +70,7 @@ export class AuthService {
         })
 
       } else {
-        permissionsObject = mainServiceRoles().filter(role => role.roleName == UserTypeEnum.admin);
+        permissionsObject = mainServiceRolePermissions().filter(role => role.roleName == UserTypeEnum.admin);
         permissions = permissionsObject[0].permissions
         // add role and user
         setTimeout(async () => {
@@ -98,7 +98,7 @@ export class AuthService {
   }
 
   private async addScopes(user: any, createUserDto: CreateUserDto, userType: UserTypeEnum, clientId: mongoose.Types.ObjectId, permissions: string[]): Promise<void> {
-    const role: IRole = await this.roleService.findOneByName(userType, clientId, permissions);
+    const role: IRole = await this.roleService.createRolesAndAddPermission(userType, clientId, permissions);
 
     const userRoleData = {
       userId: new mongoose.Types.ObjectId(user._id),
@@ -130,7 +130,7 @@ export class AuthService {
         throw new UnauthorizedException('Invalid token');
       }
     }
-    const permissionsObject = await mainServiceRoles().filter(role => role.roleName == user.userType);
+    const permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == user.userType);
 
     user['scopes'] = permissionsObject[0].permissions
     user.lastLogin = new DateHelper().getNowInISOString();

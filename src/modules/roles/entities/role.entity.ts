@@ -23,6 +23,12 @@ export class Role {
     @Prop({ type: mongoose.Types.ObjectId })
     clientId: mongoose.Types.ObjectId;
 
+    // Define the virtual field rolePermission
+    get rolePermission(): string {
+
+        return 'Computed role permission'; // Replace with your logic
+    }
+
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

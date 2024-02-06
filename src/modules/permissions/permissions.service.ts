@@ -1,4 +1,6 @@
 import { StatusEnum } from '@common/enums/status.enum';
+import { RolesService } from '@modules/roles/roles.service';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, isValidObjectId } from 'mongoose';
@@ -8,13 +10,16 @@ import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { Permission, PermissionDocument } from './entities/permission.entity';
 import { IPermission } from './interfaces/permission.interface';
-import { IUser } from '@modules/users/interfaces/user.interface';
+// import { IRole } from '@modules/roles/interfaces/role.interface';
+import { RolePermissionService } from '@modules/role-permission/role-permission.service';
 
 @Injectable()
 export class PermissionsService {
   constructor(
     @InjectModel(Permission.name)
-    private permissionModel: Model<PermissionDocument>
+    private permissionModel: Model<PermissionDocument>,
+    // private readonly roleService: RolesService,
+    // private readonly rolePermissionService: RolePermissionService,
   ) { }
 
   async create(createPermissionDto: CreatePermissionDto): Promise<IPermission> {
@@ -48,7 +53,7 @@ export class PermissionsService {
     return "created permissions";
   }
 
-  async findAllByIds(findPermissionsByIds: mongoose.Types.ObjectId[], user:IUser): Promise<IPermission[]> {
+  async findAllByIds(findPermissionsByIds: mongoose.Types.ObjectId[], user: IUser): Promise<IPermission[]> {
     if (NestHelper.getInstance().isEmpty(user?.clientId)) {
       ExceptionHelper.getInstance().defaultError(
         'client id does not exist',
@@ -77,11 +82,28 @@ export class PermissionsService {
     }
     return await this.permissionModel.findOne({ _id: id }).lean().exec();
   }
+  async findOneByRoleId(roleId: string): Promise<IPermission[]> {
+    const permissions = await this.permissionModel.find({ roleId }).lean().exec();
+    if (NestHelper.getInstance().isEmpty(permissions)) {
+      ExceptionHelper.getInstance().defaultError(
+        'invalid role id',
+        'invalid_role_id',
+        HttpStatus.NOT_FOUND
+      );
+    }
+    return permissions
+  }
 
   async findOneByName(permissionName: string): Promise<IPermission> {
     const permissions = await this.permissionModel.find({ name: permissionName }).lean();
     return NestHelper.getInstance().arrayFirstOrNull(permissions);
   }
+  // async findAllByName(roleName: string): Promise<IPermission> {
+  //   const role:IRole = await this.roleService.findOneByName(roleName);
+  //   const rolePermissionIds = (await this.rolePermissionService.findAllPermissionsByRoleId(role?._id)).map(e => e?.permissionId);
+  //   const permissions = (await this.permissionModel.find({ _id: { $in: rolePermissionIds } }, { name: 1 })).map(e => e.name)
+  //   return permissions;
+  // }
 
   async update(id: string, updatePermissionDto: UpdatePermissionDto): Promise<IPermission> {
     return await this.permissionModel.findByIdAndUpdate(id, updatePermissionDto, { new: true }).exec();

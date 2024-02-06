@@ -1,5 +1,6 @@
 import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { permissionStatusEnum } from "../enum/index.enum";
+import mongoose from "mongoose";
 
 export class CreatePermissionDto {
     @IsNotEmpty()
@@ -9,12 +10,8 @@ export class CreatePermissionDto {
     @IsNotEmpty()
     @IsString()
     @IsEnum(permissionStatusEnum)
-    status: string
+    status: permissionStatusEnum
 
     @IsString()
     details: string;
-
-    @IsNotEmpty()
-    @IsString()
-    clientId: string;
 }

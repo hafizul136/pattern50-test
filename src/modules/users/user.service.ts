@@ -1,5 +1,5 @@
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
-import { mainServiceRoles } from '@common/rolePermissions';
+import { mainServiceRolePermissions } from '@common/rolePermissions';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FlattenMaps, Model, isValidObjectId } from 'mongoose';
@@ -44,7 +44,7 @@ export class UsersService {
       );
     }
 
-    const permissionsObject = await mainServiceRoles().filter(role => role.roleName == user.userType);
+    const permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == user.userType);
 
     const scopes = permissionsObject[0].permissions
 
@@ -92,13 +92,13 @@ export class UsersService {
 
   }
 
-  async getUserByEmailAndUserId(email: string, userId: mongoose.Types.ObjectId): Promise<IUser>{
+  async getUserByEmailAndUserId(email: string, userId: mongoose.Types.ObjectId): Promise<IUser> {
     return await this.userModel.findOne({ email: email, _id: { $ne: userId } }).lean();
 
   }
 
 
-  async updateStripeInfo(id: mongoose.Types.ObjectId, stripeCustomerId: string): Promise<string>{
+  async updateStripeInfo(id: mongoose.Types.ObjectId, stripeCustomerId: string): Promise<string> {
     let updatedUser: IUser = await this.userModel.findByIdAndUpdate(id, { stripeCustomerId: stripeCustomerId }, { new: true }).lean();
     return updatedUser?.stripeCustomerId ?? "";
   }

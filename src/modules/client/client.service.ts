@@ -1,5 +1,7 @@
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { mainServiceRolePermissions } from '@common/rolePermissions';
+import { RolesService } from '@modules/roles/roles.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { NestHelper } from 'common/helpers/NestHelper';
@@ -14,7 +16,8 @@ import { IClient } from './interface/client.interface';
 export class ClientService {
   constructor(
     @InjectModel(Client.name)
-    private clientModel: Model<ClientDocument>
+    private clientModel: Model<ClientDocument>,
+    private readonly roleService: RolesService,
   ) { }
 
   async validateClientCredentials(clientId: string, clientSecret: string): Promise<Client | null> {
@@ -29,14 +32,20 @@ export class ClientService {
     }
   }
 
-  async create(createClientDto: CreateClientDto): Promise<IClient>{
-    const secret:string = await this.getSecret();
+  async create(createClientDto: CreateClientDto): Promise<IClient> {
+    const secret: string = await this.getSecret();
     const clientObj = {
       ...createClientDto,
       secret: secret
     }
     try {
-      return await this.clientModel.create(clientObj);
+      const client = await this.clientModel.create(clientObj);
+
+      const rolePermissions = mainServiceRolePermissions();
+      for (const role of rolePermissions) {
+        await this.roleService.createRolesAndAddPermission(role.roleName, client?._id, role?.permissions);
+      }
+      return client
     } catch (e) {
       ExceptionHelper.getInstance().defaultError(
         e?.message,
@@ -46,7 +55,7 @@ export class ClientService {
     }
   }
 
-  async getSecret():Promise<string> {
+  async getSecret(): Promise<string> {
     const id = uuidv4();
     return id;
   }
@@ -70,7 +79,7 @@ export class ClientService {
     return client
   }
   async getClientById(id: string): Promise<IClient> {
-    let oid:mongoose.Types.ObjectId = await MongooseHelper.getInstance().makeMongooseId(id);
+    let oid: mongoose.Types.ObjectId = await MongooseHelper.getInstance().makeMongooseId(id);
     let client: IClient = null;
     if (!NestHelper.getInstance().isEmpty(oid)) {
       client = await this.clientModel.findById(oid).lean();

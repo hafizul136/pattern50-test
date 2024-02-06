@@ -1,7 +1,7 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
-export interface IRole extends ObjectId {
-    _id: mongoose.Types.ObjectId;
+export interface IRole extends Document {
+    // _id: mongoose.Types.ObjectId;
     name: string;
     status: string;
     details: string;

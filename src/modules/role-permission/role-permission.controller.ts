@@ -25,7 +25,7 @@ export class RolePermissionController {
   }
   @Get("by-role/:roleId")
   async findAllByRoleId(@GetUser() user: IUser, @Param('roleId') roleId: mongoose.Types.ObjectId): Promise<IRolePermission[]> {
-    return await this.rolePermissionService.findAllByRoleId(roleId, user);
+    return await this.rolePermissionService.findAllPermissionsByRoleId(roleId, user);
   }
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<IRolePermission> {

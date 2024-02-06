@@ -4,5 +4,5 @@ export interface IPermission extends Document {
     name: string;
     status: string;
     details: string;
-    clientId: mongoose.Types.ObjectId;
+    // clientId: mongoose.Types.ObjectId;
 }

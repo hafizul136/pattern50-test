@@ -1,4 +1,5 @@
 import { Permission, PermissionDocument } from '@modules/permissions/entities/permission.entity';
+import { permissionStatusEnum } from '@modules/permissions/enum/index.enum';
 import { IPermission } from '@modules/permissions/interfaces/permission.interface';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 import { RolePermission, RolePermissionDocument } from '@modules/role-permission/entities/role-permission.entity';
@@ -70,21 +71,32 @@ export class RolesService {
     }
     return await this.roleModel.findOne({ _id: id }).lean();
   }
-
-  async findOneByName(name: string, clientId: mongoose.Types.ObjectId, permissions: string[]): Promise<IRole> {
-    let role: IRole = await this.roleModel.findOne({ name, clientId }).lean();
+  async findOneByName(roleName: string): Promise<IRole> {
+    const role = await this.roleModel.findOne({ name: roleName }).lean();
     if (NestHelper.getInstance().isEmpty(role)) {
+      ExceptionHelper.getInstance().defaultError(
+        'invalid role id',
+        'invalid_role_id',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    return role
+  }
+
+  async createRolesAndAddPermission(name: string, clientId: mongoose.Types.ObjectId, permissions: string[]): Promise<IRole> {
+    let roleExists: IRole = await this.roleModel.findOne({ name, clientId }).lean();
+    if (NestHelper.getInstance().isEmpty(roleExists)) {
       const roleCreateData = {
         name: name,
         status: roleStatusEnum.active,
         details: `${name} Admin role`,
         clientId: clientId
       }
-      role = await this.create(roleCreateData)
+      const newRole = await this.create(roleCreateData)
       // assign permissions to new roleID
-      await this.assignPermissionToNewRole(permissions, clientId, role?._id)
+      await this.assignPermissionToNewRole(permissions, clientId, newRole?._id)
     }
-    return role
+    return roleExists
   }
 
   async update(id: string, updateRoleDto: UpdateRoleDto): Promise<IRole> {
@@ -108,6 +120,25 @@ export class RolesService {
             clientId: clientId
           });
         }
+      } else {
+        //create permission and assign permission to new role
+        const permissionObjDTO = {
+          name: permission,
+          details: 'Permission',
+          clientId: clientId,
+          status: permissionStatusEnum.active
+        }
+        const permissionObj = await this.permissionService.create(permissionObjDTO)
+        const existRolePermission = await this.rolePermissionModel.find({ permissionId: permissionObj?._id, roleId: roleId, clientId: clientId }).lean();
+
+        if (NestHelper.getInstance().isEmpty(existRolePermission)) {
+          await this.rolePermissionModel.create({
+            permissionId: permissionObj?._id,
+            roleId: roleId,
+            clientId: clientId
+          });
+        }
+
       }
     });
   }
