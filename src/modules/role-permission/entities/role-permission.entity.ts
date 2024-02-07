@@ -12,7 +12,7 @@ export class RolePermission {
     @Prop({ type: mongoose.Types.ObjectId, ref: "Permission", default: '' })
     permissionId: mongoose.Types.ObjectId;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: "Role", default: '' })
+    @Prop({ type: mongoose.Types.ObjectId, ref: "Role", default: '', index: true })
     roleId: mongoose.Types.ObjectId;
 
 }

@@ -20,6 +20,7 @@ import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
+import { PermissionsService } from '@modules/permissions/permissions.service';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly userRoleService: UserRoleService,
     private readonly roleService: RolesService,
+    private readonly permissionService: PermissionsService,
     @Inject('ACCOUNTING_SERVICE_RMQ')
     private readonly accountingServiceRMQClient: ClientRMQ
   ) { }
@@ -130,9 +132,10 @@ export class AuthService {
         throw new UnauthorizedException('Invalid token');
       }
     }
-    const permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == user.userType);
+    // const permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == user.userType);
+    const permissions = await this.permissionService.getPermissionsByRoleNClientId(user.userType, clientId)
 
-    user['scopes'] = permissionsObject[0].permissions
+    user['scopes'] = permissions
     user.lastLogin = new DateHelper().getNowInISOString();
 
     delete user.password

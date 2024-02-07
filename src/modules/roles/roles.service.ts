@@ -23,6 +23,7 @@ export class RolesService {
     private roleModel: Model<RoleDocument>,
     @InjectModel(RolePermission.name)
     private rolePermissionModel: Model<RolePermissionDocument>,
+
     private readonly permissionService: PermissionsService,
   ) { }
 
@@ -69,7 +70,10 @@ export class RolesService {
         HttpStatus.BAD_REQUEST
       );
     }
-    return await this.roleModel.findOne({ _id: id }).lean();
+    const role = await this.roleModel.findOne({ _id: id }).exec();
+    console.log({ "role": role })
+    // console.log({ "rolePermission": role?.rolePermission })
+    return role;
   }
   async findOneByName(roleName: string): Promise<IRole> {
     const role = await this.roleModel.findOne({ name: roleName }).lean();

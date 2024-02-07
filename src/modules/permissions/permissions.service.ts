@@ -1,5 +1,4 @@
 import { StatusEnum } from '@common/enums/status.enum';
-import { RolesService } from '@modules/roles/roles.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,15 +10,18 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { Permission, PermissionDocument } from './entities/permission.entity';
 import { IPermission } from './interfaces/permission.interface';
 // import { IRole } from '@modules/roles/interfaces/role.interface';
-import { RolePermissionService } from '@modules/role-permission/role-permission.service';
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
+import { RolePermission, RolePermissionDocument } from '@modules/role-permission/entities/role-permission.entity';
+import { Role, RoleDocument } from '@modules/roles/entities/role.entity';
 
 @Injectable()
 export class PermissionsService {
   constructor(
-    @InjectModel(Permission.name)
-    private permissionModel: Model<PermissionDocument>,
-    // private readonly roleService: RolesService,
+    @InjectModel(Role.name) private readonly roleModel: Model<RoleDocument>,
+    @InjectModel(RolePermission.name) private readonly rolePermissionModel: Model<RolePermissionDocument>,
+    @InjectModel(Permission.name) private readonly permissionModel: Model<PermissionDocument>,
     // private readonly rolePermissionService: RolePermissionService,
+    // private readonly roleService: RolesService,
   ) { }
 
   async create(createPermissionDto: CreatePermissionDto): Promise<IPermission> {
@@ -98,12 +100,44 @@ export class PermissionsService {
     const permissions = await this.permissionModel.find({ name: permissionName }).lean();
     return NestHelper.getInstance().arrayFirstOrNull(permissions);
   }
-  // async findAllByName(roleName: string): Promise<IPermission> {
-  //   const role:IRole = await this.roleService.findOneByName(roleName);
-  //   const rolePermissionIds = (await this.rolePermissionService.findAllPermissionsByRoleId(role?._id)).map(e => e?.permissionId);
-  //   const permissions = (await this.permissionModel.find({ _id: { $in: rolePermissionIds } }, { name: 1 })).map(e => e.name)
-  //   return permissions;
-  // }
+  async getPermissionsByRoleNClientId(roleName: string, clientId: mongoose.Types.ObjectId): Promise<string[]> {
+    const aggregate: any = [
+      {
+        $match:
+          { name: roleName, clientId }
+      },
+    ]
+    AggregationHelper.lookupForIdLocalKey(aggregate, 'rolepermissions', 'roleId', 'rolepermission')
+    AggregationHelper.lookupForIdForeignKey(aggregate, 'permissions', 'rolepermission.permissionId', 'permission')
+    AggregationHelper.unwindAField(aggregate, 'permissions', true)
+    aggregate.push({
+      $project: {
+        'permission.name': {
+          "$map": {
+            "input": "$permission",
+            "as": "perm",
+            "in": "$$perm.name"
+          }
+        }
+      }
+    })
+    const aggregationResult = await this.roleModel.aggregate(aggregate)
+    console.log({ aggregationResult })
+    // const permissionNames = aggregationResult[0].permission.map(permission => permission.name);
+    // console.log({ aggregationResult: JSON.stringify(aggregationResult) })
+
+    // const role = await this.roleModel.findOne({ name: roleName, clientId }).lean();
+    // if (NestHelper.getInstance().isEmpty(role)) {
+    //   ExceptionHelper.getInstance().defaultError(
+    //     'invalid role id',
+    //     'invalid_role_id',
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
+    // const rolePermissionIds = (await this.rolePermissionModel.find({ roleId: role?._id }).exec()).map(e => e?.permissionId);
+    // const permissions = (await this.permissionModel.find({ _id: { $in: rolePermissionIds } }, { name: 1 })).map(e => e.name)
+    return aggregationResult;
+  }
 
   async update(id: string, updatePermissionDto: UpdatePermissionDto): Promise<IPermission> {
     return await this.permissionModel.findByIdAndUpdate(id, updatePermissionDto, { new: true }).exec();

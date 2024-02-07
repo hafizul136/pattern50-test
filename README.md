@@ -1,6 +1,7 @@
-
 # Pattern50 main service
+
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/86589eded1ab4b6da393a6b638fa1fd4)](https://app.codacy.com/gh/hafizul136/pattern50-test/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 ## Local Installation
 
 ```bash
@@ -49,7 +50,6 @@ $ http://localhost:exposed_port
 ```
 
 ````
-
 ## Support
 
 ```bash

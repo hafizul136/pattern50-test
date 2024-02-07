@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { IUser } from '@modules/users/interfaces/user.interface';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { GetUser } from 'common/decorators/getUser.decorator';
+import mongoose from 'mongoose';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { IPermission } from './interfaces/permission.interface';
 import { PermissionsService } from './permissions.service';
-import { IUser } from '@modules/users/interfaces/user.interface';
-import mongoose from 'mongoose';
 
 @Controller('permissions')
 export class PermissionsController {
@@ -31,6 +31,10 @@ export class PermissionsController {
     return await this.permissionsService.findAllByIds(findPermissionsByIdsDto, user);
   }
 
+  // @Get('/name')
+  // async findAllByName(@Query('role') roleName: string,): Promise<string[]> {
+  //   return await this.permissionsService.getPermissionsByRoleNClientId(roleName);
+  // }
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<IPermission> {
     return await this.permissionsService.findOne(id);

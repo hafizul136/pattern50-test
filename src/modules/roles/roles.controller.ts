@@ -13,7 +13,7 @@ export class RolesController {
   constructor(private readonly rolesService: RolesService) { }
 
   @Post()
-  @Permissions('role.create')
+  // @Permissions('role.create')
   async create(@Body() createRoleDto: CreateRoleDto): Promise<IRole> {
     return await this.rolesService.create(createRoleDto);
   }

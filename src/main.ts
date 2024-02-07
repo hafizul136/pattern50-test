@@ -41,6 +41,5 @@ async function bootstrap(): Promise<void> {
   await app.listen(port);
   logger.log("ENV: serverType", appConfig?.serverType);
   logger.log(`Pattern50 Main Service (${appConfig.serverType}) is listening on port ${port}`);
-  console.log({ 1: appConfig.rmqURL })
 }
 bootstrap();
