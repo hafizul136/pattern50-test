@@ -1,5 +1,5 @@
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { GetUser } from 'common/decorators/getUser.decorator';
 import mongoose from 'mongoose';
 import { CreatePermissionDto } from './dto/create-permission.dto';

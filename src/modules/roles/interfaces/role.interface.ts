@@ -1,4 +1,4 @@
-import mongoose, { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface IRole extends Document {
     // _id: mongoose.Types.ObjectId;

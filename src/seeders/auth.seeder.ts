@@ -1,10 +1,3 @@
-import { ClientIDGetHelper } from "@common/helpers/getClientId.helper";
-import { mainServiceRolePermissions } from "@common/rolePermissions";
-import { PermissionsService } from "@modules/permissions/permissions.service";
-import { RolesService } from "@modules/roles/roles.service";
-import { Req } from "@nestjs/common";
-import { Request } from "express";
-import mongoose from "mongoose";
 import { Seeder } from "nestjs-seeder";
 
 export class AuthSeeder implements Seeder {
@@ -17,8 +10,8 @@ export class AuthSeeder implements Seeder {
 
         // @InjectModel(RolePermission.name)
         // private readonly rolePermissionModel: Model<RolePermissionDocument>,
-        private readonly roleService: RolesService,
-        private readonly permissionService: PermissionsService,
+        // private readonly roleService: RolesService,
+        // private readonly permissionService: PermissionsService,
     ) { }
 
     async seed(): Promise<any> {
