@@ -5,53 +5,52 @@
 ## Local Installation
 
 ```bash
-$ npm install
+ npm install
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+ npm run start
 
 # watch mode
-$ npm run start:dev
+ npm run start:dev
 
 # production mode
-$ npm run start:prod
+ npm run start:prod
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+ npm run test
 
 # e2e tests
-$ npm run test:e2e
+ npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+ npm run test:cov
 
 ```
 
 ## Docker Installation
 
 ```bash
-$ docker-compose build
+ docker-compose build
 
-$ docker-compose up
+ docker-compose up
 ```
 
 ## URLS
 
 ```bash
-$ http://localhost:exposed_port
+ http://localhost:exposed_port
 ```
 
-````
 ## Support
 
 ```bash
-$ docker-compose build service_name ; docker-compose up -d
-````
+ docker-compose build service_name ; docker-compose up -d
+```
