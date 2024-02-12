@@ -12,10 +12,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { appConfig } from 'configuration/app.config';
 import { RolePermissionModule } from './modules/role-permission/role-permission.module';
 import { UserRoleModule } from './modules/user-role/user-role.module';
+import { UploadModule } from './modules/upload/upload.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(`${appConfig.mongodbURL}${appConfig.serverType}pattern50db`),
-    AccountingRMQClientModule,PermissionsModule, RolesModule, UsersModule, AuthModule, RolePermissionModule, UserRoleModule, ClientModule, CompanyAddressModule],
+    AccountingRMQClientModule,PermissionsModule, RolesModule, UsersModule, AuthModule, RolePermissionModule, UserRoleModule, ClientModule, CompanyAddressModule, UploadModule],
 })
 export class AppModule { }

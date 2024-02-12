@@ -1,0 +1,7 @@
+First name	,Last name	,Email,Group ids,Expiration,Start date,End date 
+   cus    ,     Boo1 ,  a10@pove1rts.com  ,  c1ba57aa-d7ce-4f13-abfd-592b3b5d9a42,   true   ,  2023-08-24     ,    2023-10-24 
+customer2    ,     Boo2 ,   a10@pove1rts.com  ,  c1ba57aa-d7ce-4f13-abfd-592b3b5d9a42,,, 
+customer2    ,     Boo3 ,   a11@pove1rts.com  ,  c1ba57aa-d7ce-4f13-abfd-592b3b5d9a42,,,  
+customer2    ,     Boo4 ,   a12@pove1rts.com  ,  c1ba57aa-d7ce-4f13-abfd-592b3b5d9a42,,,  
+   cus3    ,     Boo5 ,  a13@pove1rts.com  ,  c1ba57aa-d7ce-4f13-abfd-592b3b5d9a42,   true   ,  2023-08-24     ,    2023-10-24 
+customer4    ,     Boo6 ,   a13@pove1rts.com  ,  c1ba57aa-d7ce-4f13-abfd-592b3b5d9a42,,,
