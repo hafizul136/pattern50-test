@@ -28,7 +28,6 @@ async function bootstrap(): Promise<void> {
   });
 
   await app.startAllMicroservices();
-
   const port = appConfig.port
   app.use(helmet());
   app.enableVersioning({

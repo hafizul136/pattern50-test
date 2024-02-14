@@ -4,9 +4,9 @@ import { mainServiceRolePermissions } from '@common/rolePermissions';
 import { RolesService } from '@modules/roles/roles.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { NestHelper } from 'common/helpers/NestHelper';
 import mongoose, { Model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import { NestHelper } from '../../common/helpers/NestHelper';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client, ClientDocument } from './entities/client.entity';
@@ -21,6 +21,7 @@ export class ClientService {
   ) { }
 
   async validateClientCredentials(clientId: string, clientSecret: string): Promise<Client | null> {
+    console.log('okkkkkk')
     try {
       const clients = await this.clientModel.find({ _id: clientId, secret: clientSecret }).lean();
       const client = NestHelper.getInstance().arrayFirstOrNull(clients);

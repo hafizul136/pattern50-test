@@ -1,4 +1,5 @@
 import { mainServiceRolePermissions } from '@common/rolePermissions';
+import { PermissionsService } from '@modules/permissions/permissions.service';
 import { IRole } from '@modules/roles/interfaces/role.interface';
 import { RolesService } from '@modules/roles/roles.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
@@ -20,7 +21,6 @@ import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
-import { PermissionsService } from '@modules/permissions/permissions.service';
 
 @Injectable()
 export class AuthService {

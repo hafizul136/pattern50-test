@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { ExceptionHelper } from './ExceptionHelper';
 import { NestHelper } from './NestHelper';
 import { SIXTY_DAYS_IN_SECONDS } from './global.constants';
-import { appConfig } from 'configuration/app.config';
+import { appConfig } from './../../configuration/app.config';
 dotenv.config();
 
 // const SIXTY_DAYS_IN_SECONDS = 60 * 24 * 60 * 60
