@@ -58,7 +58,7 @@ export class ClientService {
 
   async getSecret(): Promise<string> {
     const id = uuidv4();
-    return id;
+    return id; 
   }
 
   async findAll(): Promise<IClient[]> {
@@ -79,13 +79,11 @@ export class ClientService {
 
     return client
   }
-  async getClientById(id: string): Promise<IClient> {
-    let oid: mongoose.Types.ObjectId = await MongooseHelper.getInstance().makeMongooseId(id);
-    let client: IClient = null;
-    if (!NestHelper.getInstance().isEmpty(oid)) {
-      client = await this.clientModel.findById(oid).lean();
-    }
-    return client
+  async getClientById(id: mongoose.Types.ObjectId): Promise<IClient> {
+    // let oid: mongoose.Types.ObjectId = await MongooseHelper.getInstance().makeMongooseId(id);
+    let client: IClient = await this.clientModel.findById(id).lean();
+    if (!NestHelper.getInstance().isEmpty(client)) return client
+    return null
   }
 
   async update(id: mongoose.Types.ObjectId, updateClientDto: UpdateClientDto): Promise<IClient> {
