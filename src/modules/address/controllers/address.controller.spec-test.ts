@@ -6,7 +6,7 @@
 // import { Connection, Model, connect } from 'mongoose';
 // import { getModelToken } from '@nestjs/mongoose';
 
-// describe('CompanyAddressController', () => {
+// describe('AddressController', () => {
 //   let controller: CompanyAddressController;
 //   let mongod: MongoMemoryServer;
 //   let mongoConnection: Connection;

@@ -1,4 +1,4 @@
-export enum companyAddressStatusEnum {
+export enum CompanyStatusEnum {
     active = "active",
     deactivated = "deactivated"
 }
