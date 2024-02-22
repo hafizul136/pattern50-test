@@ -29,16 +29,18 @@ export class CompanyService {
 
   async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany[]> {
     try {
-      console.time('create company')
+      console.time('all')
       const session = await this.databaseService.startSession();
       let company: ICompany[];
       await session.withTransaction(async () => {
-
+        console.time('createAddress')
         const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
         const address = await this.addressService.create(addressDTO, session)
-
+        console.timeEnd('createAddress')
+        console.time('createBilling')
         const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
+        console.timeEnd('createBilling')
         // zipCode validate
         await ZipCodeValidator.validate(createCompanyDTO?.zipCode);
         // ein uniqueness check
@@ -46,16 +48,17 @@ export class CompanyService {
         // email and masterEmail unique check
         this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
         await this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
+        console.time('createCompany')
         const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
 
         company = await this.companyModel.create([companyCreateDTO], { session });
 
+        console.timeEnd('createCompany')
       });
 
       session.endSession();
-      console.timeEnd('create company')
+      console.timeEnd('all')
       return company;
-
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,

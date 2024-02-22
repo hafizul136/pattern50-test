@@ -13,7 +13,7 @@ export class CreateCompanyDTO extends CreateAddressDto {
     @IsEmail({}, { message: 'email invalid' })
     readonly email: string;
 
-    @IsNotEmpty({ message: 'email empty' })
+    @IsNotEmpty({ message: 'email should not be empty' })
     @IsEmail({}, { message: 'email invalid' })
     readonly masterEmail: string;
 
