@@ -11,7 +11,7 @@ export class AddressController {
 
   @Post()
   // @Permissions('companyAddress.create')
-  async create(@Body() createCompanyAddressDto: CreateAddressDto): Promise<IAddress> {
+  async create(@Body() createCompanyAddressDto: CreateAddressDto): Promise<IAddress[]> {
     return await this.companyAddressService.create(createCompanyAddressDto);
   }
 

@@ -5,8 +5,8 @@ import mongoose, { Model } from 'mongoose';
 import { ExceptionHelper } from '../../../common/helpers/ExceptionHelper';
 import { CreateAddressDto } from '../dto/create-address.dto';
 import { UpdateAddressDto } from '../dto/update-address.dto';
-import { IAddress } from '../interfaces/address.interface';
 import { Address, AddressDocument } from '../entities/address.entity';
+import { IAddress } from '../interfaces/address.interface';
 
 @Injectable()
 export class AddressService {
@@ -14,9 +14,9 @@ export class AddressService {
     @InjectModel(Address.name)
     private addressModel: Model<AddressDocument>) { }
 
-  async create(createAddressDto: CreateAddressDto,session?:any): Promise<IAddress> {
+  async create(createAddressDto: CreateAddressDto, session?: any): Promise<IAddress[]> {
     try {
-      return await this.addressModel.create(createAddressDto);
+      return await this.addressModel.create([createAddressDto], { session });
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,

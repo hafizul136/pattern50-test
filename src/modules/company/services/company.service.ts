@@ -5,8 +5,8 @@ import { AddressService } from '@modules/address/services/address.service';
 import { BillingInfoService } from '@modules/billing-info/services/billing-info.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, isValidObjectId } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import mongoose, { Connection, Model, isValidObjectId } from 'mongoose';
 import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { Company, CompanyDocument } from '../entities/company.entity';
@@ -18,50 +18,52 @@ export class CompanyService {
     private companyModel: Model<CompanyDocument>,
     private addressService: AddressService,
     private billingService: BillingInfoService,
+    @InjectConnection() private readonly connection: Connection
   ) { }
 
-  async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany> {
+  async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany[]> {
     try {
 
-      // //with transaction
-      // const conn = mongoose.connection;
-      // const session = await conn.startSession();
-      // await session.withTransaction(async () => {
+      //with transaction
+      const conn = this.connection;
+      const session = await conn.startSession();
+      let company:ICompany[];
+      await session.withTransaction(async () => {
 
-      //   const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
-      //   const address = await this.addressService.create(addressDTO, session)
+        const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
+        const address = await this.addressService.create(addressDTO, session)
 
-      //   const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
-      //   const billingInfo = await this.billingService.create(billingDTO)
+        const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
+        const billingInfo = await this.billingService.create(billingDTO,session)
 
-      //   const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address, billingInfo)
+        const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
 
-      //   console.log({ companyCreateDTO })
-      //   //email and masterEmail unique check
-      //   await this.duplicateEmailCheck(companyCreateDTO);
+        console.log({ companyCreateDTO })
+        //email and masterEmail unique check
+        await this.duplicateEmailCheck(companyCreateDTO);
 
-      //   const company = await (await this.companyModel.create(companyCreateDTO)).toObject();
-      //   return company;
+        company = await this.companyModel.create([companyCreateDTO],{session});
+        
+      });
+
+      session.endSession();
+      return company;
+      //with transaction
 
 
-      // });
-      // session.endSession();
-      // //with transaction
+      // const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO,user)
+      // const address = await this.addressService.create(addressDTO)
 
+      // const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
+      // const billingInfo = await this.billingService.create(billingDTO)
 
-      const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO,user)
-      const address = await this.addressService.create(addressDTO)
+      // const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address, billingInfo)
 
-      const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
-      const billingInfo = await this.billingService.create(billingDTO)
+      // console.log({ companyCreateDTO })
+      // //email and masterEmail unique check
+      // await this.duplicateEmailCheck(companyCreateDTO);
 
-      const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address, billingInfo)
-
-      console.log({ companyCreateDTO })
-      //email and masterEmail unique check
-      await this.duplicateEmailCheck(companyCreateDTO);
-
-      return await (await this.companyModel.create(companyCreateDTO)).toObject();
+      // return await (await this.companyModel.create(companyCreateDTO)).toObject();
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,

@@ -1,14 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
-export interface IAddress {
+export interface IAddress extends Document {
     addressLine?: string;
     city?: string;
     state?: string;
     zipCode?: string;
     country?: string;
     status?: string;
-    _id?: mongoose.Types.ObjectId;
-    created_at?: Date;
-    updated_at?: Date;
-    __v?: number;
+
 }
