@@ -119,8 +119,9 @@ export class CompanyService {
     AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "addresses");
 
     // searching by 
-    if (query?.query) {
-      const escapedQuery = query?.query.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const trimmedQuery = query.query.trim();
+    if (trimmedQuery) {
+      const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       aggregate.push({
         $match: {
           $or: [
