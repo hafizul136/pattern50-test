@@ -9,19 +9,19 @@ export class Company {
     @Prop({ type: String, required: true })
     name: string;
 
-    @Prop({ type: String, required: true, unique: true })
+    @Prop({ type: String, required: true, unique: true, index: true })
     email: string;
 
-    @Prop({ type: String, required: true, unique: true })
+    @Prop({ type: String, required: true, unique: true, index: true })
     masterEmail: string;
-    
+
     @Prop({ type: String, required: true })
     phone: string;
 
     @Prop({ type: mongoose.Types.ObjectId, ref: 'User', required: true, index: true })
     userId: mongoose.Types.ObjectId;
 
-    @Prop({ type: String ,required: true})
+    @Prop({ type: String, required: true, index: true, unique: true })
     ein: string;
 
     // @Prop({ type: String })

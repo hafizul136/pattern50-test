@@ -30,40 +30,34 @@ export class CompanyService {
   async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany[]> {
     try {
       console.time('all')
-      console.time('startTransaction')
       const session = await this.databaseService.startSession();
-      console.timeEnd('startTransaction')
       let company: ICompany[];
       console.time('withTransaction')
       await session.withTransaction(async () => {
         console.time('withTransaction-inside')
-        console.time('createAddress')
         const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
         const address = await this.addressService.create(addressDTO, session)
-        console.timeEnd('createAddress')
-        console.time('createBilling')
+
         const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
-        console.timeEnd('createBilling')
-        // zipCode validate
-        await ZipCodeValidator.validate(createCompanyDTO?.zipCode);
-        // ein uniqueness check
-        await this.einDuplicateCheck(createCompanyDTO?.ein);
-        // email and masterEmail unique check
-        this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
-        await this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
-        console.time('createCompany')
+        console.time('validationCheck')
+        // Assuming these methods return promises
+        const zipCodeValidationPromise = ZipCodeValidator.validate(createCompanyDTO?.zipCode);
+        const einDuplicateCheckPromise = this.einDuplicateCheck(createCompanyDTO?.ein);
+        const dateCheckPromise = this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
+        const emailCheckPromise = this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
+
+        // Execute all promises concurrently
+        await Promise.all([zipCodeValidationPromise, einDuplicateCheckPromise, dateCheckPromise, emailCheckPromise]);
+        console.timeEnd('validationCheck')
         const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
-
         company = await this.companyModel.create([companyCreateDTO], { session });
-
-        console.timeEnd('createCompany')
         console.timeEnd('withTransaction-inside')
       });
       console.timeEnd('withTransaction')
 
-      console.timeEnd('all')
       session.endSession();
+      console.timeEnd('all')
       return company;
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
@@ -97,13 +91,10 @@ export class CompanyService {
     }
   }
 
-  async findOneByEmail(email: string): Promise<ICompany> {
-    return await this.companyModel.find({ email }).lean();
+  async findOneByEmail(email: string,masterEmail:string): Promise<ICompany> {
+    return await this.companyModel.find({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
   }
 
-  async findOneByMasterEmail(email: string): Promise<ICompany> {
-    return await this.companyModel.find({ masterEmail: email }).lean();
-  }
 
   // get company list
   async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<ICompany[]> {
@@ -178,9 +169,8 @@ export class CompanyService {
   }
 
   private async duplicateEmailCheck(email: string, masterEmail: string) {
-    const isCompanyExistByEmail = await this.findOneByEmail(email);
-    const isCompanyExistByMasterEmail = await this.findOneByEmail(masterEmail);
-    if (!NestHelper.getInstance().isEmpty(isCompanyExistByEmail) || !NestHelper.getInstance().isEmpty(isCompanyExistByMasterEmail)) {
+    const isCompanyExistByEmail = await this.findOneByEmail(email, masterEmail);
+    if (!NestHelper.getInstance().isEmpty(isCompanyExistByEmail)) {
       ExceptionHelper.getInstance().defaultError(
         'Duplicate email or master email',
         'duplicate_email_or_master_email',
