@@ -110,7 +110,11 @@ export class CompanyService {
     AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "addresses");
 
     // searching by 
-    const trimmedQuery = query.query.trim();
+    let trimmedQuery = null;
+    if (query.query) {
+      trimmedQuery = query.query.trim();
+    }
+
     if (trimmedQuery) {
       const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       aggregate.push({
