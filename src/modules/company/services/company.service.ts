@@ -2,6 +2,7 @@ import { EINSecureHelper } from '@common/helpers/EinHelper';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
 import { DateHelper } from '@common/helpers/date.helper';
+import { AggregationHelper } from '@helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@helpers/constructObjectFromDTO';
 import { AddressService } from '@modules/address/services/address.service';
 import { BillingInfoService } from '@modules/billing-info/services/billing-info.service';
@@ -10,7 +11,7 @@ import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { appConfig } from 'configuration/app.config';
-import mongoose, { Model, isValidObjectId } from 'mongoose';
+import mongoose, { Model, Types, isValidObjectId } from 'mongoose';
 import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { Company, CompanyDocument } from '../entities/company.entity';
@@ -37,10 +38,11 @@ export class CompanyService {
 
         const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
+
         // ein uniqueness check
         await this.einDuplicateCheck(createCompanyDTO?.ein);
         // email and masterEmail unique check
-        this.validDateCheck(createCompanyDTO?.startDate,createCompanyDTO?.endDate);
+        this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
         await this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
         const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
 
@@ -63,7 +65,7 @@ export class CompanyService {
 
 
 
-  private validDateCheck(startDate: string,endDate: string) {
+  private validDateCheck(startDate: string, endDate: string) {
     if (!NestHelper.getInstance().isEmpty(endDate)) {
       const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
       if (!isStartDateGreater) {
@@ -87,11 +89,47 @@ export class CompanyService {
   async findOneByEmail(email: string): Promise<ICompany> {
     return await this.companyModel.find({ email }).lean();
   }
+
   async findOneByMasterEmail(email: string): Promise<ICompany> {
     return await this.companyModel.find({ masterEmail: email }).lean();
   }
-  async findAll(): Promise<ICompany> {
-    return await this.companyModel.find().lean();
+
+  // get company list
+  async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<ICompany[]> {
+    let aggregate = [];
+    let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
+    if (!query?.page || parseInt(query?.page) < 1) page = 1;
+    if (!query?.size || parseInt(query?.size) < 1) size = 10;
+
+    // filter by client id
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new Types.ObjectId(user?.clientId) }]);
+
+    AggregationHelper.lookupForIdForeignKey(aggregate, "addresses", "addressId", "addresses");
+    AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "addresses");
+
+    // searching by 
+    if (query?.query) {
+      const escapedQuery = query?.query.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      aggregate.push({
+        $match: {
+          $or: [
+            {
+              name: { $regex: escapedQuery, $options: "i" }
+            },
+            { email: { $regex: escapedQuery, $options: "i" } },
+            { phone: { $regex: escapedQuery, $options: "i" } },
+            { "addresses.city": { $regex: escapedQuery, $options: "i" } },
+            { "addresses.state": { $regex: escapedQuery, $options: "i" } },
+          ]
+        }
+      });
+    }
+
+    AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
+
+    const companies = await this.companyModel.aggregate(aggregate).exec();
+
+    return companies;
   }
 
   async findOne(id: mongoose.Types.ObjectId): Promise<ICompany> {
