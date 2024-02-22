@@ -19,7 +19,7 @@ export class CompanyController {
   }
   // @Query("page") page: number, @Query("size") size: number, @Query("query") query: string
   @Get("list")
-  @Permissions('company.create')
+  @Permissions('company.view')
   async getCompanies(@Query() query, @GetUser() user: IUser): Promise<ICompany[]> {
     return await this.companyService.findAll(query, user);
   }

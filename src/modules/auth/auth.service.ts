@@ -132,10 +132,10 @@ export class AuthService {
         throw new UnauthorizedException('Invalid token');
       }
     }
-    // const permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == user.userType);
-    const permissions = await this.permissionService.getPermissionsByRoleNClientId(user.userType, clientId)
-
-    user['scopes'] = permissions
+    const permissionsObject = mainServiceRolePermissions().filter(role => role.roleName == user.userType);
+    user['scopes'] = permissionsObject[0].permissions
+    // const permissions = await this.permissionService.getPermissionsByRoleNClientId(user.userType, clientId)
+    // user['scopes'] = permissions
     user.lastLogin = new DateHelper().getNowInISOString();
 
     delete user.password

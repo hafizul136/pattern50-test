@@ -1,5 +1,7 @@
+import { EINSecureHelper } from '@common/helpers/EinHelper';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
+import { DateHelper } from '@common/helpers/date.helper';
 import { AggregationHelper } from '@helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@helpers/constructObjectFromDTO';
 import { AddressService } from '@modules/address/services/address.service';
@@ -8,6 +10,7 @@ import { DatabaseService } from '@modules/db/database.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { appConfig } from 'configuration/app.config';
 import mongoose, { Model, Types, isValidObjectId } from 'mongoose';
 import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
@@ -21,13 +24,11 @@ export class CompanyService {
     private addressService: AddressService,
     private billingService: BillingInfoService,
     private databaseService: DatabaseService,
-    // @InjectConnection() private readonly connection: Connection
   ) { }
 
   async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany[]> {
     try {
-      // const conn = this.connection;
-      // const session = await conn.startSession();
+      console.time('create company')
       const session = await this.databaseService.startSession();
       let company: ICompany[];
       await session.withTransaction(async () => {
@@ -38,17 +39,19 @@ export class CompanyService {
         const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
 
+        // ein uniqueness check
+        await this.einDuplicateCheck(createCompanyDTO?.ein);
+        // email and masterEmail unique check
+        this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
+        await this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
         const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
-
-        console.log({ companyCreateDTO })
-        //email and masterEmail unique check
-        await this.duplicateEmailCheck(companyCreateDTO);
 
         company = await this.companyModel.create([companyCreateDTO], { session });
 
       });
 
       session.endSession();
+      console.timeEnd('create company')
       return company;
 
     } catch (error) {
@@ -60,15 +63,26 @@ export class CompanyService {
     }
   }
 
-  private async duplicateEmailCheck(companyCreateDTO: { name: string; email: string; masterEmail: string; phone: string; ein: string; userId: mongoose.Types.ObjectId; addressId: any; billingInfoId: any; clientId: mongoose.Types.ObjectId; }) {
-    const isCompanyExistByEmail = await this.findOneByEmail(companyCreateDTO?.email);
-    const isCompanyExistByMasterEmail = await this.findOneByEmail(companyCreateDTO?.masterEmail);
-    if (!NestHelper.getInstance().isEmpty(isCompanyExistByEmail) || !NestHelper.getInstance().isEmpty(isCompanyExistByMasterEmail)) {
-      ExceptionHelper.getInstance().defaultError(
-        'Duplicate email or master email',
-        'duplicate_email_or_master_email',
-        HttpStatus.BAD_REQUEST
-      );
+
+
+  private validDateCheck(startDate: string, endDate: string) {
+    if (!NestHelper.getInstance().isEmpty(endDate)) {
+      const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
+      if (!isStartDateGreater) {
+        ExceptionHelper.getInstance().defaultError(
+          'StartDate must be greater than Today',
+          'startDate_must_be_greater_than_today',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      const isEndDateGreater = new DateHelper().isSecondDateGreater(startDate, endDate);
+      if (!isEndDateGreater) {
+        ExceptionHelper.getInstance().defaultError(
+          'EndDate must be greater than StartDate',
+          'endDate_must_be_greater_than_StartDate',
+          HttpStatus.BAD_REQUEST
+        );
+      }
     }
   }
 
@@ -138,4 +152,29 @@ export class CompanyService {
   async remove(id: string): Promise<ICompany> {
     return await this.companyModel.findByIdAndRemove(id).lean();
   }
+  //private functions
+  private async einDuplicateCheck(ein: string) {
+    const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
+    const companyExistByEIN = await this.companyModel.findOne({ ein: hashedEIN }).lean();
+    if (!NestHelper.getInstance()?.isEmpty(companyExistByEIN)) {
+      ExceptionHelper.getInstance().defaultError(
+        'EIN must be unique',
+        'EIN_must_be_unique',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  private async duplicateEmailCheck(email: string, masterEmail: string) {
+    const isCompanyExistByEmail = await this.findOneByEmail(email);
+    const isCompanyExistByMasterEmail = await this.findOneByEmail(masterEmail);
+    if (!NestHelper.getInstance().isEmpty(isCompanyExistByEmail) || !NestHelper.getInstance().isEmpty(isCompanyExistByMasterEmail)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Duplicate email or master email',
+        'duplicate_email_or_master_email',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
 }

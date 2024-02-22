@@ -324,4 +324,11 @@ export class DateHelper {
         }
         return flag;
     }
+    isSecondDateGreater(startDate: string, endDate: string): boolean {
+        return endDate > startDate;
+    }
+    isSecondDateGreaterOrEqual(startDate: string, endDate: string): boolean {
+        return endDate >= startDate;
+    }
+
 }

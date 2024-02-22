@@ -23,10 +23,10 @@ export class CreateCompanyDTO extends CreateAddressDto {
     })
     readonly phone: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsNumberString()
     @MinLength(9)
-    readonly ein?: string;
+    ein: string;
 
     @IsNotEmpty()
     @IsString()
