@@ -1,7 +1,6 @@
 import { EINSecureHelper } from "@common/helpers/EinHelper";
 import { CreateCompanyDTO } from "@modules/company/dto/create-company.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
-import { appConfig } from "configuration/app.config";
 import mongoose from "mongoose";
 
 export class ConstructObjectFromDtoHelper {
