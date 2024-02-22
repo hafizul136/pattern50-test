@@ -16,10 +16,11 @@ import { CompanyModule } from '@modules/company/company.module';
 import { BillingInfoModule } from './modules/billing-info/billing-info.module';
 import { AddressModule } from '@modules/address/address.module';
 import { DatabaseModule } from '@modules/db/mongoose.module';
+import { GeoModule } from '@modules/geo/geo.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(`${appConfig.mongodbURL}${appConfig.serverType}${appConfig.dbName}`), DatabaseModule,
+    MongooseModule.forRoot(`${appConfig.mongodbURL}${appConfig.serverType}${appConfig.dbName}`), DatabaseModule, GeoModule,
     AccountingRMQClientModule, PermissionsModule, RolesModule, UsersModule, AuthModule, RolePermissionModule, UserRoleModule, ClientModule,UploadModule, CompanyModule, AddressModule, BillingInfoModule],
 })
 export class AppModule { }
