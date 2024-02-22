@@ -11,6 +11,7 @@ import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { Company, CompanyDocument } from '../entities/company.entity';
 import { ICompany } from '../interfaces/company.interface';
+import { DatabaseService } from '@modules/db/database.service';
 @Injectable()
 export class CompanyService {
   constructor(
@@ -18,15 +19,15 @@ export class CompanyService {
     private companyModel: Model<CompanyDocument>,
     private addressService: AddressService,
     private billingService: BillingInfoService,
-    @InjectConnection() private readonly connection: Connection
+    private databaseService: DatabaseService,
+    // @InjectConnection() private readonly connection: Connection
   ) { }
 
   async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany[]> {
     try {
-
-      //with transaction
-      const conn = this.connection;
-      const session = await conn.startSession();
+      // const conn = this.connection;
+      // const session = await conn.startSession();
+      const session = await this.databaseService.startSession();
       let company:ICompany[];
       await session.withTransaction(async () => {
 
@@ -48,22 +49,7 @@ export class CompanyService {
 
       session.endSession();
       return company;
-      //with transaction
 
-
-      // const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO,user)
-      // const address = await this.addressService.create(addressDTO)
-
-      // const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
-      // const billingInfo = await this.billingService.create(billingDTO)
-
-      // const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address, billingInfo)
-
-      // console.log({ companyCreateDTO })
-      // //email and masterEmail unique check
-      // await this.duplicateEmailCheck(companyCreateDTO);
-
-      // return await (await this.companyModel.create(companyCreateDTO)).toObject();
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,
