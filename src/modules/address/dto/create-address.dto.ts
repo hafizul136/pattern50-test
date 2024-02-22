@@ -1,29 +1,29 @@
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
-import { IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateAddressDto {
-    // @IsNotEmpty({ message: "address empty" })
-    @IsString({ message: "address must be string" })
+    @IsNotEmpty({ message: 'address should not be empty' })
     @TrimAndValidateString({ message: 'address should not be empty' })
+    @IsString({ message: "address must be string" })
     readonly addressLine: string;
 
-    // @IsNotEmpty({ message: 'country empty' })
-    @IsString({ message: "country must be string" })
+    @IsNotEmpty({ message: 'country should not be empty' })
     @TrimAndValidateString({ message: 'country should not be empty' })
+    @IsString({ message: "country must be string" })
     readonly country: string;
 
-    // @IsNotEmpty({ message: "city empty" })
-    @IsString({ message: "city must be string" })
+    @IsNotEmpty({ message: "city should not be empty" })
     @TrimAndValidateString({ message: 'city should not be empty' })
+    @IsString({ message: "city must be string" })
     readonly city: string;
 
-    // @IsNotEmpty({ message: "state empty" })
-    @IsString({ message: "state must be string" })
+    @IsNotEmpty({ message: "state should not be empty" })
     @TrimAndValidateString({ message: 'state should not be empty' })
+    @IsString({ message: "state must be string" })
     readonly state: string;
 
-    // @IsNotEmpty({ message: "zip/postal code empty" })
-    @IsString({ message: "zip must be string" })
+    @IsNotEmpty({ message: "zip/postal code should not be  empty" })
     @TrimAndValidateString({ message: 'zip should not be empty' })
+    @IsString({ message: "zip must be string" })
     readonly zipCode: string;
 }

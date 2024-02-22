@@ -30,9 +30,13 @@ export class CompanyService {
   async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany[]> {
     try {
       console.time('all')
+      console.time('startTransaction')
       const session = await this.databaseService.startSession();
+      console.timeEnd('startTransaction')
       let company: ICompany[];
+      console.time('withTransaction')
       await session.withTransaction(async () => {
+        console.time('withTransaction-inside')
         console.time('createAddress')
         const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
         const address = await this.addressService.create(addressDTO, session)
@@ -54,10 +58,12 @@ export class CompanyService {
         company = await this.companyModel.create([companyCreateDTO], { session });
 
         console.timeEnd('createCompany')
+        console.timeEnd('withTransaction-inside')
       });
+      console.timeEnd('withTransaction')
 
-      session.endSession();
       console.timeEnd('all')
+      session.endSession();
       return company;
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
