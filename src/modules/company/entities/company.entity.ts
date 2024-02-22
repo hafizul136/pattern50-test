@@ -21,8 +21,8 @@ export class Company {
     @Prop({ type: mongoose.Types.ObjectId, ref: 'User', required: true, index: true })
     userId: mongoose.Types.ObjectId;
 
-    @Prop({ type: String })
-    ein?: string;
+    @Prop({ type: String ,required: true})
+    ein: string;
 
     // @Prop({ type: String })
     // logoUrl: string;
