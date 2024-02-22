@@ -2,6 +2,7 @@ import { EINSecureHelper } from '@common/helpers/EinHelper';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
 import { DateHelper } from '@common/helpers/date.helper';
+import { ZipCodeValidator } from '@common/helpers/zipCodeValidator';
 import { ConstructObjectFromDtoHelper } from '@helpers/constructObjectFromDTO';
 import { AddressService } from '@modules/address/services/address.service';
 import { BillingInfoService } from '@modules/billing-info/services/billing-info.service';
@@ -37,10 +38,12 @@ export class CompanyService {
 
         const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
+        // zipCode validate
+        await ZipCodeValidator.validate(createCompanyDTO?.zipCode);
         // ein uniqueness check
         await this.einDuplicateCheck(createCompanyDTO?.ein);
         // email and masterEmail unique check
-        this.validDateCheck(createCompanyDTO?.startDate,createCompanyDTO?.endDate);
+        this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
         await this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
         const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
 
@@ -63,7 +66,7 @@ export class CompanyService {
 
 
 
-  private validDateCheck(startDate: string,endDate: string) {
+  private validDateCheck(startDate: string, endDate: string) {
     if (!NestHelper.getInstance().isEmpty(endDate)) {
       const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
       if (!isStartDateGreater) {
