@@ -25,6 +25,7 @@ export class CompanyController {
   }
 
   @Get(':id')
+  @Permissions('company.view')
   async findOne(@Param('id') id: string): Promise<ICompany> {
     return await this.companyService.findOne(id);
   }

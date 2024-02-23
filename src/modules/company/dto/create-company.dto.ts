@@ -1,7 +1,7 @@
 import { IsPhoneNumberValidator } from "@common/validators/phone-number.validator";
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
 import { CreateAddressDto } from "@modules/address/dto/create-address.dto";
-import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString, MinLength, Validate } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString, MaxLength, MinLength, Validate } from "class-validator";
 
 export class CreateCompanyDTO extends CreateAddressDto {
     @IsNotEmpty({ message: 'name should not be empty' })
@@ -26,6 +26,7 @@ export class CreateCompanyDTO extends CreateAddressDto {
     @IsNotEmpty()
     @IsNumberString()
     @MinLength(9)
+    @MaxLength(9)
     ein: string;
 
     @IsNotEmpty()
