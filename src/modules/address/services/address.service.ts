@@ -14,9 +14,11 @@ export class AddressService {
     @InjectModel(Address.name)
     private addressModel: Model<AddressDocument>) { }
 
-  async create(createAddressDto: CreateAddressDto, session?: any): Promise<IAddress[]> {
+  async create(createAddressDto: CreateAddressDto, session?: any): Promise<IAddress> {
     try {
-      return await this.addressModel.create([createAddressDto], { session });
+      const addresses = await this.addressModel.create([createAddressDto], { session });
+      const address =NestHelper.getInstance().arrayFirstOrNull(addresses)
+      return address
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,

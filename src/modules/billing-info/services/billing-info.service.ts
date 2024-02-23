@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { BillingInfo, BillingInfoDocument } from '../entities/billing-info.entity';
 import { Model } from 'mongoose';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
+import { NestHelper } from '@common/helpers/NestHelper';
 
 @Injectable()
 export class BillingInfoService {
@@ -13,9 +14,11 @@ export class BillingInfoService {
   private billingInfoModel: Model<BillingInfoDocument>,){
 
   }
-  async create(createBillingInfoDto: CreateBillingInfoDto, session?:any):Promise<IBillingInfo[]> {
+  async create(createBillingInfoDto: CreateBillingInfoDto, session?:any):Promise<IBillingInfo> {
     try {
-      return await this.billingInfoModel.create([createBillingInfoDto], { session });
+      const billingInfos = await this.billingInfoModel.create([createBillingInfoDto], { session });
+      const billingInfo= NestHelper.getInstance().arrayFirstOrNull(billingInfos)
+      return billingInfo
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,

@@ -7,7 +7,7 @@ import { DateHelper } from "./date.helper";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 
 export class ConstructObjectFromDtoHelper {
-    static async ConstructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
+    static async constructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
         //hashed EIN 
         let ein: string
         if (createCompanyDTO?.ein) {

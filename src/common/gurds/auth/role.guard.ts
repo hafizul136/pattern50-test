@@ -34,9 +34,7 @@ export class RolesGuard implements CanActivate {
             if (NestHelper.getInstance().isEmpty(payload)) {
                 throw new UnauthorizedException();
             }
-            console.time('user')
             const user = await this.userService.findOneData(payload?.userId)
-            console.timeEnd('user')
             if (!user) {
                 return false; // User is not authenticated; deny access
             }
