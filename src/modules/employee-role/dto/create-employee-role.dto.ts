@@ -13,6 +13,7 @@ export class CreateEmployeeRolesDto {
 export class CreateEmployeeRoleDto {
     @IsNotEmpty()
     @IsString()
+    @TrimAndValidateString({ message: 'name is empty' })
     name: string;
 
     @IsOptional()
