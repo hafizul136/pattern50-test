@@ -20,12 +20,10 @@ export class EmployeeRoleService {
   ) { }
 
   async create(createEmployeeRolesDto: CreateEmployeeRolesDto): Promise<IEmployeeRoles> {
-    const employeeObjects = [];
+    const employeeObjects = createEmployeeRolesDto.roles.map(role =>
+      ConstructObjectFromDtoHelper.constructEmployeeRoleObj(role)
+    );
 
-    for (const role of createEmployeeRolesDto.roles) {
-      const employeeRoleObj = ConstructObjectFromDtoHelper.constructEmployeeRoleObj(role);
-      employeeObjects.push(employeeRoleObj);
-    }
     try {
       const roles: IEmployeeRole[] = await this.employeeRoleModel.create(employeeObjects);
 

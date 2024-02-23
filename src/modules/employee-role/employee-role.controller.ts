@@ -1,3 +1,4 @@
+import { Permissions } from '@common/decorators/permissions.decorator';
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateEmployeeRolesDto } from './dto/create-employee-role.dto';
 import { UpdateEmployeeRoleDto } from './dto/update-employee-role.dto';
@@ -9,11 +10,12 @@ export class EmployeeRoleController {
   constructor(private readonly employeeRoleService: EmployeeRoleService) { }
 
   @Post('create')
+  @Permissions("company.create")
   create(@Body() createEmployeeRolesDto: CreateEmployeeRolesDto): Promise<IEmployeeRoles> {
     return this.employeeRoleService.create(createEmployeeRolesDto);
   }
 
-  @Get()
+  @Get("list")
   findAll() {
     return this.employeeRoleService.findAll();
   }
