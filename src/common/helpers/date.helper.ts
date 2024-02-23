@@ -129,6 +129,9 @@ export class DateHelper {
     getTimeInISOString(date: Date): string {
         return DateTime.fromJSDate(date).setZone('UTC').toJSDate().toISOString();
     }
+    getTimeInISODate(date: Date): string {
+        return DateTime.fromJSDate(date).setZone('UTC').toJSDate();
+    }
 
     convertToTime(time: string): void {
         console.log(DateTime.fromFormatExplain(time, 'HH:mm a'));
@@ -331,4 +334,13 @@ export class DateHelper {
         return endDate >= startDate;
     }
 
+}
+
+export class StartAndEndDate {
+    public startDate: Date;
+    public endDate: Date;
+    constructor() {
+        this.startDate = new DateHelper().now("UTC")
+        this.endDate = null
+    }
 }

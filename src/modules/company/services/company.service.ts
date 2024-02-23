@@ -41,8 +41,8 @@ export class CompanyService {
         // Execute all promises concurrently
         await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
 
-        const addressDTO = ConstructObjectFromDtoHelper.constructCreateAddressObject(createCompanyDTO, user)
-        const billingDTO = ConstructObjectFromDtoHelper.constructCreateBillingInfoObject(createCompanyDTO, user)
+        const addressDTO = ConstructObjectFromDtoHelper.constructCreateAddressObject(createCompanyDTO)
+        const billingDTO = ConstructObjectFromDtoHelper.constructCreateBillingInfoObject(createCompanyDTO)
 
         const address = await this.addressService.create(addressDTO, session)
         const billingInfo = await this.billingService.create(billingDTO, session)

@@ -4,9 +4,9 @@ import { CreateCompanyDTO } from "@modules/company/dto/create-company.dto";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose from "mongoose";
-import { DateHelper } from "./date.helper";
+import { DateHelper, StartAndEndDate } from "./date.helper";
 
-export class ConstructObjectFromDtoHelper {
+export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     static async constructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
         //hashed EIN 
         let ein: string
@@ -28,7 +28,7 @@ export class ConstructObjectFromDtoHelper {
         }
     }
 
-    static constructCreateAddressObject(createCompanyDto: CreateCompanyDTO, user: IUser) {
+    static constructCreateAddressObject(createCompanyDto: CreateCompanyDTO) {
         return {
             addressLine: createCompanyDto?.addressLine ?? "",
             country: createCompanyDto?.country ?? "",
@@ -38,10 +38,10 @@ export class ConstructObjectFromDtoHelper {
         }
     }
 
-    static constructCreateBillingInfoObject(createCompanyDto: CreateCompanyDTO, user: IUser) {
+    static constructCreateBillingInfoObject(createCompanyDto: CreateCompanyDTO) {
         return {
-            startDate: createCompanyDto?.startDate ?? "",
-            endDate: createCompanyDto?.endDate ?? "",
+            startDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.startDate)) ?? "",
+            endDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.endDate)) ?? "",
         }
     }
 
