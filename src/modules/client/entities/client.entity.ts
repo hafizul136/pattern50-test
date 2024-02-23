@@ -12,7 +12,7 @@ export class Client {
     @Prop({
         type: String,
         enum: [StatusEnum],
-        default: StatusEnum.active,
+        default: StatusEnum.ACTIVE,
     })
     status: string
 
