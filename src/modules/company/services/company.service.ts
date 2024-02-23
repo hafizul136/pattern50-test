@@ -30,17 +30,13 @@ export class CompanyService {
 
   async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany> {
     try {
-      console.time('all')
       const session = await this.databaseService.startSession();
       let companies: ICompany[];
       await session.withTransaction(async () => {
-
         // Assuming these methods return promises
         const zipCodeValidationPromise = ZipCodeValidator.validate(createCompanyDTO?.zipCode);
         const dateCheckPromise = this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
 
-        // const einDuplicateCheckPromise = this.einDuplicateCheck(createCompanyDTO?.ein);
-        // const emailCheckPromise = this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
         const uniqueCheckEmailAndEIN= this.uniqueCheckEmailAndEIN(createCompanyDTO);
         // Execute all promises concurrently
         await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
@@ -56,7 +52,6 @@ export class CompanyService {
 
       });
       session.endSession();
-      console.timeEnd('all')
       const company = NestHelper.getInstance().arrayFirstOrNull(companies)
       return company;
     } catch (error) {

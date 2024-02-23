@@ -14,7 +14,6 @@ export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector, private jwt: JwtService, private userService: UsersService, private authService: AuthService) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        console.time('RolesGuard')
         let roles = this.reflector.get<string[]>('roles', context.getHandler());
         if (!roles) {
             return true;
@@ -46,7 +45,6 @@ export class RolesGuard implements CanActivate {
         } else {
             throw new UnauthorizedException();
         }
-        console.timeEnd('RolesGuard')
         return true;
     }
 }
