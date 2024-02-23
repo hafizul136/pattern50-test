@@ -1,5 +1,7 @@
+import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { IUser } from '@modules/users/interfaces/user.interface';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateEmployeeRolesDto } from './dto/create-employee-role.dto';
 import { UpdateEmployeeRoleDto } from './dto/update-employee-role.dto';
 import { EmployeeRoleService } from './employee-role.service';
@@ -16,8 +18,9 @@ export class EmployeeRoleController {
   }
 
   @Get("list")
-  findAll() {
-    return this.employeeRoleService.findAll();
+  @Permissions("company.create")
+  findAll(@Query() query, @GetUser() user: IUser) {
+    return this.employeeRoleService.findAll(query);
   }
 
   @Get(':id')

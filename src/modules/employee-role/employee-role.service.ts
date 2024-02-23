@@ -1,4 +1,5 @@
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { DatabaseService } from '@modules/db/database.service';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
@@ -40,8 +41,38 @@ export class EmployeeRoleService {
     }
   }
 
-  findAll() {
-    return `This action returns all employeeRole`;
+  async findAll(query) {
+    let aggregate = [];
+    let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
+    if (!query?.page || parseInt(query?.page) < 1) page = 1;
+    if (!query?.size || parseInt(query?.size) < 1) size = 10;
+
+    AggregationHelper.lookupForIdForeignKey(aggregate, "employee", "employeeRoleId", "members");
+
+    // searching by 
+    let trimmedQuery = null;
+    if (query.query) {
+      trimmedQuery = query.query.trim();
+    }
+
+    if (trimmedQuery) {
+      const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      aggregate.push({
+        $match: {
+          $or: [
+            {
+              name: { $regex: escapedQuery, $options: "i" }
+            },
+          ]
+        }
+      });
+    }
+
+    AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
+
+    const companies = await this.employeeRoleModel.aggregate(aggregate).exec();
+
+    return companies;
   }
 
   findOne(id: number) {
