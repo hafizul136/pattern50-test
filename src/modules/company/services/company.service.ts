@@ -13,7 +13,7 @@ import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { appConfig } from 'configuration/app.config';
-import { Model, Types, isValidObjectId } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { Company, CompanyDocument } from '../entities/company.entity';
@@ -36,29 +36,22 @@ export class CompanyService {
       console.time('withTransaction')
       await session.withTransaction(async () => {
         console.time('withTransaction-inside')
-        const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
-        const address = await this.addressService.create(addressDTO, session)
 
-        const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
-        const billingInfo = await this.billingService.create(billingDTO, session)
-        // const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user);
-        // const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user);
-
-        // Use Promise.all() to create address and billing concurrently
-        // const [address, billingInfo] = await Promise.all([
-        //   this.addressService.create(addressDTO, session),
-        //   this.billingService.create(billingDTO, session)
-        // ]);
         console.time('validationCheck')
         // Assuming these methods return promises
         const zipCodeValidationPromise = ZipCodeValidator.validate(createCompanyDTO?.zipCode);
         const einDuplicateCheckPromise = this.einDuplicateCheck(createCompanyDTO?.ein);
         const dateCheckPromise = this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
         const emailCheckPromise = this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
-
         // Execute all promises concurrently
         await Promise.all([zipCodeValidationPromise, einDuplicateCheckPromise, dateCheckPromise, emailCheckPromise]);
         console.timeEnd('validationCheck')
+        const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
+        const address = await this.addressService.create(addressDTO, session)
+
+        const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
+        const billingInfo = await this.billingService.create(billingDTO, session)
+
         const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
         company = await this.companyModel.create([companyCreateDTO], { session });
         console.timeEnd('withTransaction-inside')
