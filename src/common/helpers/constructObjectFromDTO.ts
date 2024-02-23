@@ -1,10 +1,10 @@
 import { StatusEnum } from "@common/enums/status.enum";
 import { EINSecureHelper } from "@common/helpers/EinHelper";
 import { CreateCompanyDTO } from "@modules/company/dto/create-company.dto";
+import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose from "mongoose";
 import { DateHelper } from "./date.helper";
-import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 
 export class ConstructObjectFromDtoHelper {
     static async constructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
@@ -48,7 +48,7 @@ export class ConstructObjectFromDtoHelper {
     static constructEmployeeRoleObj(employeeRoleDto: CreateEmployeeRoleDto) {
         return {
             name: employeeRoleDto?.name ?? "",
-            description: employeeRoleDto?.description ?? "",
+            description: employeeRoleDto?.description.trim() ?? "",
             status: StatusEnum.ACTIVE,
             isDeleted: false,
             startDate: new DateHelper().now("UTC")
