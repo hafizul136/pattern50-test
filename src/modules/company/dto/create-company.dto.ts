@@ -25,8 +25,8 @@ export class CreateCompanyDTO extends CreateAddressDto {
 
     @IsNotEmpty()
     @IsNumberString()
-    @MinLength(9)
-    @MaxLength(9)
+    @MinLength(9, { message: 'ein must be equal to 9 characters' })
+    @MaxLength(9, { message: 'ein must be equal to 9 characters' })
     ein: string;
 
     @IsNotEmpty()
