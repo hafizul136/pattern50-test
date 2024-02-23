@@ -16,18 +16,18 @@ export class MongooseHelper {
         MongooseHelper.instance = MongooseHelper.instance || new MongooseHelper();
         return MongooseHelper.instance;
     }
-    async isValidMongooseId(id: mongoose.Types.ObjectId | string): Promise<void> {
+     isValidMongooseId(id: mongoose.Types.ObjectId | string):void {
         let isValidMongooseId = mongoose.Types.ObjectId.isValid(id);
         if (!isValidMongooseId) {
             ExceptionHelper.getInstance().defaultError("Invalid id", "invalid_id", HttpStatus.BAD_REQUEST)
         }
     }
-    async isNotValidMongooseIdThenMakeItNull(id: mongoose.Types.ObjectId): Promise<boolean | mongoose.Types.ObjectId> {
+    isNotValidMongooseIdThenMakeItNull(id: mongoose.Types.ObjectId):boolean | mongoose.Types.ObjectId {
         let isValidMongooseId = mongoose.Types.ObjectId.isValid(id);
         if (!isValidMongooseId) return null;
         return id
     }
-    async makeMongooseId(id: string): Promise<mongoose.Types.ObjectId> {
+    makeMongooseId(id: string): mongoose.Types.ObjectId {
         if (NestHelper.getInstance().isEmpty(id)) {
             return null;
         }

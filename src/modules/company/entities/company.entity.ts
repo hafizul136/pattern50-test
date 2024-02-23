@@ -27,14 +27,14 @@ export class Company {
     // @Prop({ type: String })
     // logoUrl: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: 'Address' })
+    @Prop({ type: mongoose.Types.ObjectId, ref: 'Address', required: true })
     addressId: mongoose.Types.ObjectId;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true, index: true })
     clientId: mongoose.Schema.Types.ObjectId;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'BillingInfo', required: true, index: true })
-    billingInfoId: mongoose.Schema.Types.ObjectId;
+    @Prop({ type: mongoose.Types.ObjectId, ref: 'BillingInfo', required: true })
+    billingInfoId: mongoose.Types.ObjectId;
 
     @Prop({
         type: String,

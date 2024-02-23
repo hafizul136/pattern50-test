@@ -1,4 +1,4 @@
-import { Utils } from '@helpers/utils';
+
 import { Body, Controller, Delete, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
@@ -6,6 +6,7 @@ import { diskStorage } from 'multer';
 import * as path from 'path';
 import { UploadDto } from './dto/upload.dto';
 import { UploadService } from './upload.service';
+import { Utils } from '@common/helpers/utils';
 
 @Controller('upload')
 export class UploadController {

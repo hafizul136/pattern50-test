@@ -1,10 +1,11 @@
 import { EINSecureHelper } from '@common/helpers/EinHelper';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
+import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { DateHelper } from '@common/helpers/date.helper';
+import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { ZipCodeValidator } from '@common/helpers/zipCodeValidator';
-import { AggregationHelper } from '@helpers/aggregation.helper';
-import { ConstructObjectFromDtoHelper } from '@helpers/constructObjectFromDTO';
 import { AddressService } from '@modules/address/services/address.service';
 import { BillingInfoService } from '@modules/billing-info/services/billing-info.service';
 import { DatabaseService } from '@modules/db/database.service';
@@ -12,7 +13,7 @@ import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { appConfig } from 'configuration/app.config';
-import mongoose, { Model, Types, isValidObjectId } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { Company, CompanyDocument } from '../entities/company.entity';
@@ -40,6 +41,14 @@ export class CompanyService {
 
         const billingDTO = await ConstructObjectFromDtoHelper.constructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
+        // const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user);
+        // const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user);
+
+        // Use Promise.all() to create address and billing concurrently
+        // const [address, billingInfo] = await Promise.all([
+        //   this.addressService.create(addressDTO, session),
+        //   this.billingService.create(billingDTO, session)
+        // ]);
         console.time('validationCheck')
         // Assuming these methods return promises
         const zipCodeValidationPromise = ZipCodeValidator.validate(createCompanyDTO?.zipCode);
@@ -67,35 +76,6 @@ export class CompanyService {
       );
     }
   }
-
-
-
-  private validDateCheck(startDate: string, endDate: string) {
-    if (!NestHelper.getInstance().isEmpty(endDate)) {
-      const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
-      if (!isStartDateGreater) {
-        ExceptionHelper.getInstance().defaultError(
-          'StartDate must be greater than Today',
-          'startDate_must_be_greater_than_today',
-          HttpStatus.BAD_REQUEST
-        );
-      }
-      const isEndDateGreater = new DateHelper().isSecondDateGreater(startDate, endDate);
-      if (!isEndDateGreater) {
-        ExceptionHelper.getInstance().defaultError(
-          'EndDate must be greater than StartDate',
-          'endDate_must_be_greater_than_StartDate',
-          HttpStatus.BAD_REQUEST
-        );
-      }
-    }
-  }
-
-  async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
-    return await this.companyModel.find({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
-  }
-
-
   // get company list
   async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<ICompany[]> {
     let aggregate = [];
@@ -139,17 +119,26 @@ export class CompanyService {
     return companies;
   }
 
-  async findOne(id: mongoose.Types.ObjectId): Promise<ICompany> {
-    if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
+  async findOne(id: string): Promise<ICompany> {
+    MongooseHelper.getInstance().isValidMongooseId(id)
+    const oId = MongooseHelper.getInstance().makeMongooseId(id)
+    const aggregate = [
+      { $match: { _id: oId } }
+    ]
+    AggregationHelper.lookupForIdForeignKey(aggregate, 'addresses', 'addressId', 'address')
+    AggregationHelper.lookupForIdForeignKey(aggregate, 'billinginfos', 'billingInfoId', 'billingInfo')
+    AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, 'address')
+    AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, 'billingInfo')
+    const companies = await this.companyModel.aggregate(aggregate)
+    const company = NestHelper.getInstance().arrayFirstOrNull(companies)
+    if (NestHelper.getInstance().isEmpty(company)) {
       ExceptionHelper.getInstance().defaultError(
-        'invalid Company id',
-        'invalid_Company_id',
+        'No company found',
+        'no_company_found',
         HttpStatus.BAD_REQUEST
       );
     }
-    const Company = await this.companyModel.findOne({ _id: id }).exec();
-    console.log({ "Company": Company })
-    return Company;
+    return company;
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDTO): Promise<ICompany> {
@@ -159,7 +148,11 @@ export class CompanyService {
   async remove(id: string): Promise<ICompany> {
     return await this.companyModel.findByIdAndRemove(id).lean();
   }
+  async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
+    return await this.companyModel.find({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
+  }
   //private functions
+
   private async einDuplicateCheck(ein: string) {
     const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
     const companyExistByEIN = await this.companyModel.findOne({ ein: hashedEIN }).lean();
@@ -180,6 +173,27 @@ export class CompanyService {
         'duplicate_email_or_master_email',
         HttpStatus.BAD_REQUEST
       );
+    }
+  }
+
+  private validDateCheck(startDate: string, endDate: string) {
+    if (!NestHelper.getInstance().isEmpty(endDate)) {
+      const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
+      if (!isStartDateGreater) {
+        ExceptionHelper.getInstance().defaultError(
+          'StartDate must be greater than Today',
+          'startDate_must_be_greater_than_today',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      const isEndDateGreater = new DateHelper().isSecondDateGreater(startDate, endDate);
+      if (!isEndDateGreater) {
+        ExceptionHelper.getInstance().defaultError(
+          'EndDate must be greater than StartDate',
+          'endDate_must_be_greater_than_StartDate',
+          HttpStatus.BAD_REQUEST
+        );
+      }
     }
   }
 

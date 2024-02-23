@@ -25,7 +25,7 @@ export class CompanyController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: mongoose.Types.ObjectId): Promise<ICompany> {
+  async findOne(@Param('id') id: string): Promise<ICompany> {
     return await this.companyService.findOne(id);
   }
 
