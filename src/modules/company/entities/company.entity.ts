@@ -39,7 +39,7 @@ export class Company {
     @Prop({
         type: String,
         enum: [StatusEnum],
-        default: StatusEnum.active
+        default: StatusEnum.ACTIVE
     })
     status: string;
 }

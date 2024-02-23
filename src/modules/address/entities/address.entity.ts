@@ -12,20 +12,20 @@ export class Address {
 
     @Prop({ type: String, required: true })
     city: string;
-    
+
     @Prop({ type: String, required: true })
     state: string;
-    
+
     @Prop({ type: String, required: true })
     zipCode: string;
-    
+
     @Prop({ type: String, required: true })
     country: string;
 
     @Prop({
         type: String,
         enum: [StatusEnum],
-        default: StatusEnum.active,
+        default: StatusEnum.ACTIVE,
     })
     status: string
 }

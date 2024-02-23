@@ -35,10 +35,10 @@ export class CompanyService {
       console.time('withTransaction')
       await session.withTransaction(async () => {
         console.time('withTransaction-inside')
-        const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
+        const addressDTO = await ConstructObjectFromDtoHelper.constructCreateAddressObject(createCompanyDTO, user)
         const address = await this.addressService.create(addressDTO, session)
 
-        const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
+        const billingDTO = await ConstructObjectFromDtoHelper.constructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
         console.time('validationCheck')
         // Assuming these methods return promises
@@ -91,7 +91,7 @@ export class CompanyService {
     }
   }
 
-  async findOneByEmail(email: string,masterEmail:string): Promise<ICompany> {
+  async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
     return await this.companyModel.find({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
   }
 

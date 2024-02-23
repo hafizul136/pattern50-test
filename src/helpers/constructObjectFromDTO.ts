@@ -1,10 +1,13 @@
+import { StatusEnum } from "@common/enums/status.enum";
 import { EINSecureHelper } from "@common/helpers/EinHelper";
 import { CreateCompanyDTO } from "@modules/company/dto/create-company.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose from "mongoose";
+import { CreateEmployeeRoleDto } from './../modules/employee-role/dto/create-employee-role.dto';
+import { DateHelper } from "./date.helper";
 
 export class ConstructObjectFromDtoHelper {
-    static async ConstructCreateCompanyObject(user: IUser,createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
+    static async ConstructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
         //hashed EIN 
         let ein: string
         if (createCompanyDTO?.ein) {
@@ -24,7 +27,8 @@ export class ConstructObjectFromDtoHelper {
 
         }
     }
-    static async ConstructCreateAddressObject(createCompanyDto: CreateCompanyDTO, user: IUser) {
+
+    static constructCreateAddressObject(createCompanyDto: CreateCompanyDTO, user: IUser) {
         return {
             addressLine: createCompanyDto?.addressLine ?? "",
             country: createCompanyDto?.country ?? "",
@@ -33,10 +37,21 @@ export class ConstructObjectFromDtoHelper {
             zipCode: createCompanyDto?.zipCode ?? "",
         }
     }
-    static async ConstructCreateBillingInfoObject(createCompanyDto: CreateCompanyDTO, user: IUser) {
+
+    static constructCreateBillingInfoObject(createCompanyDto: CreateCompanyDTO, user: IUser) {
         return {
             startDate: createCompanyDto?.startDate ?? "",
             endDate: createCompanyDto?.endDate ?? "",
+        }
+    }
+
+    static constructEmployeeRoleObj(employeeRoleDto: CreateEmployeeRoleDto) {
+        return {
+            name: employeeRoleDto?.name ?? "",
+            description: employeeRoleDto?.description ?? "",
+            status: StatusEnum.ACTIVE,
+            isDeleted: false,
+            startDate: new DateHelper().now("UTC")
         }
     }
 }
