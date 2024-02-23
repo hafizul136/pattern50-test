@@ -22,8 +22,8 @@ export class CreateAddressDto {
     @IsString({ message: "state must be string" })
     readonly state: string;
 
-    @IsNotEmpty({ message: "zip/postal code should not be  empty" })
-    @TrimAndValidateString({ message: 'zip should not be empty' })
-    @IsString({ message: "zip must be string" })
+    @IsNotEmpty({ message: "zip/postal code should not be empty" })
+    @TrimAndValidateString({ message: 'zip/postal should not be empty' })
+    @IsString({ message: "zip/postal must be string" })
     readonly zipCode: string;
 }
