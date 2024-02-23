@@ -41,6 +41,14 @@ export class CompanyService {
 
         const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
+        // const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user);
+        // const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user);
+
+        // Use Promise.all() to create address and billing concurrently
+        // const [address, billingInfo] = await Promise.all([
+        //   this.addressService.create(addressDTO, session),
+        //   this.billingService.create(billingDTO, session)
+        // ]);
         console.time('validationCheck')
         // Assuming these methods return promises
         const zipCodeValidationPromise = ZipCodeValidator.validate(createCompanyDTO?.zipCode);
@@ -68,7 +76,6 @@ export class CompanyService {
       );
     }
   }
-
   // get company list
   async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<ICompany[]> {
     let aggregate = [];
