@@ -21,5 +21,5 @@ export function Permissions(
         Roles(...roles),
         // UseGuards(AuthGuard('jwt') ,RolesGuard),
         UseGuards(RolesGuard, AuthGuard('jwt'))
-    );
+        );
 }

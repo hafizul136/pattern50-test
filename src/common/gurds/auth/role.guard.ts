@@ -14,7 +14,6 @@ export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector, private jwt: JwtService, private userService: UsersService, private authService: AuthService) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        console.time('RolesGuard')
         let roles = this.reflector.get<string[]>('roles', context.getHandler());
         if (!roles) {
             return true;
@@ -34,9 +33,7 @@ export class RolesGuard implements CanActivate {
             if (NestHelper.getInstance().isEmpty(payload)) {
                 throw new UnauthorizedException();
             }
-            console.time('user')
             const user = await this.userService.findOneData(payload?.userId)
-            console.timeEnd('user')
             if (!user) {
                 return false; // User is not authenticated; deny access
             }
@@ -48,7 +45,6 @@ export class RolesGuard implements CanActivate {
         } else {
             throw new UnauthorizedException();
         }
-        console.timeEnd('RolesGuard')
         return true;
     }
 }

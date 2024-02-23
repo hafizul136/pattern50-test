@@ -14,7 +14,7 @@ export class CompanyController {
 
   @Post()
   @Permissions('company.create')
-  async create(@Body() createCompanyDto: CreateCompanyDTO, @GetUser() user: IUser): Promise<ICompany[]> {
+  async create(@Body() createCompanyDto: CreateCompanyDTO, @GetUser() user: IUser): Promise<ICompany> {
     return await this.companyService.create(createCompanyDto, user);
   }
   // @Query("page") page: number, @Query("size") size: number, @Query("query") query: string

@@ -28,37 +28,31 @@ export class CompanyService {
     private databaseService: DatabaseService,
   ) { }
 
-  async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany[]> {
+  async create(createCompanyDTO: CreateCompanyDTO, user: IUser): Promise<ICompany> {
     try {
-      console.time('all')
       const session = await this.databaseService.startSession();
-      let company: ICompany[];
-      console.time('withTransaction')
+      let companies: ICompany[];
       await session.withTransaction(async () => {
-        console.time('withTransaction-inside')
-        console.time('validationCheck')
         // Assuming these methods return promises
         const zipCodeValidationPromise = ZipCodeValidator.validate(createCompanyDTO?.zipCode);
-        const einDuplicateCheckPromise = this.einDuplicateCheck(createCompanyDTO?.ein);
         const dateCheckPromise = this.validDateCheck(createCompanyDTO?.startDate, createCompanyDTO?.endDate);
-        const emailCheckPromise = this.duplicateEmailCheck(createCompanyDTO?.email, createCompanyDTO?.masterEmail);
-        // Execute all promises concurrently
-        await Promise.all([zipCodeValidationPromise, einDuplicateCheckPromise, dateCheckPromise, emailCheckPromise]);
-        console.timeEnd('validationCheck')
-        const addressDTO = await ConstructObjectFromDtoHelper.constructCreateAddressObject(createCompanyDTO, user)
-        const address = await this.addressService.create(addressDTO, session)
 
-        const billingDTO = await ConstructObjectFromDtoHelper.constructCreateBillingInfoObject(createCompanyDTO, user)
+        const uniqueCheckEmailAndEIN= this.uniqueCheckEmailAndEIN(createCompanyDTO);
+        // Execute all promises concurrently
+        await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
+
+        const addressDTO = ConstructObjectFromDtoHelper.constructCreateAddressObject(createCompanyDTO, user)
+        const billingDTO = ConstructObjectFromDtoHelper.constructCreateBillingInfoObject(createCompanyDTO, user)
+
+        const address = await this.addressService.create(addressDTO, session)
         const billingInfo = await this.billingService.create(billingDTO, session)
 
-        const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
-        company = await this.companyModel.create([companyCreateDTO], { session });
-        console.timeEnd('withTransaction-inside')
-      });
-      console.timeEnd('withTransaction')
+        const companyCreateDTO = await ConstructObjectFromDtoHelper.constructCreateCompanyObject(user, createCompanyDTO, address, billingInfo)
+        companies = await this.companyModel.create([companyCreateDTO], { session });
 
+      });
       session.endSession();
-      console.timeEnd('all')
+      const company = NestHelper.getInstance().arrayFirstOrNull(companies)
       return company;
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
@@ -68,6 +62,24 @@ export class CompanyService {
       );
     }
   }
+  private async uniqueCheckEmailAndEIN(createCompanyDTO: CreateCompanyDTO) {
+    const a = await this.checkDuplicateEmailAndEIN(createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
+    if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
+      ExceptionHelper.getInstance().defaultError(
+        'EIN must be unique',
+        'EIN_must_be_unique',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Duplicate email or master email',
+        'duplicate_email_or_master_email',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   // get company list
   async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<ICompany[]> {
     let aggregate = [];
@@ -141,7 +153,7 @@ export class CompanyService {
     return await this.companyModel.findByIdAndRemove(id).lean();
   }
   async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
-    return await this.companyModel.find({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
+    return await this.companyModel.findOne({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
   }
   //private functions
 
@@ -166,6 +178,31 @@ export class CompanyService {
         HttpStatus.BAD_REQUEST
       );
     }
+  }
+  private async checkDuplicateEmailAndEIN(ein: string, email: string, masterEmail: string) {
+    const emailPipeline = [
+      {
+        $match: {
+          $or: [{ email: email }, { masterEmail: masterEmail }],
+        },
+      },
+    ];
+    const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
+    const einPipeline = [
+      {
+        $match: { ein: hashedEIN },
+      },
+
+    ];
+
+    return this.companyModel.aggregate([
+      {
+        $facet: {
+          byEmail: emailPipeline,
+          byEIN: einPipeline,
+        },
+      },
+    ])
   }
 
   private validDateCheck(startDate: string, endDate: string) {

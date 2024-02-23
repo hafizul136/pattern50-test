@@ -9,7 +9,7 @@ export class BillingInfoController {
   constructor(private readonly billingInfoService: BillingInfoService) { }
 
   @Post()
-  async create(@Body() createBillingInfoDto: CreateBillingInfoDto): Promise<IBillingInfo[]> {
+  async create(@Body() createBillingInfoDto: CreateBillingInfoDto): Promise<IBillingInfo> {
     return await this.billingInfoService.create(createBillingInfoDto);
   }
 
