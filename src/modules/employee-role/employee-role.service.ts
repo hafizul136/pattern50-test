@@ -1,5 +1,5 @@
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
-import { ConstructObjectFromDtoHelper } from '@helpers/constructObjectFromDTO';
+import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { DatabaseService } from '@modules/db/database.service';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
