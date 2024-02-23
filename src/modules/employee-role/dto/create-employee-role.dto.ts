@@ -17,7 +17,7 @@ export class CreateEmployeeRoleDto {
     name: string;
 
     @IsOptional()
-    @ValidateIf((o) => o.description !== "")
+    @ValidateIf((o) => o.description.trim() !== "")
     @IsString()
     @TrimAndValidateString({ message: 'description is empty' })
     @MaxLength(250)
