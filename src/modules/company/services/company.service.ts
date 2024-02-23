@@ -135,6 +135,8 @@ export class CompanyService {
     AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, 'billingInfo')
     const companies = await this.companyModel.aggregate(aggregate)
     const company = NestHelper.getInstance().arrayFirstOrNull(companies)
+    const ein = await EINSecureHelper.decrypt(company?.ein,appConfig?.einHashedSecret);
+    company['ein'] = ein
     if (NestHelper.getInstance().isEmpty(company)) {
       ExceptionHelper.getInstance().defaultError(
         'No company found',
