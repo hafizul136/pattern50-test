@@ -36,7 +36,6 @@ export class CompanyService {
       console.time('withTransaction')
       await session.withTransaction(async () => {
         console.time('withTransaction-inside')
-
         console.time('validationCheck')
         // Assuming these methods return promises
         const zipCodeValidationPromise = ZipCodeValidator.validate(createCompanyDTO?.zipCode);
@@ -46,10 +45,10 @@ export class CompanyService {
         // Execute all promises concurrently
         await Promise.all([zipCodeValidationPromise, einDuplicateCheckPromise, dateCheckPromise, emailCheckPromise]);
         console.timeEnd('validationCheck')
-        const addressDTO = await ConstructObjectFromDtoHelper.ConstructCreateAddressObject(createCompanyDTO, user)
+        const addressDTO = await ConstructObjectFromDtoHelper.constructCreateAddressObject(createCompanyDTO, user)
         const address = await this.addressService.create(addressDTO, session)
 
-        const billingDTO = await ConstructObjectFromDtoHelper.ConstructCreateBillingInfoObject(createCompanyDTO, user)
+        const billingDTO = await ConstructObjectFromDtoHelper.constructCreateBillingInfoObject(createCompanyDTO, user)
         const billingInfo = await this.billingService.create(billingDTO, session)
 
         const companyCreateDTO = await ConstructObjectFromDtoHelper.ConstructCreateCompanyObject(user, createCompanyDTO, address[0], billingInfo[0])
