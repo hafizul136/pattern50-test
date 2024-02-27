@@ -92,7 +92,7 @@ export class AggregationHelper {
             {
                 $project: {
                     _id: 0,
-                    total: '$total.total',
+                    count: '$total.total',
                     data: 1,
                 },
             })
@@ -152,7 +152,7 @@ export class AggregationHelper {
         });
     }
 
-    static getSplittedTimeInInteger(aggregate:unknown[]): void {
+    static getSplittedTimeInInteger(aggregate: unknown[]): void {
         aggregate.push({
             $addFields: {
                 startHour: {

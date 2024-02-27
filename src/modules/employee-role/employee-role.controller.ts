@@ -1,4 +1,5 @@
 import { Permissions } from '@common/decorators/permissions.decorator';
+import { IListQuery } from '@common/interfaces/list-query.interface';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateEmployeeRolesDto } from './dto/create-employee-role.dto';
 import { UpdateEmployeeRoleDto } from './dto/update-employee-role.dto';
@@ -17,7 +18,7 @@ export class EmployeeRoleController {
 
   @Get("list")
   @Permissions("company.create")
-  findAll(@Query() query) {
+  findAll(@Query() query: IListQuery): Promise<{ data?: IEmployeeRole[], count?: number }> {
     return this.employeeRoleService.findAll(query);
   }
 

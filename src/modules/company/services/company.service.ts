@@ -5,6 +5,7 @@ import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { DateHelper } from '@common/helpers/date.helper';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { Utils } from '@common/helpers/utils';
 import { ZipCodeValidator } from '@common/helpers/zipCodeValidator';
 import { AddressService } from '@modules/address/services/address.service';
 import { BillingInfoService } from '@modules/billing-info/services/billing-info.service';
@@ -81,7 +82,7 @@ export class CompanyService {
   }
 
   // get company list
-  async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<ICompany[]> {
+  async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<{ data?: ICompany[], count?: number }> {
     let aggregate = [];
     let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
     if (!query?.page || parseInt(query?.page) < 1) page = 1;
@@ -120,7 +121,7 @@ export class CompanyService {
 
     const companies = await this.companyModel.aggregate(aggregate).exec();
 
-    return companies;
+    return Utils.returnListResponse(companies);
   }
 
   async findOne(id: string): Promise<ICompany> {
