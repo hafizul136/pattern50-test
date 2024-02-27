@@ -15,7 +15,7 @@ import { Role, RoleDocument } from './entities/role.entity';
 import { roleStatusEnum } from './enum/index.enum';
 import { IPermissionData, IRole } from './interfaces/role.interface';
 @Injectable()
-export class RolesService {
+export class RoleService {
   constructor(
     @InjectModel(Permission.name)
     private permissionModel: Model<PermissionDocument>,

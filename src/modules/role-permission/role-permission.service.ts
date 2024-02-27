@@ -7,7 +7,7 @@ import mongoose, { Model, isValidObjectId } from 'mongoose';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
 import { PermissionsService } from '../permissions/permissions.service';
-import { RolesService } from '../roles/roles.service';
+import { RoleService } from '../role/role.service';
 import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
 import { RolePermission, RolePermissionDocument } from './entities/role-permission.entity';
 import { IRolePermission } from './interfaces/rolePermission.interface';
@@ -18,7 +18,7 @@ export class RolePermissionService {
     @InjectModel(RolePermission.name)
     private rolePermissionModel: Model<RolePermissionDocument>,
     private readonly permissionsService: PermissionsService,
-    private readonly rolesService: RolesService,
+    private readonly rolesService: RoleService,
     private readonly userRoleService: UserRoleService,
   ) { }
 

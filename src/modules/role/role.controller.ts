@@ -3,13 +3,13 @@ import mongoose from 'mongoose';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { IPermissionData, IRole } from './interfaces/role.interface';
-import { RolesService } from './roles.service';
+import { RoleService } from './role.service';
 
 @Controller('roles')
 // @UseGuards(AuthGuard('jwt'))
 // @Permissions('read:resource') // Specify required permissions
-export class RolesController {
-  constructor(private readonly rolesService: RolesService) { }
+export class RoleController {
+  constructor(private readonly rolesService: RoleService) { }
 
   @Post()
   // @Permissions('role.create')

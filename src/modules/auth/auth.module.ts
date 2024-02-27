@@ -1,11 +1,12 @@
+import { AccountingRMQClientModule } from '@common/rabbitMQ/client/accounting.rmq.client.module';
 import { ClientService } from '@modules/client/client.service';
 import { Client, ClientSchema } from '@modules/client/entities/client.entity';
 import { Permission, PermissionSchema } from '@modules/permissions/entities/permission.entity';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 import { RolePermission, RolePermissionSchema } from '@modules/role-permission/entities/role-permission.entity';
 import { RolePermissionService } from '@modules/role-permission/role-permission.service';
-import { Role, RoleSchema } from '@modules/roles/entities/role.entity';
-import { RolesService } from '@modules/roles/roles.service';
+import { Role, RoleSchema } from '@modules/role/entities/role.entity';
+import { RoleService } from '@modules/role/role.service';
 import { UserRole, UserRoleSchema } from '@modules/user-role/entities/user-role.entity';
 import { UserRoleService } from '@modules/user-role/user-role.service';
 import { User, UserSchema } from '@modules/users/entities/user.entity';
@@ -18,7 +19,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
-import { AccountingRMQClientModule } from '@common/rabbitMQ/client/accounting.rmq.client.module';
 
 @Module({
     imports: [
@@ -35,6 +35,6 @@ import { AccountingRMQClientModule } from '@common/rabbitMQ/client/accounting.rm
         UsersModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService, UsersService, AccessTokenStrategy, RefreshTokenStrategy, UserRoleService, RolesService, RolePermissionService, PermissionsService, ClientService],
+    providers: [AuthService, UsersService, AccessTokenStrategy, RefreshTokenStrategy, UserRoleService, RoleService, RolePermissionService, PermissionsService, ClientService],
 })
 export class AuthModule { }

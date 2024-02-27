@@ -35,9 +35,9 @@ export class CompanyController {
     return await this.companyService.update(id, updateCompanyDto,user);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<ICompany> {
-    return await this.companyService.remove(id);
-  }
+  // @Delete(':id')
+  // async remove(@Param('id') id: string): Promise<ICompany> {
+  //   return await this.companyService.remove(id);
+  // }
   
 }

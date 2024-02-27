@@ -1,16 +1,17 @@
 import { Permission, PermissionSchema } from '@modules/permissions/entities/permission.entity';
 import { PermissionsService } from '@modules/permissions/permissions.service';
-import { Role, RoleSchema } from '@modules/roles/entities/role.entity';
-import { RolesService } from '@modules/roles/roles.service';
-import { UserRoleService } from '@modules/user-role/user-role.service';
+
 import { UserRole, UserRoleSchema } from '@modules/user-role/entities/user-role.entity';
+import { UserRoleService } from '@modules/user-role/user-role.service';
 import { User, UserSchema } from '@modules/users/entities/user.entity';
+import { UsersService } from '@modules/users/user.service';
 import { Module } from '@nestjs/common';
-import { RolePermissionService } from './role-permission.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RolePermission, RolePermissionSchema } from './entities/role-permission.entity';
 import { RolePermissionController } from './role-permission.controller';
-import { UsersService } from '@modules/users/user.service';
+import { RolePermissionService } from './role-permission.service';
+import { Role, RoleSchema } from '@modules/role/entities/role.entity';
+import { RoleService } from '@modules/role/role.service';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { UsersService } from '@modules/users/user.service';
   providers: [
     RolePermissionService,
     PermissionsService,
-    RolesService,
+    RoleService,
     UserRoleService,
     UsersService
   ]

@@ -1,7 +1,7 @@
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { mainServiceRolePermissions } from '@common/rolePermissions';
-import { RolesService } from '@modules/roles/roles.service';
+import { RoleService } from '@modules/role/role.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -17,7 +17,7 @@ export class ClientService {
   constructor(
     @InjectModel(Client.name)
     private clientModel: Model<ClientDocument>,
-    private readonly roleService: RolesService,
+    private readonly roleService: RoleService,
   ) { }
 
   async validateClientCredentials(clientId: string, clientSecret: string): Promise<Client | null> {
@@ -58,7 +58,7 @@ export class ClientService {
 
   async getSecret(): Promise<string> {
     const id = uuidv4();
-    return id; 
+    return id;
   }
 
   async findAll(): Promise<IClient[]> {

@@ -1,7 +1,7 @@
 import { mainServiceRolePermissions } from '@common/rolePermissions';
 import { PermissionsService } from '@modules/permissions/permissions.service';
-import { IRole } from '@modules/roles/interfaces/role.interface';
-import { RolesService } from '@modules/roles/roles.service';
+import { IRole } from '@modules/role/interfaces/role.interface';
+import { RoleService } from '@modules/role/role.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UserTypeEnum } from '@modules/users/enum/index.enum';
 import { IUser } from '@modules/users/interfaces/user.interface';
@@ -28,7 +28,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private readonly userRoleService: UserRoleService,
-    private readonly roleService: RolesService,
+    private readonly roleService: RoleService,
     private readonly permissionService: PermissionsService,
     @Inject('ACCOUNTING_SERVICE_RMQ')
     private readonly accountingServiceRMQClient: ClientRMQ

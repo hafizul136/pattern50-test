@@ -12,7 +12,7 @@ import { IPermission } from './interfaces/permission.interface';
 // import { IRole } from '@modules/roles/interfaces/role.interface';
 import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { RolePermission, RolePermissionDocument } from '@modules/role-permission/entities/role-permission.entity';
-import { Role, RoleDocument } from '@modules/roles/entities/role.entity';
+import { Role, RoleDocument } from '@modules/role/entities/role.entity';
 
 @Injectable()
 export class PermissionsService {
