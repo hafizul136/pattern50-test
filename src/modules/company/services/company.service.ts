@@ -19,7 +19,6 @@ import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { Company, CompanyDocument } from '../entities/company.entity';
 import { ICompany } from '../interfaces/company.interface';
-import { populate } from 'dotenv';
 @Injectable()
 export class CompanyService {
   constructor(
@@ -169,23 +168,23 @@ export class CompanyService {
 
   async update(id: string, updateCompanyDto: UpdateCompanyDTO, user: IUser): Promise<ICompany> {
     //check company existence
-    const company: ICompany = await this.findOne(id)
+    const existingCompany: ICompany = await this.findOne(id)
     // Assuming these methods return promises
     const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
     const dateCheckPromise = this.validDateCheck(updateCompanyDto?.startDate, updateCompanyDto?.endDate);
 
-    const uniqueCheckEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(company?._id, updateCompanyDto);
+    const uniqueCheckEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(existingCompany?._id, updateCompanyDto);
     // Execute all promises concurrently
     await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
 
-    const addressDTO = ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, company)
-    const billingDTO = ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, company)
+    const addressDTO = ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, existingCompany)
+    const billingDTO = ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, existingCompany)
 
-    await this.addressService.update(company?.addressId, addressDTO)
-    await this.billingService.update(company?.billingInfoId, billingDTO,)
-    const companyDTO = await ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, company)
-    await this.companyModel.findByIdAndUpdate(id, companyDTO, { new: true }).lean();
-    return await this.findOne(id)
+    const address = await this.addressService.update(existingCompany?.addressId, addressDTO)
+    const billingInfo = await this.billingService.update(existingCompany?.billingInfoId, billingDTO,)
+    const companyDTO = await ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, existingCompany)
+    const company = await this.companyModel.findByIdAndUpdate(id, companyDTO, { new: true }).lean();
+    return { ...company, address, billingInfo }
   }
 
   async remove(id: string): Promise<ICompany> {
