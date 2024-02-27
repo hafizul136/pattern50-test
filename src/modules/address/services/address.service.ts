@@ -43,8 +43,6 @@ export class AddressService {
   }
 
   async update(id: Types.ObjectId, updateAddressDto: UpdateAddressDto): Promise<IAddress> {
-    const company = await this.addressModel.findOne({ _id: id }).lean().exec();
-    if (!company) ExceptionHelper.getInstance().noDataFound()
     return await this.addressModel.findByIdAndUpdate(id, updateAddressDto, { new: true }).lean();
   }
 

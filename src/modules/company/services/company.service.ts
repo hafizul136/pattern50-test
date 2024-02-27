@@ -167,23 +167,35 @@ export class CompanyService {
 
   async update(id: string, updateCompanyDto: UpdateCompanyDTO, user: IUser): Promise<ICompany> {
     //check company existence
+    console.time('existingCompany')
     const existingCompany: ICompany = await this.findOne(id)
+    console.timeEnd('existingCompany')
     // Assuming these methods return promises
+    console.time('validate')
     const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
     const dateCheckPromise = this.validDateCheck(updateCompanyDto?.startDate, updateCompanyDto?.endDate);
-
     const uniqueCheckEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(existingCompany?._id, updateCompanyDto);
     // Execute all promises concurrently
     await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
+    console.timeEnd('validate')
 
-    const addressDTO = ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, existingCompany)
-    const billingDTO = ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, existingCompany)
+    // Construct update DTOs concurrently
+    console.time('DTOgenerate')
+    const [addressDTO, billingDTO, companyDTO] = await Promise.all([
+      ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, existingCompany),
+      ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, existingCompany),
+      ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, existingCompany)
+    ]);
+    console.timeEnd('DTOgenerate')
 
-    const address = await this.addressService.update(existingCompany?.addressId, addressDTO)
-    const billingInfo = await this.billingService.update(existingCompany?.billingInfoId, billingDTO)
-
-    const companyDTO = await ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, existingCompany)
-    const company = await this.companyModel.findByIdAndUpdate(id, companyDTO, { new: true }).lean();
+    // Update address, billing info, and company concurrently
+    console.time('update')
+    const [address, billingInfo, company] = await Promise.all([
+      this.addressService.update(existingCompany?.addressId, addressDTO),
+      this.billingService.update(existingCompany?.billingInfoId, billingDTO),
+      await this.companyModel.findByIdAndUpdate(id, companyDTO, { new: true }).lean()
+    ]);
+    console.timeEnd('update')
     return { ...company, address, billingInfo }
   }
 
