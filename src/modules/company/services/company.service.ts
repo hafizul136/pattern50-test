@@ -205,18 +205,18 @@ export class CompanyService {
   async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
     return await this.companyModel.findOne({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
   }
-  // async findOneById(id: Types.ObjectId): Promise<ICompany> {
-  //   const company = await this.companyModel.findOne({ _id: id }).lean()
-  //   if (NestHelper.getInstance().isEmpty(company)) {
-  //     ExceptionHelper.getInstance().defaultError(
-  //       'No company found',
-  //       'no_company_found',
-  //       HttpStatus.BAD_REQUEST
-  //     );
+  async findOneById(id: Types.ObjectId): Promise<ICompany> {
+    const company = await this.companyModel.findOne({ _id: id }).lean()
+    if (NestHelper.getInstance().isEmpty(company)) {
+      ExceptionHelper.getInstance().defaultError(
+        'No company found',
+        'no_company_found',
+        HttpStatus.BAD_REQUEST
+      );
 
-  //   }
-  //   return company;
-  // }
+    }
+    return company;
+  }
   //private functions
 
   private async einDuplicateCheck(ein: string) {

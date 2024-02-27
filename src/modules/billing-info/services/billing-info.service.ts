@@ -37,7 +37,7 @@ export class BillingInfoService {
   }
 
   async update(id: Types.ObjectId, updateBillingInfoDto: UpdateBillingInfoDTO): Promise<IBillingInfo> {
-    return await this.billingInfoModel.findOneAndUpdate(id, updateBillingInfoDto)
+    return await this.billingInfoModel.findOneAndUpdate(id, updateBillingInfoDto).lean()
   }
 
   remove(id: number) {
