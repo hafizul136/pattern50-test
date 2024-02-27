@@ -1,6 +1,8 @@
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
+import { NestHelper } from '@common/helpers/NestHelper';
 import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
+import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { DatabaseService } from '@modules/db/database.service';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,6 +15,7 @@ import { IEmployeeRole, IEmployeeRoles } from './interface/employee-role.interfa
 @Injectable()
 export class EmployeeRoleService {
   private logger = new Logger(EmployeeRole.name);
+
   constructor(
     @InjectModel(EmployeeRole.name)
     private readonly employeeRoleModel: Model<EmployeeRoleDocument>,
@@ -20,12 +23,15 @@ export class EmployeeRoleService {
     private readonly databaseService: DatabaseService
   ) { }
 
+  // create roles
   async create(createEmployeeRolesDto: CreateEmployeeRolesDto): Promise<IEmployeeRoles> {
+    // construct objects
     const employeeObjects = createEmployeeRolesDto.roles.map(role =>
       ConstructObjectFromDtoHelper.constructEmployeeRoleObj(role)
     );
 
     try {
+      // create in bulk operation
       const roles: IEmployeeRole[] = await this.employeeRoleModel.create(employeeObjects);
 
       return {
@@ -41,6 +47,7 @@ export class EmployeeRoleService {
     }
   }
 
+  // get list of employee roles
   async findAll(query) {
     let aggregate = [];
     let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
@@ -75,12 +82,30 @@ export class EmployeeRoleService {
     return companies;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employeeRole`;
+  async findOne(id: string): Promise<IEmployeeRole> {
+    new MongooseHelper().isValidMongooseId(id);
+
+    const employeeRole = await this.employeeRoleModel.findById(id);
+
+    if (NestHelper.getInstance().isEmpty(employeeRole)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Role not found",
+        "role_not_found",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    return employeeRole;
   }
 
-  update(id: number, updateEmployeeRoleDto: UpdateEmployeeRoleDto) {
-    return `This action updates a #${id} employeeRole`;
+  // update employee role status
+  async update(id: string, updateEmployeeRoleDto: UpdateEmployeeRoleDto): Promise<IEmployeeRole> {
+    // validate if role exists by the id
+    await this.findOne(id);
+
+    const updatedRole = await this.employeeRoleModel.findByIdAndUpdate(id, { status: updateEmployeeRoleDto.status.trim() }, { new: true });
+
+    return updatedRole;
   }
 
   remove(id: number) {
