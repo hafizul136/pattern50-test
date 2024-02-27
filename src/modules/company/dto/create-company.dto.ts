@@ -4,7 +4,7 @@ import { CreateAddressDto } from "@modules/address/dto/create-address.dto";
 import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString, MaxLength, MinLength, Validate } from "class-validator";
 
 export class CreateCompanyDTO extends CreateAddressDto {
-    @IsNotEmpty({ message: 'name should not be empty' })
+    // @IsNotEmpty({ message: 'name should not be empty' })
     @TrimAndValidateString({ message: "name should not be empty" })
     @IsString({ message: "name must be string" })
     readonly name: string;
