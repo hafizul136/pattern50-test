@@ -1,7 +1,7 @@
 import { NestHelper } from '@common/helpers/NestHelper';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { ExceptionHelper } from '../../../common/helpers/ExceptionHelper';
 import { CreateAddressDto } from '../dto/create-address.dto';
 import { UpdateAddressDto } from '../dto/update-address.dto';
@@ -42,7 +42,7 @@ export class AddressService {
     return Address
   }
 
-  async update(id: mongoose.Types.ObjectId, updateAddressDto: UpdateAddressDto): Promise<IAddress> {
+  async update(id: Types.ObjectId, updateAddressDto: UpdateAddressDto): Promise<IAddress> {
     const company = await this.addressModel.findOne({ _id: id }).lean().exec();
     if (!company) ExceptionHelper.getInstance().noDataFound()
     return await this.addressModel.findByIdAndUpdate(id, updateAddressDto, { new: true }).lean();

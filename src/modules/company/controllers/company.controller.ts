@@ -1,7 +1,7 @@
 import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import mongoose from 'mongoose';
 import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
@@ -31,9 +31,9 @@ export class CompanyController {
   }
 
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDTO): Promise<ICompany> {
-    return await this.companyService.update(id, updateCompanyDto);
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDTO,@GetUser() user:IUser): Promise<ICompany> {
+    return await this.companyService.update(id, updateCompanyDto,user);
   }
 
   @Delete(':id')
