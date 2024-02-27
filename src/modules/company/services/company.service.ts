@@ -152,17 +152,16 @@ export class CompanyService {
     AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, 'address')
     AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, 'billingInfo')
     const companies = await this.companyModel.aggregate(aggregate)
-    const company = NestHelper.getInstance().arrayFirstOrNull(companies)
-    const ein = await EINSecureHelper.decrypt(company?.ein, appConfig?.einHashedSecret);
-    company['ein'] = ein
-    if (NestHelper.getInstance().isEmpty(company)) {
+    if (NestHelper.getInstance().isEmpty(companies)) {
       ExceptionHelper.getInstance().defaultError(
         'No company found',
         'no_company_found',
         HttpStatus.BAD_REQUEST
       );
-
     }
+    const company = NestHelper.getInstance().arrayFirstOrNull(companies)
+    const ein = await EINSecureHelper.decrypt(company?.ein, appConfig?.einHashedSecret);
+    company['ein'] = ein
     return company;
   }
 
@@ -181,7 +180,8 @@ export class CompanyService {
     const billingDTO = ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, existingCompany)
 
     const address = await this.addressService.update(existingCompany?.addressId, addressDTO)
-    const billingInfo = await this.billingService.update(existingCompany?.billingInfoId, billingDTO,)
+    const billingInfo = await this.billingService.update(existingCompany?.billingInfoId, billingDTO)
+
     const companyDTO = await ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, existingCompany)
     const company = await this.companyModel.findByIdAndUpdate(id, companyDTO, { new: true }).lean();
     return { ...company, address, billingInfo }
