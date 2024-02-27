@@ -23,10 +23,10 @@ export class RolesGuard implements CanActivate {
         const au = headers.authorization;
         if (!NestHelper.getInstance().isEmpty(au)) {
             const token = au.split('Bearer ');
-            try{
+            try {
                 this.jwt.verify(token[1], { secret: appConfig.jwtAccessToken });
-            }catch(err){
-                ExceptionHelper.getInstance().defaultError('Invalid token', 'invalid_token', HttpStatus.BAD_REQUEST)
+            } catch (err) {
+                ExceptionHelper.getInstance().defaultError('Invalid token', 'invalid_token', HttpStatus.UNAUTHORIZED)
             }
 
             const payload: any = this.jwt.decode(token[1]);

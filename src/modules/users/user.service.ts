@@ -44,7 +44,7 @@ export class UsersService {
       );
     }
 
-    const permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == user.userType);
+    const permissionsObject = mainServiceRolePermissions().filter(role => role.roleName == user.userType);
 
     const scopes = permissionsObject[0].permissions
 
@@ -54,7 +54,7 @@ export class UsersService {
   }
 
   async findOneData(id: string): Promise<IUser> {
-    const objId = await MongooseHelper.getInstance().makeMongooseId(id);
+    const objId = MongooseHelper.getInstance().makeMongooseId(id);
     if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
       ExceptionHelper.getInstance().defaultError(
         'invalid role id',

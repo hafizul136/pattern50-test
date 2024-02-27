@@ -15,6 +15,7 @@ export interface ICommonConfig {
 export interface IConfig extends ICommonConfig {
     port: number;
     mongodbURL: string
+    dbName: string
     jwtAccessToken: string
     jwtRefreshToken: string
     jwtAccessTokenExpire: string
@@ -38,6 +39,7 @@ const commonConfig = (): ICommonConfig => {
 const getAppConfig = (): IConfig => {
     const port = parseInt(process.env.APP_PORT);
     const mongodbURL = process.env.MONGODB_URL;
+    const dbName = process.env.DB_NAME;
     const jwtAccessToken = process.env.JWT_ACCESS_SECRET;
     const jwtRefreshToken = process.env.JWT_REFRESH_SECRET;
     const jwtAccessTokenExpire = process.env.JWT_ACCESS_SECRET_EXPIRE;
@@ -49,6 +51,7 @@ const getAppConfig = (): IConfig => {
 
     if (!port) throw new Error('port must be specified');
     if (!mongodbURL) throw new Error('mongodbURL must be specified');
+    if (!dbName) throw new Error('dbName must be specified');
     if (!jwtAccessToken) throw new Error('jwtAccessToken must be specified');
     if (!jwtAccessTokenExpire) throw new Error('jwtAccessTokenExpire must be specified');
     if (!jwtRefreshTokenExpire) throw new Error('jwtRefreshTokenExpire must be specified');
@@ -60,6 +63,7 @@ const getAppConfig = (): IConfig => {
         ...commonConfig(),
         port,
         mongodbURL,
+        dbName,
         jwtAccessToken,
         jwtRefreshToken,
         jwtAccessTokenExpire,

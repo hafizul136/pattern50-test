@@ -40,7 +40,7 @@ export class PermissionsService {
       const existPermission = await this.permissionModel.find({ name: permission }).lean();
 
       if (NestHelper.getInstance().isEmpty(existPermission)) {
-        const createdPermission = await this.permissionModel.create({ name: permission, status: StatusEnum.active, details: "permissions", clientId: body?.clientId });
+        const createdPermission = await this.permissionModel.create({ name: permission, status: StatusEnum.ACTIVE, details: "permissions", clientId: body?.clientId });
 
         if (NestHelper.getInstance().isEmpty(createdPermission))
           ExceptionHelper.getInstance().defaultError(
