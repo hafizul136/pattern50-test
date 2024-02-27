@@ -166,29 +166,17 @@ export class CompanyService {
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDTO, user: IUser): Promise<ICompany> {
-    //check company existence
-    console.time('existingCompany')
     MongooseHelper.getInstance().isValidMongooseId(id)
     const oId = MongooseHelper.getInstance().makeMongooseId(id)
+    //check company existence
     const existingCompany: ICompany = await this.findOneById(oId)
-    console.timeEnd('existingCompany')
+
     // Assuming these methods return promises
-    console.time('validate')
     const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
     const dateCheckPromise = this.validDateCheck(updateCompanyDto?.startDate, updateCompanyDto?.endDate);
     const uniqueCheckEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(existingCompany?._id, updateCompanyDto);
     // Execute all promises concurrently
     await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
-    console.timeEnd('validate')
-
-    // // Construct update DTOs concurrently
-    // console.time('DTOgenerate')
-    // const [addressDTO, billingDTO, companyDTO] = await Promise.all([
-    //   ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, existingCompany),
-    //   ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, existingCompany),
-    //   ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, existingCompany)
-    // ]);
-    // console.timeEnd('DTOgenerate')
 
     // Update address, billing info, and company concurrently
     console.time('update')
