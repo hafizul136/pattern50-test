@@ -85,7 +85,7 @@ export class EmployeeRoleService {
   async findOne(id: string): Promise<IEmployeeRole> {
     new MongooseHelper().isValidMongooseId(id);
 
-    const employeeRole = await this.employeeRoleModel.findById(id);
+    const employeeRole = await this.employeeRoleModel.findById(id).lean();
 
     if (NestHelper.getInstance().isEmpty(employeeRole)) {
       ExceptionHelper.getInstance().defaultError(
@@ -101,7 +101,15 @@ export class EmployeeRoleService {
   // update employee role status
   async update(id: string, updateEmployeeRoleDto: UpdateEmployeeRoleDto): Promise<IEmployeeRole> {
     // validate if role exists by the id
-    await this.findOne(id);
+    const employeeRole: IEmployeeRole = await this.findOne(id);
+
+    if (employeeRole?.status === updateEmployeeRoleDto?.status) {
+      ExceptionHelper.getInstance().defaultError(
+        `Role already ${employeeRole.status}`,
+        "conflicts",
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
     const updatedRole = await this.employeeRoleModel.findByIdAndUpdate(id, { status: updateEmployeeRoleDto.status.trim() }, { new: true });
 
