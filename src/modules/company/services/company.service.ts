@@ -144,11 +144,30 @@ export class CompanyService {
         'no_company_found',
         HttpStatus.BAD_REQUEST
       );
+
     }
     return company;
   }
 
-  async update(id: string, updateCompanyDto: UpdateCompanyDTO): Promise<ICompany> {
+  async update(id: string, updateCompanyDto: UpdateCompanyDTO,user:IUser): Promise<ICompany> {
+    //check company existence
+    MongooseHelper.getInstance().isValidMongooseId(id)
+    const oId = MongooseHelper.getInstance().makeMongooseId(id)
+    const company:ICompany = await this.findOneById(oId)
+    // Assuming these methods return promises
+    const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
+    const dateCheckPromise = this.validDateCheck(updateCompanyDto?.startDate, updateCompanyDto?.endDate);
+
+    const uniqueCheckEmailAndEIN = this.uniqueCheckEmailAndEIN(updateCompanyDto);
+    // Execute all promises concurrently
+    await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
+
+    const addressDTO = ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto,company)
+    const billingDTO = ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, company)
+
+    const address = await this.addressService.update(company?._id, addressDTO)
+    const billingInfo = await this.billingService.update(company?._id, billingDTO,)
+    const companyCreateDTO = await ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, company)
     return await this.companyModel.findByIdAndUpdate(id, updateCompanyDto, { new: true }).lean();
   }
 
@@ -157,6 +176,18 @@ export class CompanyService {
   }
   async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
     return await this.companyModel.findOne({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
+  }
+  async findOneById(id: Types.ObjectId): Promise<ICompany> {
+    const company = await this.companyModel.findOne({ _id: id }).lean()
+    if (NestHelper.getInstance().isEmpty(company)) {
+      ExceptionHelper.getInstance().defaultError(
+        'No company found',
+        'no_company_found',
+        HttpStatus.BAD_REQUEST
+      );
+
+    }
+    return company;
   }
   //private functions
 

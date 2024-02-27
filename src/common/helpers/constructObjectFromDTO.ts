@@ -5,6 +5,7 @@ import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employe
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
+import { ICompany } from "@modules/company/interfaces/company.interface";
 
 export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     static async constructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
@@ -27,6 +28,26 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
 
         }
     }
+    static async constructUpdateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, company: ICompany) {
+        //hashed EIN 
+        let ein: string = createCompanyDTO?.ein ?? createCompanyDTO?.ein
+        if (createCompanyDTO?.ein) {
+            const hashedEin = await EINSecureHelper.getEinHashed(createCompanyDTO?.ein);
+            ein = hashedEin;
+        }
+        return {
+            name: createCompanyDTO?.name ?? company?.name,
+            email: createCompanyDTO?.email ?? company?.email,
+            masterEmail: createCompanyDTO?.masterEmail ?? company?.masterEmail,
+            phone: createCompanyDTO?.phone ?? company?.phone,
+            ein: ein ?? company?.ein,
+            userId: new mongoose.Types.ObjectId(user?.userId),
+            addressId: company?.address?._id,
+            billingInfoId: company?.billingInfo?._id,
+            clientId: new mongoose.Types.ObjectId(user?.clientId)
+
+        }
+    }
 
     static constructCreateAddressObject(createCompanyDto: CreateCompanyDTO) {
         return {
@@ -37,11 +58,26 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             zipCode: createCompanyDto?.zipCode ?? "",
         }
     }
+    static constructUpdateAddressObject(updateCompanyDto: CreateCompanyDTO,company:ICompany) {
+        return {
+            addressLine: updateCompanyDto?.addressLine ?? company?.address?.addressLine,
+            country: updateCompanyDto?.country ?? company?.address?.country, 
+            city: updateCompanyDto?.city ?? company?.address?.city, 
+            state: updateCompanyDto?.state ?? company?.address?.state,
+            zipCode: updateCompanyDto?.zipCode ?? company?.address?.zipCode,
+        }
+    }
 
     static constructCreateBillingInfoObject(createCompanyDto: CreateCompanyDTO) {
         return {
             startDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.startDate)) ?? "",
             endDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.endDate)) ?? "",
+        }
+    }
+    static constructUpdateBillingInfoObject(createCompanyDto: CreateCompanyDTO,company:ICompany) {
+        return {
+            startDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.startDate)) ?? company?.billingInfo?.startDate,
+            endDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.endDate)) ?? company?.billingInfo?.endDate,
         }
     }
 

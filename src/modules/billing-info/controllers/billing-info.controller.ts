@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { CreateBillingInfoDto } from '../dto/create-billing-info.dto';
 import { UpdateBillingInfoDTO } from '../dto/update-billing-info.dto';
 import { IBillingInfo } from '../interfaces/billing.interface';
@@ -24,8 +25,8 @@ export class BillingInfoController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBillingInfoDto: UpdateBillingInfoDTO) {
-    return this.billingInfoService.update(+id, updateBillingInfoDto);
+  async update(@Param('id') id: Types.ObjectId, @Body() updateBillingInfoDto: UpdateBillingInfoDTO): Promise<IBillingInfo> {
+    return await this.billingInfoService.update(id, updateBillingInfoDto);
   }
 
   @Delete(':id')

@@ -30,8 +30,8 @@ export class Company {
     @Prop({ type: mongoose.Types.ObjectId, ref: 'Address', required: true })
     addressId: mongoose.Types.ObjectId;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true, index: true })
-    clientId: mongoose.Schema.Types.ObjectId;
+    @Prop({ type: mongoose.Types.ObjectId, ref: 'Client', required: true, index: true })
+    clientId: mongoose.Types.ObjectId;
 
     @Prop({ type: mongoose.Types.ObjectId, ref: 'BillingInfo', required: true })
     billingInfoId: mongoose.Types.ObjectId;
