@@ -168,7 +168,9 @@ export class CompanyService {
   async update(id: string, updateCompanyDto: UpdateCompanyDTO, user: IUser): Promise<ICompany> {
     //check company existence
     console.time('existingCompany')
-    const existingCompany: ICompany = await this.findOne(id)
+    MongooseHelper.getInstance().isValidMongooseId(id)
+    const oId = MongooseHelper.getInstance().makeMongooseId(id)
+    const existingCompany: ICompany = await this.findOneById(oId)
     console.timeEnd('existingCompany')
     // Assuming these methods return promises
     console.time('validate')
@@ -179,21 +181,21 @@ export class CompanyService {
     await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
     console.timeEnd('validate')
 
-    // Construct update DTOs concurrently
-    console.time('DTOgenerate')
-    const [addressDTO, billingDTO, companyDTO] = await Promise.all([
-      ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, existingCompany),
-      ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, existingCompany),
-      ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, existingCompany)
-    ]);
-    console.timeEnd('DTOgenerate')
+    // // Construct update DTOs concurrently
+    // console.time('DTOgenerate')
+    // const [addressDTO, billingDTO, companyDTO] = await Promise.all([
+    //   ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, existingCompany),
+    //   ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, existingCompany),
+    //   ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, existingCompany)
+    // ]);
+    // console.timeEnd('DTOgenerate')
 
     // Update address, billing info, and company concurrently
     console.time('update')
     const [address, billingInfo, company] = await Promise.all([
-      this.addressService.update(existingCompany?.addressId, addressDTO),
-      this.billingService.update(existingCompany?.billingInfoId, billingDTO),
-      await this.companyModel.findByIdAndUpdate(id, companyDTO, { new: true }).lean()
+      this.addressService.update(existingCompany?.addressId, updateCompanyDto),
+      this.billingService.update(existingCompany?.billingInfoId, updateCompanyDto),
+      await this.companyModel.findByIdAndUpdate(id, updateCompanyDto, { new: true }).lean()
     ]);
     console.timeEnd('update')
     return { ...company, address, billingInfo }
