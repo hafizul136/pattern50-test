@@ -1,5 +1,5 @@
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsString } from "class-validator";
 
 export class CreateAddressDto {
     // @IsNotEmpty({ message: 'address should not be empty' })
@@ -23,7 +23,7 @@ export class CreateAddressDto {
     readonly state: string;
 
     // @IsNotEmpty({ message: "zip/postal code should not be empty" })
-    @TrimAndValidateString({ message: 'zip/postal should not be empty' })
-    @IsString({ message: "zip/postal must be string" })
+    @TrimAndValidateString({ message: 'zip or postal code should not be empty' })
+    @IsString({ message: "zip or postal code must be string" })
     readonly zipCode: string;
 }

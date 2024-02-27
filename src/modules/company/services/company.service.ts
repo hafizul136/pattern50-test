@@ -174,18 +174,16 @@ export class CompanyService {
     // Assuming these methods return promises
     const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
     const dateCheckPromise = this.validDateCheck(updateCompanyDto?.startDate, updateCompanyDto?.endDate);
-    const uniqueCheckEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(existingCompany?._id, updateCompanyDto);
+    const uniqueCheckCompanyEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(existingCompany?._id, updateCompanyDto);
     // Execute all promises concurrently
-    await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
+    await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckCompanyEmailAndEIN]);
 
     // Update address, billing info, and company concurrently
-    console.time('update')
     const [address, billingInfo, company] = await Promise.all([
       this.addressService.update(existingCompany?.addressId, updateCompanyDto),
       this.billingService.update(existingCompany?.billingInfoId, updateCompanyDto),
       await this.companyModel.findByIdAndUpdate(id, updateCompanyDto, { new: true }).lean()
     ]);
-    console.timeEnd('update')
     return { ...company, address, billingInfo }
   }
 
@@ -203,7 +201,6 @@ export class CompanyService {
         'no_company_found',
         HttpStatus.BAD_REQUEST
       );
-
     }
     return company;
   }
