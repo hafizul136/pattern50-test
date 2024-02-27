@@ -32,6 +32,7 @@ export class CompanyController {
 
 
   @Put(':id')
+  @Permissions('company.create')
   async update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDTO,@GetUser() user:IUser): Promise<ICompany> {
     return await this.companyService.update(id, updateCompanyDto,user);
   }

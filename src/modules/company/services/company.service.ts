@@ -18,6 +18,7 @@ import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { Company, CompanyDocument } from '../entities/company.entity';
 import { ICompany } from '../interfaces/company.interface';
+import { populate } from 'dotenv';
 @Injectable()
 export class CompanyService {
   constructor(
@@ -64,6 +65,23 @@ export class CompanyService {
   }
   private async uniqueCheckEmailAndEIN(createCompanyDTO: CreateCompanyDTO) {
     const a = await this.checkDuplicateEmailAndEIN(createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
+    if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
+      ExceptionHelper.getInstance().defaultError(
+        'EIN must be unique',
+        'EIN_must_be_unique',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Duplicate email or master email',
+        'duplicate_email_or_master_email',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+  private async uniqueCheckCompanyEmailAndEIN(companyId: Types.ObjectId, createCompanyDTO: CreateCompanyDTO) {
+    const a = await this.checkDuplicateCompanyEmailAndEIN(companyId, createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
     if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
       ExceptionHelper.getInstance().defaultError(
         'EIN must be unique',
@@ -148,26 +166,25 @@ export class CompanyService {
     return company;
   }
 
-  async update(id: string, updateCompanyDto: UpdateCompanyDTO,user:IUser): Promise<ICompany> {
+  async update(id: string, updateCompanyDto: UpdateCompanyDTO, user: IUser): Promise<ICompany> {
     //check company existence
-    MongooseHelper.getInstance().isValidMongooseId(id)
-    const oId = MongooseHelper.getInstance().makeMongooseId(id)
-    const company:ICompany = await this.findOneById(oId)
+    const company: ICompany = await this.findOne(id)
     // Assuming these methods return promises
     const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
     const dateCheckPromise = this.validDateCheck(updateCompanyDto?.startDate, updateCompanyDto?.endDate);
 
-    const uniqueCheckEmailAndEIN = this.uniqueCheckEmailAndEIN(updateCompanyDto);
+    const uniqueCheckEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(company?._id, updateCompanyDto);
     // Execute all promises concurrently
     await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckEmailAndEIN]);
 
-    const addressDTO = ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto,company)
+    const addressDTO = ConstructObjectFromDtoHelper.constructUpdateAddressObject(updateCompanyDto, company)
     const billingDTO = ConstructObjectFromDtoHelper.constructUpdateBillingInfoObject(updateCompanyDto, company)
 
-    const address = await this.addressService.update(company?._id, addressDTO)
-    const billingInfo = await this.billingService.update(company?._id, billingDTO,)
-    const companyCreateDTO = await ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, company)
-    return await this.companyModel.findByIdAndUpdate(id, updateCompanyDto, { new: true }).lean();
+    await this.addressService.update(company?.addressId, addressDTO)
+    await this.billingService.update(company?.billingInfoId, billingDTO,)
+    const companyDTO = await ConstructObjectFromDtoHelper.constructUpdateCompanyObject(user, updateCompanyDto, company)
+    await this.companyModel.findByIdAndUpdate(id, companyDTO, { new: true }).lean();
+    return await this.findOne(id)
   }
 
   async remove(id: string): Promise<ICompany> {
@@ -176,18 +193,18 @@ export class CompanyService {
   async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
     return await this.companyModel.findOne({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
   }
-  async findOneById(id: Types.ObjectId): Promise<ICompany> {
-    const company = await this.companyModel.findOne({ _id: id }).lean()
-    if (NestHelper.getInstance().isEmpty(company)) {
-      ExceptionHelper.getInstance().defaultError(
-        'No company found',
-        'no_company_found',
-        HttpStatus.BAD_REQUEST
-      );
+  // async findOneById(id: Types.ObjectId): Promise<ICompany> {
+  //   const company = await this.companyModel.findOne({ _id: id }).lean()
+  //   if (NestHelper.getInstance().isEmpty(company)) {
+  //     ExceptionHelper.getInstance().defaultError(
+  //       'No company found',
+  //       'no_company_found',
+  //       HttpStatus.BAD_REQUEST
+  //     );
 
-    }
-    return company;
-  }
+  //   }
+  //   return company;
+  // }
   //private functions
 
   private async einDuplicateCheck(ein: string) {
@@ -236,6 +253,32 @@ export class CompanyService {
         },
       },
     ])
+  }
+  private async checkDuplicateCompanyEmailAndEIN(companyId: Types.ObjectId, ein: string, email: string, masterEmail: string) {
+    const emailPipeline = [
+      {
+        $match: {
+          $or: [{ _id: { $ne: companyId }, email: email }, { _id: { $ne: companyId }, masterEmail: masterEmail }],
+        },
+      },
+    ];
+    const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
+    const einPipeline = [
+      {
+        $match: { _id: { $ne: companyId }, ein: hashedEIN },
+      },
+
+    ];
+
+    const res = await this.companyModel.aggregate([
+      {
+        $facet: {
+          byEmail: emailPipeline,
+          byEIN: einPipeline,
+        },
+      },
+    ])
+    return res
   }
 
   private validDateCheck(startDate: string, endDate: string) {
