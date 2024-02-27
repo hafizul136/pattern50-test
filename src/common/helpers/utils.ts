@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class Utils {
     static specialCharactersRegex = /^[!@#$%^&*(),.?":{}|<>\\/]+$/;
 
-    static getDefaultValueForDto(value:string, defaultValue:string): boolean | string {
+    static getDefaultValueForDto(value: string, defaultValue: string): boolean | string {
         return value !== '' && value !== undefined ? value : defaultValue;
     }
 
@@ -15,6 +15,13 @@ export class Utils {
             return inputString.replace(this.specialCharactersRegex, undefined);
 
         return inputString
+    }
+
+    static returnListResponse(response: any): { data?: any, count?: number } {
+        return {
+            data: response?.length ? response[0]?.data : [],
+            count: response?.length ? response[0]?.count : 0,
+        }
     }
 
     static hasOnlySpecialCharacters(inputString: string): boolean {

@@ -3,6 +3,8 @@ import { NestHelper } from '@common/helpers/NestHelper';
 import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { Utils } from '@common/helpers/utils';
+import { IListQuery } from '@common/interfaces/list-query.interface';
 import { DatabaseService } from '@modules/db/database.service';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -48,7 +50,7 @@ export class EmployeeRoleService {
   }
 
   // get list of employee roles
-  async findAll(query) {
+  async findAll(query: IListQuery): Promise<{ data?: IEmployeeRole[], count?: number }> {
     let aggregate = [];
     let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
     if (!query?.page || parseInt(query?.page) < 1) page = 1;
@@ -77,9 +79,9 @@ export class EmployeeRoleService {
 
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
 
-    const companies = await this.employeeRoleModel.aggregate(aggregate).exec();
+    const employeeRoles = await this.employeeRoleModel.aggregate(aggregate).exec();
 
-    return companies;
+    return Utils.returnListResponse(employeeRoles);
   }
 
   async findOne(id: string): Promise<IEmployeeRole> {
