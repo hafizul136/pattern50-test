@@ -39,4 +39,5 @@ export class CompanyController {
   async remove(@Param('id') id: string): Promise<ICompany> {
     return await this.companyService.remove(id);
   }
+  
 }
