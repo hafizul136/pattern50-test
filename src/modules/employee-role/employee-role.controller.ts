@@ -29,6 +29,7 @@ export class EmployeeRoleController {
 
   // toggle role activation/deactivation
   @Patch(':id/:status')
+  @Permissions('company.view')
   update(@Param('id') id: string, @Body() updateEmployeeRoleDto: UpdateEmployeeRoleDto): Promise<IEmployeeRole> {
     return this.employeeRoleService.update(id, updateEmployeeRoleDto);
   }
