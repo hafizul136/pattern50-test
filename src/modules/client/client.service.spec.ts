@@ -1,5 +1,5 @@
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
-import { RolesService } from '@modules/roles/roles.service';
+import { RoleService } from '@modules/roles/role.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import mongoose, { Model } from 'mongoose';
@@ -60,7 +60,7 @@ describe('ClientService', () => {
       providers: [
         ClientService,
         { provide: getModelToken(Client.name), useValue: clientModelMock },
-        { provide: RolesService, useValue: roleServiceMock },
+        { provide: RoleService, useValue: roleServiceMock },
       ],
     }).compile();
 

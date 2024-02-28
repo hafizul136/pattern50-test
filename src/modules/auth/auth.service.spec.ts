@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientRMQ } from '@nestjs/microservices';
 import { getModelToken } from '@nestjs/mongoose';
@@ -12,11 +11,11 @@ import { PermissionsService } from '../../modules/permissions/permissions.servic
 import { RolePermission } from '../../modules/role-permission/entities/role-permission.entity';
 import { RolePermissionService } from '../../modules/role-permission/role-permission.service';
 import { Role } from '../../modules/roles/entities/role.entity';
-import { RolesService } from '../../modules/roles/roles.service';
 import { UserRole } from '../../modules/user-role/entities/user-role.entity';
 import { UserRoleService } from '../../modules/user-role/user-role.service';
 import { User } from '../../modules/users/entities/user.entity';
 import { UsersService } from '../../modules/users/user.service';
+import { RoleService } from '../roles/role.service';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 describe('AuthService', () => {
@@ -121,7 +120,7 @@ describe('AuthService', () => {
                 UserRoleService,
                 RolePermissionService,
                 PermissionsService,
-                RolesService,
+                RoleService,
                 {
                     provide: 'ACCOUNTING_SERVICE_RMQ',
                     useClass: ClientRMQ, // Provide the mock class instead of the real one

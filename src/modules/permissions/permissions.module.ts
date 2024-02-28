@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Permission, PermissionSchema } from './entities/permission.entity';
 import { PermissionsController } from './permissions.controller';
 import { PermissionsService } from './permissions.service';
-import { Role, RoleSchema } from '@modules/roles/entities/role.entity';
+import { Role, RoleSchema } from '@modules/role/entities/role.entity';
 import { RolePermission, RolePermissionSchema } from '@modules/role-permission/entities/role-permission.entity';
 
 @Module({

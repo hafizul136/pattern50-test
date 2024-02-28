@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Permission } from '../permissions/entities/permission.entity';
 import { PermissionsService } from '../permissions/permissions.service';
 import { Role } from '../roles/entities/role.entity';
-import { RolesService } from '../roles/roles.service';
+import { RoleService } from '../roles/role.service';
 import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
 import { RolePermission } from './entities/role-permission.entity';
 import { RolePermissionService } from './role-permission.service';
@@ -31,7 +31,7 @@ describe('RolePermissionService', () => {
             find: jest.fn(),
           },
         },
-        RolesService,
+        RoleService,
         {
           provide: getModelToken(Role.name), useValue: {
             create: jest.fn(),

@@ -187,9 +187,9 @@ export class CompanyService {
     return { ...company, address, billingInfo }
   }
 
-  async remove(id: string): Promise<ICompany> {
-    return await this.companyModel.findByIdAndRemove(id).lean();
-  }
+  // async remove(id: string): Promise<ICompany> {
+  //   return await this.companyModel.findByIdAndRemove(id).lean();
+  // }
   async findOneByEmail(email: string, masterEmail: string): Promise<ICompany> {
     return await this.companyModel.findOne({ $or: [{ email: email }, { masterEmail: masterEmail }] }).lean();
   }

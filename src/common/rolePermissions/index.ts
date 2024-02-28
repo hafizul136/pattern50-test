@@ -1,4 +1,4 @@
-import { IPermissionData } from '@modules/roles/interfaces/role.interface';
+import { IPermissionData } from '@modules/role/interfaces/role.interface';
 import * as fs from 'fs';
 
 const filePath = `./src/common/rolePermissions/scopes.json`;

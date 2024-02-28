@@ -1,15 +1,15 @@
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as dotenv from 'dotenv';
 import mongoose, { Model, isValidObjectId } from 'mongoose';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
-import { RolesService } from '../../modules/roles/roles.service';
 import { UsersService } from '../../modules/users/user.service';
+import { RoleService } from '../role/role.service';
 import { CreateUserRoleDto, IEnvironment } from './dto/create-user-role.dto';
 import { UserRole, UserRoleDocument } from './entities/user-role.entity';
 import { IUserRole } from './interfaces/user-role.interface';
-import { IUser } from '@modules/users/interfaces/user.interface';
 dotenv.config();
 @Injectable()
 export class UserRoleService {
@@ -17,7 +17,7 @@ export class UserRoleService {
     @InjectModel(UserRole.name)
     private userRoleModel: Model<UserRoleDocument>,
     private readonly usersService: UsersService,
-    private readonly rolesService: RolesService
+    private readonly rolesService: RoleService
   ) { }
 
   async create(createUserRoleDto: CreateUserRoleDto): Promise<IUserRole> {

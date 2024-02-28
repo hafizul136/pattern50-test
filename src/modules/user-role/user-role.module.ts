@@ -1,8 +1,8 @@
 import { Permission, PermissionSchema } from '@modules/permissions/entities/permission.entity';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 import { RolePermission, RolePermissionSchema } from '@modules/role-permission/entities/role-permission.entity';
-import { Role, RoleSchema } from '@modules/roles/entities/role.entity';
-import { RolesService } from '@modules/roles/roles.service';
+import { Role, RoleSchema } from '@modules/role/entities/role.entity';
+import { RoleService } from '@modules/role/role.service';
 import { User, UserSchema } from '@modules/users/entities/user.entity';
 import { UsersService } from '@modules/users/user.service';
 import { Module } from '@nestjs/common';
@@ -24,6 +24,6 @@ import { UserRoleService } from './user-role.service';
     ]),
   ],
   controllers: [UserRoleController],
-  providers: [UserRoleService, UsersService, RolesService, PermissionsService]
+  providers: [UserRoleService, UsersService, RoleService, PermissionsService]
 })
 export class UserRoleModule { }

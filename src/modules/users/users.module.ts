@@ -1,18 +1,18 @@
+import { AuthService } from '@modules/auth/auth.service';
+import { Permission, PermissionSchema } from '@modules/permissions/entities/permission.entity';
+import { PermissionsService } from '@modules/permissions/permissions.service';
+import { RolePermission, RolePermissionSchema } from '@modules/role-permission/entities/role-permission.entity';
+import { RolePermissionService } from '@modules/role-permission/role-permission.service';
+import { Role, RoleSchema } from '@modules/role/entities/role.entity';
+import { RoleService } from '@modules/role/role.service';
+import { UserRole, UserRoleSchema } from '@modules/user-role/entities/user-role.entity';
+import { UserRoleService } from '@modules/user-role/user-role.service';
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './entities/user.entity';
 import { UsersService } from './user.service';
 import { UsersController } from './users.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from '@modules/auth/auth.service';
-import { UserRoleService } from '@modules/user-role/user-role.service';
-import { RolePermissionService } from '@modules/role-permission/role-permission.service';
-import { PermissionsService } from '@modules/permissions/permissions.service';
-import { RolesService } from '@modules/roles/roles.service';
-import { UserRole, UserRoleSchema } from '@modules/user-role/entities/user-role.entity';
-import { RolePermission, RolePermissionSchema } from '@modules/role-permission/entities/role-permission.entity';
-import { Permission, PermissionSchema } from '@modules/permissions/entities/permission.entity';
-import { Role, RoleSchema } from '@modules/roles/entities/role.entity';
 
 @Module({
   imports: [
@@ -25,6 +25,6 @@ import { Role, RoleSchema } from '@modules/roles/entities/role.entity';
       { name: Role.name, schema: RoleSchema },
     ])],
   controllers: [UsersController],
-  providers: [UsersService, AuthService, UserRoleService, RolePermissionService, PermissionsService, RolesService]
+  providers: [UsersService, AuthService, UserRoleService, RolePermissionService, PermissionsService, RoleService]
 })
 export class UsersModule { }

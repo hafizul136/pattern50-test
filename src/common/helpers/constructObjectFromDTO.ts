@@ -1,11 +1,12 @@
 import { StatusEnum } from "@common/enums/status.enum";
 import { EINSecureHelper } from "@common/helpers/EinHelper";
 import { CreateCompanyDTO } from "@modules/company/dto/create-company.dto";
+import { ICompany } from "@modules/company/interfaces/company.interface";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
+import { CreateEmployeeDto } from "@modules/employee/dto/create-employee.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
-import { ICompany } from "@modules/company/interfaces/company.interface";
 
 export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     static async constructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
@@ -58,11 +59,11 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             zipCode: createCompanyDto?.zipCode ?? "",
         }
     }
-    static constructUpdateAddressObject(updateCompanyDto: CreateCompanyDTO,company:ICompany) {
+    static constructUpdateAddressObject(updateCompanyDto: CreateCompanyDTO, company: ICompany) {
         return {
             addressLine: updateCompanyDto?.addressLine ?? company?.address?.addressLine,
-            country: updateCompanyDto?.country ?? company?.address?.country, 
-            city: updateCompanyDto?.city ?? company?.address?.city, 
+            country: updateCompanyDto?.country ?? company?.address?.country,
+            city: updateCompanyDto?.city ?? company?.address?.city,
             state: updateCompanyDto?.state ?? company?.address?.state,
             zipCode: updateCompanyDto?.zipCode ?? company?.address?.zipCode,
         }
@@ -74,7 +75,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             endDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.endDate)) ?? "",
         }
     }
-    static constructUpdateBillingInfoObject(createCompanyDto: CreateCompanyDTO,company:ICompany) {
+    static constructUpdateBillingInfoObject(createCompanyDto: CreateCompanyDTO, company: ICompany) {
         return {
             startDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.startDate)) ?? new DateHelper().getTimeInISODate(new Date(company?.billingInfo?.startDate)),
             endDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.endDate)) ?? new DateHelper().getTimeInISODate(new Date(company?.billingInfo?.endDate)),
@@ -88,6 +89,15 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             status: StatusEnum.ACTIVE,
             isDeleted: false,
             startDate: new DateHelper().now("UTC")
+        }
+    }
+    static constructEmployeeObj(user: IUser, createEmployeeDto: CreateEmployeeDto) {
+        return {
+            name: createEmployeeDto?.name ?? "",
+            email: createEmployeeDto?.email ?? "",
+            phone: createEmployeeDto?.phone ?? "",
+            employeeRoleIds: createEmployeeDto?.employeeRoleIds ?? "",
+            clientId: new mongoose.Types.ObjectId(user?.clientId) ?? ""
         }
     }
 }
