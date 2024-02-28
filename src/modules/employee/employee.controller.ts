@@ -26,7 +26,7 @@ export class EmployeeController {
 
   @Get(':id')
   @Permissions('company.view')
-  async findOne(@Param('id') id: mongoose.Types.ObjectId): Promise<IEmployee> {
+  async findOne(@Param('id') id: string): Promise<IEmployee> {
     return await this.employeesService.findOne(id);
   }
 

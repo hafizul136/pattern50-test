@@ -10,6 +10,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee, EmployeeDocument } from './entities/employee.entity';
 import { IEmployee } from './interfaces/employee.interface';
+import { MongooseHelper } from '@common/helpers/mongooseHelper';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -40,15 +41,11 @@ export class EmployeeService {
     return await this.employeeModel.find().lean();
   }
 
-  async findOne(id: mongoose.Types.ObjectId): Promise<IEmployee> {
-    if (NestHelper.getInstance().isEmpty(id) && !isValidObjectId(id)) {
-      ExceptionHelper.getInstance().defaultError(
-        'invalid employee id',
-        'invalid_employee_id',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    const employee = await this.employeeModel.findOne({ _id: id }).populate('employeeRoleId').exec();
+  async findOne(id: string): Promise<IEmployee> {
+    MongooseHelper.getInstance().isValidMongooseId(id)
+    const oId = MongooseHelper.getInstance().makeMongooseId(id)
+   
+    const employee = await this.employeeModel.findOne({ _id: oId }).populate('employeeRoleIds').lean();
     if (NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
         'no employee found',
@@ -56,6 +53,8 @@ export class EmployeeService {
         HttpStatus.BAD_REQUEST
       );
     }
+    employee['employeeRoles'] = employee?.employeeRoleIds;
+    delete employee.employeeRoleIds
     return employee;
   }
 
