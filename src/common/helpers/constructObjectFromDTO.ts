@@ -93,9 +93,9 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     }
     static constructEmployeeObj(user: IUser, createEmployeeDto: CreateEmployeeDto) {
         return {
-            name: createEmployeeDto?.name ?? "",
-            email: createEmployeeDto?.email ?? "",
-            phone: createEmployeeDto?.phone ?? "",
+            name: createEmployeeDto?.name ? createEmployeeDto?.name?.trim() : "",
+            email: createEmployeeDto?.email ? createEmployeeDto?.email?.trim() : "",
+            phone: createEmployeeDto?.phone ? createEmployeeDto?.phone?.trim() : "",
             employeeRoleIds: createEmployeeDto?.employeeRoleIds ?? "",
             clientId: new mongoose.Types.ObjectId(user?.clientId) ?? ""
         }
