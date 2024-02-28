@@ -1,11 +1,11 @@
 import { StatusEnum } from "@common/enums/status.enum";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Document } from 'mongoose';
 
-export type TechnologyCategoryDocument = TechnologyCategory & Document;
+export type ToolTypeDocument = Document & ToolType;
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
-export class TechnologyCategory {
+export class ToolType {
     @Prop({ type: String, unique: true, required: true })
     name: string;
 
@@ -13,4 +13,4 @@ export class TechnologyCategory {
     status: StatusEnum;
 }
 
-export const TechnologyCategorySchema = SchemaFactory.createForClass(TechnologyCategory);
+export const ToolTypeSchema = SchemaFactory.createForClass(ToolType);
