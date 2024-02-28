@@ -44,7 +44,6 @@ export class EmployeeService {
   async findOne(id: string): Promise<IEmployee> {
     MongooseHelper.getInstance().isValidMongooseId(id)
     const oId = MongooseHelper.getInstance().makeMongooseId(id)
-   
     const employee = await this.employeeModel.findOne({ _id: oId }).populate('employeeRoleIds').lean();
     if (NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
