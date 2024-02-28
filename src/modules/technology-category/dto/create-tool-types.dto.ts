@@ -1,5 +1,6 @@
+import { TrimAndValidateString } from "@common/validators/trim-string.validator";
 import { Type } from "class-transformer";
-import { ArrayNotEmpty, IsArray, IsNotEmpty, ValidateNested } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString, ValidateNested } from "class-validator";
 
 export class CreateToolTypesDto {
     @IsArray()
@@ -11,5 +12,7 @@ export class CreateToolTypesDto {
 
 export class CreateToolTypeDto {
     @IsNotEmpty()
+    @IsString()
+    @TrimAndValidateString({ message: 'name is empty' })
     name: string;
 }
