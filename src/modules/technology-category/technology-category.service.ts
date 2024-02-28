@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { CreateTechnologyCategoriesDto } from './dto/create-technology-category.dto';
 import { UpdateTechnologyCategoryDto } from './dto/update-technology-category.dto';
 import { TechnologyCategory, technologyCategoryDocument } from './entities/technology-category.entity';
+import { ITechnologyCategory } from './interfaces/technology-category.interface';
 
 @Injectable()
 export class TechnologyCategoryService {
@@ -15,7 +16,7 @@ export class TechnologyCategoryService {
   ) { }
 
   // create technology categories
-  async create(createTechnologyCategoriesDto: CreateTechnologyCategoriesDto) {
+  async create(createTechnologyCategoriesDto: CreateTechnologyCategoriesDto): Promise<ITechnologyCategory[]> {
     try {
       // construct objects
       const categoriesObj = createTechnologyCategoriesDto?.categories.map(category => {
@@ -39,8 +40,8 @@ export class TechnologyCategoryService {
     }
   }
 
-  async findAll() {
-    const categories = await this.technologyCategoryModel.find();
+  async findAll(): Promise<{ data?: ITechnologyCategory[], count?: number }> {
+    const categories: ITechnologyCategory[] = await this.technologyCategoryModel.find();
 
     return {
       data: categories,

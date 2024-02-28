@@ -1,6 +1,8 @@
+import { Permissions } from '@common/decorators/permissions.decorator';
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateTechnologyCategoriesDto } from './dto/create-technology-category.dto';
 import { UpdateTechnologyCategoryDto } from './dto/update-technology-category.dto';
+import { ITechnologyCategory } from './interfaces/technology-category.interface';
 import { TechnologyCategoryService } from './technology-category.service';
 
 @Controller('technology-category')
@@ -8,13 +10,15 @@ export class TechnologyCategoryController {
   constructor(private readonly technologyCategoryService: TechnologyCategoryService) { }
 
   @Post("create")
-  create(@Body() createTechnologyCategoriesDto: CreateTechnologyCategoriesDto) {
-    return this.technologyCategoryService.create(createTechnologyCategoriesDto);
+  @Permissions('company.create')
+  async create(@Body() createTechnologyCategoriesDto: CreateTechnologyCategoriesDto): Promise<ITechnologyCategory[]> {
+    return await this.technologyCategoryService.create(createTechnologyCategoriesDto);
   }
 
   @Get("list")
-  findAll() {
-    return this.technologyCategoryService.findAll();
+  @Permissions('company.create')
+  async findAll(): Promise<{ data?: ITechnologyCategory[], count?: number }> {
+    return await this.technologyCategoryService.findAll();
   }
 
   @Get(':id')
