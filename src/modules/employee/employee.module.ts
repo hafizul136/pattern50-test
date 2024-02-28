@@ -13,6 +13,10 @@ import { RolePermission, RolePermissionSchema } from '@modules/role-permission/e
 import { UserRole, UserRoleSchema } from '@modules/user-role/entities/user-role.entity';
 import { UserRoleService } from '@modules/user-role/user-role.service';
 import { RolePermissionService } from '@modules/role-permission/role-permission.service';
+import { RoleService } from '@modules/role/role.service';
+import { Role, RoleSchema } from '@modules/role/entities/role.entity';
+import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
+import { EmployeeRole, employeeRoleSchema } from '@modules/employee-role/entities/employee-role.entity';
 
 @Module({
   imports: [
@@ -20,12 +24,14 @@ import { RolePermissionService } from '@modules/role-permission/role-permission.
     MongooseModule.forFeature([
       { name: Employee.name, schema: EmployeeSchema },
       { name: User.name, schema: UserSchema },
+      { name: Role.name, schema: RoleSchema },
       { name: UserRole.name, schema: UserRoleSchema },
       { name: RolePermission.name, schema: RolePermissionSchema },
       { name: Permission.name, schema: PermissionSchema },
+      { name: EmployeeRole.name, schema: employeeRoleSchema },
     ])],
 
   controllers: [EmployeeController],
-  providers: [EmployeeService, UsersService, AuthService, UserRoleService, RolePermissionService, PermissionsService]
+  providers: [EmployeeService, UsersService, AuthService, RoleService, UserRoleService, RolePermissionService, PermissionsService, EmployeeRoleService]
 })
 export class EmployeeModule { }

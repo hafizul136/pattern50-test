@@ -19,10 +19,11 @@ import { GeoModule } from '@modules/geo/geo.module';
 import { BillingInfoModule } from './modules/billing-info/billing-info.module';
 import { EmailModule } from './modules/email/email.module';
 import { EmployeeRoleModule } from './modules/employee-role/employee-role.module';
+import { EmployeeModule } from '@modules/employee/employee.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(`${appConfig.mongodbURL}${appConfig.serverType}${appConfig.dbName}`), DatabaseModule, GeoModule,
-    AccountingRMQClientModule, EmailRMQClientModule, PermissionsModule, RoleModule, UsersModule, AuthModule, RolePermissionModule, UserRoleModule, ClientModule, UploadModule, CompanyModule, AddressModule, BillingInfoModule, EmployeeRoleModule, EmailModule],
+    AccountingRMQClientModule, EmailRMQClientModule, PermissionsModule, RoleModule, UsersModule, AuthModule, RolePermissionModule, UserRoleModule, ClientModule, UploadModule, CompanyModule, AddressModule, BillingInfoModule, EmployeeRoleModule, EmailModule, EmployeeModule],
 })
 export class AppModule { }
