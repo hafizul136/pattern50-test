@@ -1,7 +1,7 @@
 import { StatusEnum } from "@common/enums/status.enum";
 import { IsPhoneNumberValidator } from "@common/validators/phone-number.validator";
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
-import { ArrayNotEmpty, IsArray, IsDateString, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsString, Validate } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsDateString, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString, Validate } from "class-validator";
 import mongoose from "mongoose";
 
 export class CreateEmployeeDto {
@@ -14,7 +14,7 @@ export class CreateEmployeeDto {
     @IsEmail({}, { message: 'email invalid' })
     email: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @Validate(IsPhoneNumberValidator, {
         message: 'Invalid phone number format. It should start with "+" and contain only digits.',
     })
