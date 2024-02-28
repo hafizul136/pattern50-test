@@ -1,5 +1,6 @@
+import { TrimAndValidateString } from "@common/validators/trim-string.validator";
 import { Type } from "class-transformer";
-import { ArrayNotEmpty, IsArray, IsNotEmpty, ValidateNested } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString, ValidateNested } from "class-validator";
 
 
 export class CreateTechnologyCategoriesDto {
@@ -12,5 +13,7 @@ export class CreateTechnologyCategoriesDto {
 
 export class CreateTechnologyCategoryDto {
     @IsNotEmpty()
+    @IsString()
+    @TrimAndValidateString({ message: 'name is empty' })
     name: string;
 }
