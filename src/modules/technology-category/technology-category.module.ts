@@ -12,6 +12,7 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TechnologyCategory, TechnologyCategorySchema } from './entities/technology-category.entity';
+import { ToolType, ToolTypeSchema } from './entities/tool-type.entity';
 import { TechnologyCategoryController } from './technology-category.controller';
 import { TechnologyCategoryService } from './technology-category.service';
 
@@ -19,6 +20,7 @@ import { TechnologyCategoryService } from './technology-category.service';
   imports: [
     MongooseModule.forFeature([
       { name: TechnologyCategory.name, schema: TechnologyCategorySchema },
+      { name: ToolType.name, schema: ToolTypeSchema },
       { name: User.name, schema: UserSchema },
       { name: UserRole.name, schema: UserRoleSchema },
       { name: Permission.name, schema: PermissionSchema },
