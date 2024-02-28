@@ -72,7 +72,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     static constructCreateBillingInfoObject(createCompanyDto: CreateCompanyDTO) {
         return {
             startDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.startDate)) ?? "",
-            endDate: new DateHelper().getTimeInISODate(new Date(createCompanyDto?.endDate)) ?? "",
+            endDate: createCompanyDto?.endDate ? new DateHelper().getTimeInISODate(new Date(createCompanyDto?.endDate)) : "",
         }
     }
     static constructUpdateBillingInfoObject(createCompanyDto: CreateCompanyDTO, company: ICompany) {
