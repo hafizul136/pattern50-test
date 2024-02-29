@@ -1,7 +1,7 @@
 import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateEmployeeDTOs } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeService } from './employee.service';
@@ -17,11 +17,11 @@ export class EmployeeController {
     return await this.employeesService.create(createEmployeeDTOs, user);
   }
 
-  @Get()
-  async findAll(): Promise<IEmployee> {
-    return await this.employeesService.findAll();
+  @Get("list")
+  @Permissions('company.view')
+  async getCompanies(@Query() query, @GetUser() user: IUser): Promise<{ data?: IEmployee[], total?: number }> {
+    return await this.employeesService.findAll(query, user);
   }
-
   @Get(':id')
   @Permissions('company.view')
   async findOne(@Param('id') id: string): Promise<IEmployee> {
