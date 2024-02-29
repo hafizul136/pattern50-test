@@ -4,7 +4,7 @@ import { EmployeeRoleService } from '@modules/employee-role/employee-role.servic
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
 import { CreateEmployeeDTOs } from './dto/create-employee.dto';
@@ -21,7 +21,17 @@ export class EmployeeService {
 
   async create(createEmployeeDTOs: CreateEmployeeDTOs, user: IUser): Promise<IEmployees> {
     try {
+      //email unique check in payload
+      const hasDuplicate = NestHelper.getInstance().hasDuplicateInArrayOfObject(createEmployeeDTOs?.employees, 'email')
+      if (hasDuplicate) {
+        ExceptionHelper.getInstance().defaultError(
+          'email must be unique',
+          'email_must_be_unique',
+          HttpStatus.BAD_REQUEST
+        );
+      }
       const employeeDTOsPromises = createEmployeeDTOs.employees.map(async (employee) => {
+        //email unique check in db
         await this.checkEmailUniqueness(employee?.email);
         // check employee role
         for (const employeeRoleId of employee?.employeeRoleIds) {
@@ -71,7 +81,22 @@ export class EmployeeService {
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto): Promise<IEmployee> {
-    return await this.employeeModel.findByIdAndUpdate(id, updateEmployeeDto, { new: true }).lean();
+    MongooseHelper.getInstance().isValidMongooseId(id)
+    const oId = MongooseHelper.getInstance().makeMongooseId(id)
+    await this.checkUniqueEmailWithOutItself(oId, updateEmployeeDto?.email);
+    // check employee role
+    for (const employeeRoleId of updateEmployeeDto?.employeeRoleIds) {
+      await this.employeeRoleService.findOne(String(employeeRoleId));
+    }
+    const employee = await this.employeeModel.findByIdAndUpdate(id, updateEmployeeDto, { new: true }).lean();
+    if (NestHelper.getInstance().isEmpty(employee)) {
+      ExceptionHelper.getInstance().defaultError(
+        'employee not found',
+        'employee_not_found',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    return employee;
   }
 
   async remove(id: string): Promise<IEmployee> {
@@ -80,6 +105,16 @@ export class EmployeeService {
   // private functions
   private async checkEmailUniqueness(email: string): Promise<void> {
     const employee = await this.employeeModel.findOne({ email: email }).lean();
+    if (!NestHelper.getInstance().isEmpty(employee)) {
+      ExceptionHelper.getInstance().defaultError(
+        'email must be unique',
+        'email_must_be_unique',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+  private async checkUniqueEmailWithOutItself(id: mongoose.Types.ObjectId, email: string): Promise<void> {
+    const employee = await this.employeeModel.findOne({ _id: { $ne: id }, email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
         'email must be unique',
