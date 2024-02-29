@@ -5,7 +5,7 @@ import { ICompany } from "@modules/company/interfaces/company.interface";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 import { CreateEmployeeDTO } from "@modules/employee/dto/create-employee.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
 
 export class ConstructObjectFromDtoHelper extends StartAndEndDate {
@@ -82,13 +82,14 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
         }
     }
 
-    static constructEmployeeRoleObj(employeeRoleDto: CreateEmployeeRoleDto) {
+    static constructEmployeeRoleObj(employeeRoleDto: CreateEmployeeRoleDto, clientId: mongoose.Types.ObjectId) {
         return {
             name: employeeRoleDto?.name ?? "",
             description: employeeRoleDto?.description.trim() ?? "",
             status: StatusEnum.ACTIVE,
             isDeleted: false,
-            startDate: new DateHelper().now("UTC")
+            startDate: new DateHelper().now("UTC"),
+            clientId: new Types.ObjectId(clientId)
         }
     }
     static async constructEmployeeObj(user: IUser, createEmployeeDto: CreateEmployeeDTO) {
