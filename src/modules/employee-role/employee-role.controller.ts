@@ -1,5 +1,7 @@
+import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { IListQuery } from '@common/interfaces/list-query.interface';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateEmployeeRolesDto } from './dto/create-employee-role.dto';
 import { UpdateEmployeeRoleDto } from './dto/update-employee-role.dto';
@@ -12,8 +14,8 @@ export class EmployeeRoleController {
 
   @Post('create')
   @Permissions("company.create")
-  create(@Body() createEmployeeRolesDto: CreateEmployeeRolesDto): Promise<IEmployeeRoles> {
-    return this.employeeRoleService.create(createEmployeeRolesDto);
+  create(@Body() createEmployeeRolesDto: CreateEmployeeRolesDto, @GetUser() user: IUser): Promise<IEmployeeRoles> {
+    return this.employeeRoleService.create(createEmployeeRolesDto, user);
   }
 
   @Get("list")
