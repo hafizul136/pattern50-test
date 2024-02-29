@@ -1,5 +1,7 @@
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { Utils } from '@common/helpers/utils';
 import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -11,8 +13,6 @@ import { CreateEmployeeDTOs } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee, EmployeeDocument } from './entities/employee.entity';
 import { IEmployee, IEmployees } from './interfaces/employee.interface';
-import { AggregationHelper } from '@common/helpers/aggregation.helper';
-import { Utils } from '@common/helpers/utils';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -81,7 +81,7 @@ export class EmployeeService {
     }
 
     if (trimmedQuery) {
-      const escapedQForPhone = trimmedQuery.replace(/[()\s-]/g, "");
+
       const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       aggregate.push({
         $match: {
@@ -90,9 +90,7 @@ export class EmployeeService {
               name: { $regex: escapedQuery, $options: "i" }
             },
             { email: { $regex: escapedQuery, $options: "i" } },
-            { phone: { $regex: escapedQForPhone, $options: "i" } },
             { "employeeRoles.name": { $regex: escapedQuery, $options: "i" } },
-            
           ]
         }
       });
@@ -129,7 +127,7 @@ export class EmployeeService {
     for (const employeeRoleId of updateEmployeeDto?.employeeRoleIds) {
       await this.employeeRoleService.findOne(String(employeeRoleId));
     }
-    const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeUpdateObj(user,updateEmployeeDto);
+    const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeUpdateObj(user, updateEmployeeDto);
     const employee = await this.employeeModel.findByIdAndUpdate(id, employeeDTO, { new: true }).lean();
     if (NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
