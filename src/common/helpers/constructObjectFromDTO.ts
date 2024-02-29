@@ -4,6 +4,7 @@ import { CreateCompanyDTO } from "@modules/company/dto/create-company.dto";
 import { ICompany } from "@modules/company/interfaces/company.interface";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 import { CreateEmployeeDTO } from "@modules/employee/dto/create-employee.dto";
+import { UpdateEmployeeDto } from "@modules/employee/dto/update-employee.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose, { Types } from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
@@ -99,6 +100,14 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             phone: createEmployeeDto?.phone ? createEmployeeDto?.phone?.trim() : "",
             employeeRoleIds: createEmployeeDto?.employeeRoleIds ?? "",
             clientId: new mongoose.Types.ObjectId(user?.clientId) ?? ""
+        }
+    }
+    static async constructEmployeeUpdateObj(updateEmployeeDto: UpdateEmployeeDto) {
+        return {
+            name: updateEmployeeDto?.name ? updateEmployeeDto?.name?.trim() : "",
+            email: updateEmployeeDto?.email ? updateEmployeeDto?.email?.trim() : "",
+            phone: updateEmployeeDto?.phone ? updateEmployeeDto?.phone?.trim() : "",
+            employeeRoleIds: updateEmployeeDto?.employeeRoleIds ?? ""
         }
     }
 }

@@ -282,15 +282,15 @@ export class CompanyService {
   }
 
   private validDateCheck(startDate: string, endDate: string) {
+    const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
+    if (!isStartDateGreater) {
+      ExceptionHelper.getInstance().defaultError(
+        'StartDate must be greater than Today',
+        'startDate_must_be_greater_than_today',
+        HttpStatus.BAD_REQUEST
+      );
+    }
     if (!NestHelper.getInstance().isEmpty(endDate)) {
-      const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
-      if (!isStartDateGreater) {
-        ExceptionHelper.getInstance().defaultError(
-          'StartDate must be greater than Today',
-          'startDate_must_be_greater_than_today',
-          HttpStatus.BAD_REQUEST
-        );
-      }
       const isEndDateGreater = new DateHelper().isSecondDateGreater(startDate, endDate);
       if (!isEndDateGreater) {
         ExceptionHelper.getInstance().defaultError(

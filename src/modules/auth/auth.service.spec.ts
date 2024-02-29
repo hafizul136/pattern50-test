@@ -10,12 +10,12 @@ import { Permission } from '../../modules/permissions/entities/permission.entity
 import { PermissionsService } from '../../modules/permissions/permissions.service';
 import { RolePermission } from '../../modules/role-permission/entities/role-permission.entity';
 import { RolePermissionService } from '../../modules/role-permission/role-permission.service';
-import { Role } from '../../modules/roles/entities/role.entity';
+import { Role } from '../../modules/role/entities/role.entity';
 import { UserRole } from '../../modules/user-role/entities/user-role.entity';
 import { UserRoleService } from '../../modules/user-role/user-role.service';
 import { User } from '../../modules/users/entities/user.entity';
 import { UsersService } from '../../modules/users/user.service';
-import { RoleService } from '../roles/role.service';
+import { RoleService } from '../role/role.service';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 describe('AuthService', () => {

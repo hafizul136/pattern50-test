@@ -129,7 +129,8 @@ export class EmployeeService {
     for (const employeeRoleId of updateEmployeeDto?.employeeRoleIds) {
       await this.employeeRoleService.findOne(String(employeeRoleId));
     }
-    const employee = await this.employeeModel.findByIdAndUpdate(id, updateEmployeeDto, { new: true }).lean();
+    const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeUpdateObj(updateEmployeeDto);
+    const employee = await this.employeeModel.findByIdAndUpdate(id, employeeDTO, { new: true }).lean();
     if (NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
         'employee not found',
