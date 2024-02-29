@@ -89,8 +89,8 @@ export class EmployeeService {
             {
               name: { $regex: escapedQuery, $options: "i" }
             },
-            { email: { $regex: escapedQuery, $options: "i" } },
-            { "employeeRoles.name": { $regex: escapedQuery, $options: "i" } },
+            // { email: { $regex: escapedQuery, $options: "i" } },
+            // { "employeeRoles.name": { $regex: escapedQuery, $options: "i" } },
           ]
         }
       });
