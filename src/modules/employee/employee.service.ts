@@ -4,13 +4,15 @@ import { EmployeeRoleService } from '@modules/employee-role/employee-role.servic
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
 import { CreateEmployeeDTOs } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee, EmployeeDocument } from './entities/employee.entity';
 import { IEmployee, IEmployees } from './interfaces/employee.interface';
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
+import { Utils } from '@common/helpers/utils';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -60,8 +62,47 @@ export class EmployeeService {
     }
   }
 
-  async findAll(): Promise<IEmployee> {
-    return await this.employeeModel.find().lean();
+  async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<{ data?: IEmployee[], count?: number }> {
+    let aggregate = [];
+    let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
+    if (!query?.page || parseInt(query?.page) < 1) page = 1;
+    if (!query?.size || parseInt(query?.size) < 1) size = 10;
+
+    // filter by client id
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new Types.ObjectId(user?.clientId) }]);
+
+    AggregationHelper.lookupForIdForeignKey(aggregate, "EmployeeRole", "employeeRoleId", "employeeRoles");
+    AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "employeeRoles");
+
+    // searching by 
+    let trimmedQuery = null;
+    if (query.query) {
+      trimmedQuery = query.query.trim();
+    }
+
+    if (trimmedQuery) {
+      const escapedQForPhone = trimmedQuery.replace(/[()\s-]/g, "");
+      const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      aggregate.push({
+        $match: {
+          $or: [
+            {
+              name: { $regex: escapedQuery, $options: "i" }
+            },
+            { email: { $regex: escapedQuery, $options: "i" } },
+            { phone: { $regex: escapedQForPhone, $options: "i" } },
+            { "employeeRoles.name": { $regex: escapedQuery, $options: "i" } },
+            
+          ]
+        }
+      });
+    }
+
+    AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
+
+    const companies = await this.employeeModel.aggregate(aggregate).exec();
+
+    return Utils.returnListResponse(companies);
   }
 
   async findOne(id: string): Promise<IEmployee> {
