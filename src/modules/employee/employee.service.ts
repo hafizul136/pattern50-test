@@ -121,7 +121,7 @@ export class EmployeeService {
     return employee;
   }
 
-  async update(id: string, updateEmployeeDto: UpdateEmployeeDto): Promise<IEmployee> {
+  async update(id: string, updateEmployeeDto: UpdateEmployeeDto, user: IUser): Promise<IEmployee> {
     MongooseHelper.getInstance().isValidMongooseId(id)
     const oId = MongooseHelper.getInstance().makeMongooseId(id)
     await this.checkUniqueEmailWithOutItself(oId, updateEmployeeDto?.email);
@@ -129,7 +129,7 @@ export class EmployeeService {
     for (const employeeRoleId of updateEmployeeDto?.employeeRoleIds) {
       await this.employeeRoleService.findOne(String(employeeRoleId));
     }
-    const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeUpdateObj(updateEmployeeDto);
+    const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeUpdateObj(user,updateEmployeeDto);
     const employee = await this.employeeModel.findByIdAndUpdate(id, employeeDTO, { new: true }).lean();
     if (NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(

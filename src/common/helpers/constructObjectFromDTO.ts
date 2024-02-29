@@ -102,12 +102,13 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             clientId: new mongoose.Types.ObjectId(user?.clientId) ?? ""
         }
     }
-    static async constructEmployeeUpdateObj(updateEmployeeDto: UpdateEmployeeDto) {
+    static constructEmployeeUpdateObj(user: IUser,updateEmployeeDto: UpdateEmployeeDto) {
         return {
             name: updateEmployeeDto?.name ? updateEmployeeDto?.name?.trim() : "",
             email: updateEmployeeDto?.email ? updateEmployeeDto?.email?.trim() : "",
             phone: updateEmployeeDto?.phone ? updateEmployeeDto?.phone?.trim() : "",
-            employeeRoleIds: updateEmployeeDto?.employeeRoleIds ?? ""
+            employeeRoleIds: updateEmployeeDto?.employeeRoleIds ?? "",
+            clientId: new mongoose.Types.ObjectId(user?.clientId) ?? ""
         }
     }
 }

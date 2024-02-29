@@ -29,8 +29,8 @@ export class EmployeeController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto): Promise<IEmployee> {
-    return await this.employeesService.update(id, updateEmployeeDto);
+  async update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @GetUser() user: IUser): Promise<IEmployee> {
+    return await this.employeesService.update(id, updateEmployeeDto,user);
   }
 
   @Delete(':id')
