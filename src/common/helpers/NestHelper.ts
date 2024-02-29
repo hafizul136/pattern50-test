@@ -85,5 +85,16 @@ export class NestHelper {
         if (!value) value = null;
         return value;
     }
+    hasDuplicateInArrayOfObject(array, property) {
+        const seen = new Set();
+        for (const item of array) {
+            const value = item[property];
+            if (seen.has(value)) {
+                return true; // Duplicate found
+            }
+            seen.add(value);
+        }
+        return false; // No duplicates found
+    }
 
 }

@@ -1,8 +1,8 @@
 import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { CreateEmployeeDTO, CreateEmployeeDTOs } from './dto/create-employee.dto';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { CreateEmployeeDTOs } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeService } from './employee.service';
 import { IEmployee, IEmployees } from './interfaces/employee.interface';
@@ -28,7 +28,7 @@ export class EmployeeController {
     return await this.employeesService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto): Promise<IEmployee> {
     return await this.employeesService.update(id, updateEmployeeDto);
   }
