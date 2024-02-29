@@ -1,3 +1,4 @@
+import { StatusEnum } from '@common/enums/status.enum';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
 import { AggregationHelper } from '@common/helpers/aggregation.helper';
@@ -6,6 +7,7 @@ import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { Utils } from '@common/helpers/utils';
 import { IListQuery } from '@common/interfaces/list-query.interface';
 import { DatabaseService } from '@modules/db/database.service';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -26,10 +28,10 @@ export class EmployeeRoleService {
   ) { }
 
   // create roles
-  async create(createEmployeeRolesDto: CreateEmployeeRolesDto): Promise<IEmployeeRoles> {
+  async create(createEmployeeRolesDto: CreateEmployeeRolesDto, user: IUser): Promise<IEmployeeRoles> {
     // construct objects
     const employeeObjects = createEmployeeRolesDto.roles.map(role =>
-      ConstructObjectFromDtoHelper.constructEmployeeRoleObj(role)
+      ConstructObjectFromDtoHelper.constructEmployeeRoleObj(role, user?.clientId)
     );
 
     try {
@@ -56,6 +58,10 @@ export class EmployeeRoleService {
     if (!query?.page || parseInt(query?.page) < 1) page = 1;
     if (!query?.size || parseInt(query?.size) < 1) size = 10;
 
+    // filter by status
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ status: StatusEnum.ACTIVE }]);
+
+    // get the members
     AggregationHelper.lookupForIdForeignKey(aggregate, "employee", "employeeRoleId", "members");
 
     // searching by 

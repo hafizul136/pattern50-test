@@ -1,6 +1,6 @@
 import { StatusEnum } from "@common/enums/status.enum";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export type EmployeeRoleDocument = EmployeeRole & Document;
 
@@ -27,7 +27,10 @@ export class EmployeeRole {
     status: string;
 
     @Prop({ type: Boolean, required: true, default: false })
-    isDeleted: boolean
+    isDeleted: boolean;
+
+    @Prop({ type: mongoose.Types.ObjectId })
+    clientId: mongoose.Types.ObjectId;
 }
 
 export const employeeRoleSchema = SchemaFactory.createForClass(EmployeeRole);

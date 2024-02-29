@@ -7,6 +7,7 @@ export interface IEmployeeRole extends Document {
     endDate?: Date | null;
     isDeleted?: boolean;
     status?: string;
+    clientId?: any;
 }
 
 export interface IEmployeeRoles {
