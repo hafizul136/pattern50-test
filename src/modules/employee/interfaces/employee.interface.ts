@@ -11,3 +11,7 @@ export interface IEmployee extends Document {
     status?: string;
     clientId?: mongoose.Types.ObjectId;
 }
+export interface IEmployees {
+    count: number;
+    employees: IEmployee[];
+}

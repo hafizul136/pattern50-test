@@ -1,16 +1,16 @@
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
+import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, isValidObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDTOs } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee, EmployeeDocument } from './entities/employee.entity';
-import { IEmployee } from './interfaces/employee.interface';
-import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { IEmployee, IEmployees } from './interfaces/employee.interface';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -19,15 +19,28 @@ export class EmployeeService {
     private employeeRoleService: EmployeeRoleService
   ) { }
 
-  async create(createEmployeeDto: CreateEmployeeDto, user: IUser): Promise<IEmployee> {
+  async create(createEmployeeDTOs: CreateEmployeeDTOs, user: IUser): Promise<IEmployees> {
     try {
-      await this.checkEmailUniqueness(createEmployeeDto?.email)
-      // check employee role
-      for (const employeeRoleId of createEmployeeDto?.employeeRoleIds) {
-        await this.employeeRoleService.findOne(String(employeeRoleId));
+      const employeeDTOsPromises = createEmployeeDTOs.employees.map(async (employee) => {
+        await this.checkEmailUniqueness(employee?.email);
+        // check employee role
+        for (const employeeRoleId of employee?.employeeRoleIds) {
+          await this.employeeRoleService.findOne(String(employeeRoleId));
+        }
+        return await ConstructObjectFromDtoHelper.constructEmployeeObj(user, employee);
+      });
+
+      // Await all promises
+      const employeeDTOs = await Promise.all(employeeDTOsPromises);
+
+      // const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeObj(user, createEmployeeDto)
+      const employees: IEmployee[] = await this.employeeModel.create(employeeDTOs);
+      return {
+        count: employees?.length ?? 0,
+        employees: employees
       }
-      const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeObj(user, createEmployeeDto)
-      return await this.employeeModel.create(employeeDTO);
+
+
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
         error?.message,

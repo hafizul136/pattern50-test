@@ -1,13 +1,13 @@
 import { IsPhoneNumberValidator } from "@common/validators/phone-number.validator";
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
-import { ArrayNotEmpty, IsArray, IsEmail, IsNotEmpty, IsOptional, IsString, Validate, ValidateIf } from "class-validator";
+import { Type } from "class-transformer";
+import { ArrayNotEmpty, IsArray, IsEmail, IsNotEmpty, IsOptional, IsString, Validate, ValidateIf, ValidateNested } from "class-validator";
 import mongoose from "mongoose";
 
-export class CreateEmployeeDto {
+export class CreateEmployeeDTO {
     @TrimAndValidateString({ message: "name should not be empty" })
     @IsString({ message: "name must be string" })
     name: string;
-
 
     @IsNotEmpty({ message: 'email should not be empty' })
     @IsEmail({}, { message: 'email invalid' })
@@ -24,6 +24,14 @@ export class CreateEmployeeDto {
     @ArrayNotEmpty()
     @IsString({ each: true })
     employeeRoleIds: mongoose.Types.ObjectId[];
+}
+export class CreateEmployeeDTOs {
+    @IsArray()
+    @ArrayNotEmpty()
+    @ValidateNested({ each: true })
+    @Type(() => CreateEmployeeDTO)
+    employees: CreateEmployeeDTO[]
+
 }
 
 export enum WorkingStatusEnum {

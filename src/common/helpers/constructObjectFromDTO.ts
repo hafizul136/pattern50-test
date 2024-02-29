@@ -3,7 +3,7 @@ import { EINSecureHelper } from "@common/helpers/EinHelper";
 import { CreateCompanyDTO } from "@modules/company/dto/create-company.dto";
 import { ICompany } from "@modules/company/interfaces/company.interface";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
-import { CreateEmployeeDto } from "@modules/employee/dto/create-employee.dto";
+import { CreateEmployeeDTO } from "@modules/employee/dto/create-employee.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
@@ -91,7 +91,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             startDate: new DateHelper().now("UTC")
         }
     }
-    static constructEmployeeObj(user: IUser, createEmployeeDto: CreateEmployeeDto) {
+    static async constructEmployeeObj(user: IUser, createEmployeeDto: CreateEmployeeDTO) {
         return {
             name: createEmployeeDto?.name ? createEmployeeDto?.name?.trim() : "",
             email: createEmployeeDto?.email ? createEmployeeDto?.email?.trim() : "",
