@@ -24,6 +24,12 @@ export class EmployeeRoleController {
     return this.employeeRoleService.findAll(query);
   }
 
+  @Get("list/dropdown")
+  @Permissions("company.create")
+  listDropdown(): Promise<IEmployeeRole[]> {
+    return this.employeeRoleService.list();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string): Promise<IEmployeeRole> {
     return this.employeeRoleService.findOne(id);

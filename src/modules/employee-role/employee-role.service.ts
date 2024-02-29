@@ -58,9 +58,6 @@ export class EmployeeRoleService {
     if (!query?.page || parseInt(query?.page) < 1) page = 1;
     if (!query?.size || parseInt(query?.size) < 1) size = 10;
 
-    // filter by status
-    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ status: StatusEnum.ACTIVE }]);
-
     // get the members
     AggregationHelper.lookupForIdForeignKey(aggregate, "employee", "employeeRoleId", "members");
 
@@ -88,6 +85,17 @@ export class EmployeeRoleService {
     const employeeRoles = await this.employeeRoleModel.aggregate(aggregate).exec();
 
     return Utils.returnListResponse(employeeRoles);
+  }
+
+  async list(): Promise<IEmployeeRole[]> {
+    let aggregate = [];
+
+    // filter by status
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ status: StatusEnum.ACTIVE }]);
+
+    const employeeRoles = await this.employeeRoleModel.aggregate(aggregate).exec();
+
+    return employeeRoles;
   }
 
   async findOne(id: string): Promise<IEmployeeRole> {
