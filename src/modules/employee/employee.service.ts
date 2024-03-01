@@ -37,7 +37,7 @@ export class EmployeeService {
         await this.checkEmailUniqueness(employee?.email);
         // check employee role
         for (const employeeRoleId of employee?.employeeRoleIds) {
-          await this.employeeRoleService.findOne(String(employeeRoleId));
+          await this.employeeRoleService.findActiveRole(String(employeeRoleId));
         }
         return await ConstructObjectFromDtoHelper.constructEmployeeObj(user, employee);
       });
@@ -125,7 +125,7 @@ export class EmployeeService {
     await this.checkUniqueEmailWithOutItself(oId, updateEmployeeDto?.email);
     // check employee role
     for (const employeeRoleId of updateEmployeeDto?.employeeRoleIds) {
-      await this.employeeRoleService.findOne(String(employeeRoleId));
+      await this.employeeRoleService.findActiveRole(String(employeeRoleId));
     }
     const employeeDTO = ConstructObjectFromDtoHelper.constructEmployeeUpdateObj(user, updateEmployeeDto);
     const employee = await this.employeeModel.findByIdAndUpdate(id, employeeDTO, { new: true }).lean();

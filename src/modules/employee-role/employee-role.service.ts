@@ -113,6 +113,21 @@ export class EmployeeRoleService {
 
     return employeeRole;
   }
+  async findActiveRole(id: string): Promise<IEmployeeRole> {
+    new MongooseHelper().isValidMongooseId(id);
+
+    const employeeRole = await this.employeeRoleModel.findOne({_id:id,status:StatusEnum.ACTIVE}).lean();
+
+    if (NestHelper.getInstance().isEmpty(employeeRole)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Role not found",
+        "role_not_found",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    return employeeRole;
+  }
 
   // update employee role status
   async update(id: string, updateEmployeeRoleDto: UpdateEmployeeRoleDto): Promise<IEmployeeRole> {
