@@ -23,8 +23,6 @@ export class EmployeeRoleService {
   constructor(
     @InjectModel(EmployeeRole.name)
     private readonly employeeRoleModel: Model<EmployeeRoleDocument>,
-
-    private readonly databaseService: DatabaseService
   ) { }
 
   // create roles

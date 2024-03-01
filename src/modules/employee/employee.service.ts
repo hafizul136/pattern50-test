@@ -143,7 +143,7 @@ export class EmployeeService {
     return await this.employeeModel.findByIdAndRemove(id).lean();
   }
   // private functions
-  private async checkEmailUniqueness(email: string): Promise<void> {
+  async checkEmailUniqueness(email: string): Promise<void> {
     const employee = await this.employeeModel.findOne({ email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
@@ -153,7 +153,7 @@ export class EmployeeService {
       );
     }
   }
-  private async checkUniqueEmailWithOutItself(id: mongoose.Types.ObjectId, email: string): Promise<void> {
+  async checkUniqueEmailWithOutItself(id: mongoose.Types.ObjectId, email: string): Promise<void> {
     const employee = await this.employeeModel.findOne({ _id: { $ne: id }, email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(

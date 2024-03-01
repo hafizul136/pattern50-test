@@ -6,7 +6,7 @@ import { UsersService } from '@modules/users/user.service';
 import { CanActivate, ExecutionContext, ForbiddenException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { appConfig } from 'configuration/app.config';
+import { appConfig } from '../../../configuration/app.config';
 
 
 @Injectable()
