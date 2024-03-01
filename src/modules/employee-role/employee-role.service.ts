@@ -25,8 +25,6 @@ export class EmployeeRoleService {
   constructor(
     @InjectModel(EmployeeRole.name)
     private readonly employeeRoleModel: Model<EmployeeRoleDocument>,
-
-    private readonly databaseService: DatabaseService
   ) { }
 
   // create roles
@@ -104,6 +102,21 @@ export class EmployeeRoleService {
     new MongooseHelper().isValidMongooseId(id);
 
     const employeeRole = await this.employeeRoleModel.findById(id).lean();
+
+    if (NestHelper.getInstance().isEmpty(employeeRole)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Role not found",
+        "role_not_found",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    return employeeRole;
+  }
+  async findActiveRole(id: string): Promise<IEmployeeRole> {
+    new MongooseHelper().isValidMongooseId(id);
+
+    const employeeRole = await this.employeeRoleModel.findOne({_id:id,status:StatusEnum.ACTIVE}).lean();
 
     if (NestHelper.getInstance().isEmpty(employeeRole)) {
       ExceptionHelper.getInstance().defaultError(
