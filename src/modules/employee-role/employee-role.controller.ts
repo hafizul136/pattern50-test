@@ -2,7 +2,8 @@ import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { IListQuery } from '@common/interfaces/list-query.interface';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateEmployeeRolesDto } from './dto/create-employee-role.dto';
 import { UpdateEmployeeRoleDto } from './dto/update-employee-role.dto';
 import { EmployeeRoleService } from './employee-role.service';
@@ -28,6 +29,12 @@ export class EmployeeRoleController {
   @Permissions("company.create")
   listDropdown(): Promise<IEmployeeRole[]> {
     return this.employeeRoleService.list();
+  }
+
+  @Patch('/uploadFile')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<any> {
+    return await this.employeeRoleService.uploadFile(file);
   }
 
   @Get(':id')
