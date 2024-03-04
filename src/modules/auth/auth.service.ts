@@ -1,3 +1,4 @@
+import { Utils } from '@common/helpers/utils';
 import { mainServiceRolePermissions } from '@common/rolePermissions';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 import { IRole } from '@modules/role/interfaces/role.interface';
@@ -5,7 +6,7 @@ import { RoleService } from '@modules/role/role.service';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UserTypeEnum } from '@modules/users/enum/index.enum';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { BadRequestException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientRMQ } from '@nestjs/microservices';
 import mongoose from 'mongoose';
@@ -19,6 +20,7 @@ import { appConfig } from '../../configuration/app.config';
 import { UserRoleService } from '../../modules/user-role/user-role.service';
 import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
+import { ForgetPassDto } from './dto/forgetPassDto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
 
@@ -64,7 +66,7 @@ export class AuthService {
       let permissions = [];
       let permissionsObject
       if (createUserDto.userType == UserTypeEnum.companyAdmin) {
-        permissionsObject = await mainServiceRolePermissions().filter(role => role.roleName == UserTypeEnum.companyAdmin);
+        permissionsObject = mainServiceRolePermissions().filter(role => role.roleName == UserTypeEnum.companyAdmin);
         permissions = permissionsObject[0].permissions
         // add role and user
         setTimeout(async () => {
@@ -143,6 +145,42 @@ export class AuthService {
     const authToken = { ...tokens }
 
     return { auth: authToken, user };
+  }
+  async sendForgetPasswordLink(forgetDto: ForgetPassDto, AuthUser: IUser): Promise<{ user: IUser; forgetPassLink: string }> {
+    const user: IUser = await this.usersService.findOneByEmail(forgetDto.email, AuthUser?.clientId);
+    if (!user) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: ['user_not_found'],
+      });
+    } else {
+
+      const token = this.jwtService.sign(
+        { email: user.email, id: user.id },
+        {
+          expiresIn: '2d',
+        }
+      );
+
+      await this.updateResetCode(user, token);
+      let link: string = Utils.getAppUrl() + 'forgot-password/reset/' + token;
+
+      // const emailRes = await AwsServices.SimpleEmailService.sendEmail({
+      //   from: process.env.FROM_EMAIL,
+      //   sendersName: 'Charge OnSite',
+      //   subject: 'Forgot password',
+      //   to: user.email,
+      //   text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link),
+      // });
+      // console.log(emailRes);
+      return {
+        user: user,
+        forgetPassLink: link,
+      };
+    }
+  }
+  async updateResetCode(user: IUser, code: string): Promise<IUser> {
+    return await this.usersService.updateResetCode(user, code);
   }
 
   hashData(password: string): Promise<string> {

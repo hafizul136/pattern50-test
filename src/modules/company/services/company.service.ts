@@ -198,7 +198,7 @@ export class CompanyService {
     }
     if (!NestHelper.getInstance()?.isEmpty(a[0].byMasterEmail)) {
       ExceptionHelper.getInstance().defaultError(
-        'Master Email address already exists',
+        'Master email address already exists',
         'master_email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
@@ -239,7 +239,7 @@ export class CompanyService {
         $match: { masterEmail: masterEmail }
       },
     ];
-    
+
     const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
     const einPipeline = [
       {
@@ -261,12 +261,12 @@ export class CompanyService {
   private async checkDuplicateCompanyEmailAndEIN(companyId: Types.ObjectId, ein: string, email: string, masterEmail: string) {
     const emailPipeline = [
       {
-        $match: {_id: { $ne: companyId }, email: email},
+        $match: { _id: { $ne: companyId }, email: email },
       },
     ];
     const masterEmailPipeline = [
       {
-        $match:{ _id: { $ne: companyId }, masterEmail: masterEmail },
+        $match: { _id: { $ne: companyId }, masterEmail: masterEmail },
       },
     ];
     const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);

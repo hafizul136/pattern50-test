@@ -14,6 +14,9 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { IAuthResponse, IFullName } from './interface/auth.interface';
 import { Request } from 'express';
+import { ForgetPassDto } from './dto/forgetPassDto';
+import { IUser } from '@modules/users/interfaces/user.interface';
+import { GetUser } from '@common/decorators/getUser.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +36,10 @@ export class AuthController {
         const clientId = await ClientIDGetHelper.getClientIdFromRequest(req);
         const clientObjId = new mongoose.Types.ObjectId(clientId);
         return await this.authService.signIn(data, clientObjId);
+    }
+    @Post('forgot-password')
+    forgotPassword(@Body() forgetDto: ForgetPassDto,@GetUser() user:IUser): Promise<{ user: IUser; forgetPassLink: string }> {
+        return this.authService.sendForgetPasswordLink(forgetDto,user);
     }
     // @Post('sign-in/driver')
     // @UseGuards(ClientCredentialsGuard)
