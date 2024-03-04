@@ -53,7 +53,7 @@ export class TechnologyToolService {
   }
 
   findAll() {
-    return `This action returns all technologyTool`;
+    // get the category type id
   }
 
   findOne(id: number) {
