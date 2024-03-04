@@ -2,7 +2,9 @@ import { StatusEnum } from '@common/enums/status.enum';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
 import { AggregationHelper } from '@common/helpers/aggregation.helper';
+import { AwsServices } from '@common/helpers/aws.service';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
+import { FileTypes } from '@common/helpers/file.type.matcher';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { Utils } from '@common/helpers/utils';
 import { IListQuery } from '@common/interfaces/list-query.interface';
@@ -148,4 +150,19 @@ export class EmployeeRoleService {
   remove(id: number) {
     return `This action removes a #${id} employeeRole`;
   }
+
+  // ----------------Test------------------------
+
+  async uploadFile(file: Express.Multer.File) {
+    const s3Response = await AwsServices.S3.uploadFile(file, FileTypes.IMAGE);
+    if (s3Response == -1) {
+      return {
+        error: 'FILE TYPE NOT ALLOWED',
+      };
+    }
+
+    return s3Response;
+  }
+
+  // -----------------------------------------------
 }

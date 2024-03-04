@@ -24,6 +24,9 @@ export interface IConfig extends ICommonConfig {
     rmqURL: string
     redisURL: string
     stripeSecret: string
+    accessKeyId: string
+    secretAccessKey: string
+    awsRegion: string
 }
 
 const commonConfig = (): ICommonConfig => {
@@ -48,6 +51,9 @@ const getAppConfig = (): IConfig => {
     const rmqURL = process.env.RMQ_URL;
     const redisURL = (process.env.REDIS_ENDPOINT)?.split('//')[1];
     const stripeSecret = process.env.STRIPE_SECRET;
+    const accessKeyId = process.env.ACCESS_KEY_ID;
+    const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+    const awsRegion = process.env.AWS_REGION;
 
     if (!port) throw new Error('port must be specified');
     if (!mongodbURL) throw new Error('mongodbURL must be specified');
@@ -59,6 +65,9 @@ const getAppConfig = (): IConfig => {
     if (!serverType) throw new Error('serverType must be specified');
     if (!rmqURL) throw new Error('rmqURL must be specified');
     if (!stripeSecret) throw new Error('stripeSecret must be specified');
+    if (!accessKeyId) throw new Error('accessKeyId must be specified');
+    if (!secretAccessKey) throw new Error('secretAccessKey must be specified');
+    if (!awsRegion) throw new Error('awsRegion must be specified');
     return {
         ...commonConfig(),
         port,
@@ -71,7 +80,10 @@ const getAppConfig = (): IConfig => {
         serverType,
         rmqURL,
         redisURL,
-        stripeSecret
+        stripeSecret,
+        accessKeyId,
+        secretAccessKey,
+        awsRegion
     };
 };
 export const appConfig = getAppConfig();
