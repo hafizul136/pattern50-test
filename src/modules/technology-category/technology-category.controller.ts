@@ -37,7 +37,7 @@ export class TechnologyCategoryController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.technologyCategoryService.findOne(+id);
+    return this.technologyCategoryService.findOne(id);
   }
 
   @Patch(':id')

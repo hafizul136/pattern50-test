@@ -3,6 +3,8 @@ import { NestHelper } from '@common/helpers/NestHelper';
 import { AwsServices } from '@common/helpers/aws.service';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { FileTypes } from '@common/helpers/file.type.matcher';
+import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { TechnologyCategoryService } from '@modules/technology-category/technology-category.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -15,7 +17,8 @@ export class TechnologyToolService {
 
   constructor(
     @InjectModel(TechnologyTool.name)
-    private readonly technologyToolModel: Model<TechnologyToolDocument>
+    private readonly technologyToolModel: Model<TechnologyToolDocument>,
+    private readonly technologyCategoryService: TechnologyCategoryService
   ) { }
 
   // upload logo to aws s3
@@ -41,8 +44,17 @@ export class TechnologyToolService {
   // create tools under technology
   async create(createTechnologyToolsDto: CreateTechnologyToolsDto) {
     // construct objects for multiple creation
-    const toolsObjs = createTechnologyToolsDto?.tools?.map(tool =>
-      ConstructObjectFromDtoHelper.constructToolsObj(tool));
+    // construct objects for multiple creation
+    const toolsObjs = await Promise.all(createTechnologyToolsDto?.tools?.map(async tool => {
+      // validate mongo ids
+      MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId, "category");
+      MongooseHelper.getInstance().isValidMongooseId(tool?.typeId, "type");
+      await this.technologyCategoryService.findOne(tool?.categoryId);
+      await this.technologyCategoryService.findOneToolType(tool?.typeId);
+
+      return ConstructObjectFromDtoHelper.constructToolsObj(tool);
+    }));
+
 
     const tools = await this.technologyToolModel.create(toolsObjs);
 
