@@ -149,7 +149,7 @@ export class CompanyService {
     // Assuming these methods return promises
     const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
     const dateCheckPromise = this.validDateCheck(updateCompanyDto?.startDate, updateCompanyDto?.endDate);
-    const uniqueCheckCompanyEmailAndEIN = this.uniqueCheckCompanyEmailAndEIN(existingCompany?._id, updateCompanyDto);
+    const uniqueCheckCompanyEmailAndEIN = await this.uniqueCheckCompanyEmailAndEIN(existingCompany?._id, updateCompanyDto);
     // Execute all promises concurrently
     await Promise.all([zipCodeValidationPromise, dateCheckPromise, uniqueCheckCompanyEmailAndEIN]);
 
@@ -222,7 +222,7 @@ export class CompanyService {
     }
     if (!NestHelper.getInstance()?.isEmpty(a[0].byMasterEmail)) {
       ExceptionHelper.getInstance().defaultError(
-        'Master Email address already exists',
+        'Master email address already exists',
         'master_email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
@@ -269,10 +269,10 @@ export class CompanyService {
         $match: { _id: { $ne: companyId }, masterEmail: masterEmail },
       },
     ];
-    const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
+
     const einPipeline = [
       {
-        $match: { _id: { $ne: companyId }, ein: hashedEIN },
+        $match: { _id: { $ne: companyId }, ein: ein },
       },
 
     ];
