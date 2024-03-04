@@ -1,15 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TechnologyToolService } from './technology-tool.service';
-import { CreateTechnologyToolDto } from './dto/create-technology-tool.dto';
+import { Permissions } from '@common/decorators/permissions.decorator';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
+import { TechnologyToolService } from './technology-tool.service';
 
 @Controller('technology-tool')
 export class TechnologyToolController {
-  constructor(private readonly technologyToolService: TechnologyToolService) {}
+  constructor(private readonly technologyToolService: TechnologyToolService) { }
 
-  @Post()
-  create(@Body() createTechnologyToolDto: CreateTechnologyToolDto) {
-    return this.technologyToolService.create(createTechnologyToolDto);
+  @Patch('/upload-logo')
+  @UseInterceptors(FileInterceptor('logo'))
+  async uploadFile(@UploadedFile() logo: Express.Multer.File): Promise<any> {
+    return await this.technologyToolService.uploadLogo(logo);
+  }
+
+  @Post("create")
+  @Permissions("company.create")
+  create(@Body() createTechnologyToolsDto: CreateTechnologyToolsDto) {
+    return this.technologyToolService.create(createTechnologyToolsDto);
   }
 
   @Get()
