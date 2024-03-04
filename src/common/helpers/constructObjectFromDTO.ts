@@ -5,6 +5,7 @@ import { ICompany } from "@modules/company/interfaces/company.interface";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 import { CreateEmployeeDTO } from "@modules/employee/dto/create-employee.dto";
 import { UpdateEmployeeDto } from "@modules/employee/dto/update-employee.dto";
+import { CreateTechnologyToolDto } from "@modules/technology-tool/dto/create-technology-tool.dto";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose, { Types } from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
@@ -102,13 +103,24 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             clientId: new mongoose.Types.ObjectId(user?.clientId) ?? ""
         }
     }
-    static constructEmployeeUpdateObj(user: IUser,updateEmployeeDto: UpdateEmployeeDto) {
+    static constructEmployeeUpdateObj(user: IUser, updateEmployeeDto: UpdateEmployeeDto) {
         return {
             name: updateEmployeeDto?.name ? updateEmployeeDto?.name?.trim() : "",
             email: updateEmployeeDto?.email ? updateEmployeeDto?.email?.trim() : "",
             phone: updateEmployeeDto?.phone ? updateEmployeeDto?.phone?.trim() : "",
             employeeRoleIds: updateEmployeeDto?.employeeRoleIds ?? "",
             clientId: new mongoose.Types.ObjectId(user?.clientId) ?? ""
+        }
+    }
+
+    static constructToolsObj(tool: CreateTechnologyToolDto) {
+        return {
+            name: tool?.name ?? "",
+            typeId: new Types.ObjectId(tool?.typeId) ?? "",
+            categoryId: new Types.ObjectId(tool?.categoryId) ?? "",
+            website: tool?.website ?? "",
+            logo: tool?.logo ?? "",
+            status: StatusEnum.ACTIVE,
         }
     }
 }

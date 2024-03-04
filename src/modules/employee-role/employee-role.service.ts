@@ -2,13 +2,10 @@ import { StatusEnum } from '@common/enums/status.enum';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
 import { AggregationHelper } from '@common/helpers/aggregation.helper';
-import { AwsServices } from '@common/helpers/aws.service';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
-import { FileTypes } from '@common/helpers/file.type.matcher';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { Utils } from '@common/helpers/utils';
 import { IListQuery } from '@common/interfaces/list-query.interface';
-import { DatabaseService } from '@modules/db/database.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -116,7 +113,7 @@ export class EmployeeRoleService {
   async findActiveRole(id: string): Promise<IEmployeeRole> {
     new MongooseHelper().isValidMongooseId(id);
 
-    const employeeRole = await this.employeeRoleModel.findOne({_id:id,status:StatusEnum.ACTIVE}).lean();
+    const employeeRole = await this.employeeRoleModel.findOne({ _id: id, status: StatusEnum.ACTIVE }).lean();
 
     if (NestHelper.getInstance().isEmpty(employeeRole)) {
       ExceptionHelper.getInstance().defaultError(
@@ -150,19 +147,4 @@ export class EmployeeRoleService {
   remove(id: number) {
     return `This action removes a #${id} employeeRole`;
   }
-
-  // ----------------Test------------------------
-
-  async uploadFile(file: Express.Multer.File) {
-    const s3Response = await AwsServices.S3.uploadFile(file, FileTypes.IMAGE);
-    if (s3Response == -1) {
-      return {
-        error: 'FILE TYPE NOT ALLOWED',
-      };
-    }
-
-    return s3Response;
-  }
-
-  // -----------------------------------------------
 }
