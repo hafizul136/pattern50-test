@@ -22,6 +22,7 @@ export class TechnologyToolController {
   }
 
   @Get()
+  @Permissions("company.create")
   findAll() {
     return this.technologyToolService.findAll();
   }

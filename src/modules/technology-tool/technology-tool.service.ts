@@ -38,6 +38,7 @@ export class TechnologyToolService {
     return s3Response;
   }
 
+  // create tools under technology
   async create(createTechnologyToolsDto: CreateTechnologyToolsDto) {
     // construct objects for multiple creation
     const toolsObjs = createTechnologyToolsDto?.tools?.map(tool =>
@@ -52,7 +53,7 @@ export class TechnologyToolService {
   }
 
   findAll() {
-    return `This action returns all technologyTool`;
+    // get the category type id
   }
 
   findOne(id: number) {
