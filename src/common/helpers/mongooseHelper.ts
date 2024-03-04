@@ -15,10 +15,10 @@ export class MongooseHelper {
         return MongooseHelper.instance;
     }
 
-    isValidMongooseId(id: mongoose.Types.ObjectId | string): void {
+    isValidMongooseId(id: mongoose.Types.ObjectId | string, fieldName?: string): void {
         let isValidMongooseId = mongoose.Types.ObjectId.isValid(id);
         if (!isValidMongooseId) {
-            ExceptionHelper.getInstance().defaultError("Invalid id", "invalid_id", HttpStatus.BAD_REQUEST)
+            ExceptionHelper.getInstance().defaultError(`Invalid ${fieldName ? fieldName + ' ' : ''}id`, `invalid_${fieldName}_id`, HttpStatus.BAD_REQUEST)
         }
     }
 
