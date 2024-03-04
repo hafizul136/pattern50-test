@@ -63,41 +63,6 @@ export class CompanyService {
       );
     }
   }
-  private async uniqueCheckEmailAndEIN(createCompanyDTO: CreateCompanyDTO) {
-    const a = await this.checkDuplicateEmailAndEIN(createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
-    if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
-      ExceptionHelper.getInstance().defaultError(
-        'EIN must be unique',
-        'EIN_must_be_unique',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
-      ExceptionHelper.getInstance().defaultError(
-        'Duplicate email or master email',
-        'duplicate_email_or_master_email',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-  }
-  private async uniqueCheckCompanyEmailAndEIN(companyId: Types.ObjectId, createCompanyDTO: CreateCompanyDTO) {
-    const a = await this.checkDuplicateCompanyEmailAndEIN(companyId, createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
-    if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
-      ExceptionHelper.getInstance().defaultError(
-        'EIN must be unique',
-        'EIN_must_be_unique',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
-      ExceptionHelper.getInstance().defaultError(
-        'Duplicate email or master email',
-        'duplicate_email_or_master_email',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-  }
-
   // get company list
   async findAll(query: { page: string, size: string, query?: string }, user: IUser): Promise<{ data?: ICompany[], count?: number }> {
     let aggregate = [];
@@ -171,6 +136,14 @@ export class CompanyService {
     const oId = MongooseHelper.getInstance().makeMongooseId(id)
     //check company existence
     const existingCompany: ICompany = await this.findOneById(oId)
+    //hashed EIN 
+
+    let ein: string;
+    if (updateCompanyDto?.ein) {
+      const hashedEin = await EINSecureHelper.getEinHashed(updateCompanyDto?.ein);
+      ein = hashedEin;
+      updateCompanyDto['ein']=ein
+    }
 
     // Assuming these methods return promises
     const zipCodeValidationPromise = ZipCodeValidator.validate(updateCompanyDto?.zipCode);
@@ -206,7 +179,40 @@ export class CompanyService {
     return company;
   }
   //private functions
-
+  private async uniqueCheckEmailAndEIN(createCompanyDTO: CreateCompanyDTO) {
+    const a = await this.checkDuplicateEmailAndEIN(createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
+    if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
+      ExceptionHelper.getInstance().defaultError(
+        'EIN must be unique',
+        'EIN_must_be_unique',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Duplicate email or master email',
+        'duplicate_email_or_master_email',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+  private async uniqueCheckCompanyEmailAndEIN(companyId: Types.ObjectId, createCompanyDTO: CreateCompanyDTO) {
+    const a = await this.checkDuplicateCompanyEmailAndEIN(companyId, createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
+    if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
+      ExceptionHelper.getInstance().defaultError(
+        'EIN must be unique',
+        'EIN_must_be_unique',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Duplicate email or master email',
+        'duplicate_email_or_master_email',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
   private async einDuplicateCheck(ein: string) {
     const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
     const companyExistByEIN = await this.companyModel.findOne({ ein: hashedEIN }).lean();
