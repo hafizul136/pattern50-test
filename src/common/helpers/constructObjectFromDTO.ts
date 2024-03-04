@@ -116,8 +116,8 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
 
     static constructToolsObj(tool: CreateTechnologyToolDto) {
         // validate mongo ids
-        MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId);
-        MongooseHelper.getInstance().isValidMongooseId(tool?.typeId);
+        MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId, "category");
+        MongooseHelper.getInstance().isValidMongooseId(tool?.typeId, "type");
 
         return {
             name: tool?.name ?? "",
