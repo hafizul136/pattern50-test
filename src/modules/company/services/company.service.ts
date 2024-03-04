@@ -142,7 +142,7 @@ export class CompanyService {
     if (updateCompanyDto?.ein) {
       const hashedEin = await EINSecureHelper.getEinHashed(updateCompanyDto?.ein);
       ein = hashedEin;
-      updateCompanyDto['ein']=ein
+      updateCompanyDto['ein'] = ein
     }
 
     // Assuming these methods return promises
@@ -190,8 +190,15 @@ export class CompanyService {
     }
     if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
       ExceptionHelper.getInstance().defaultError(
-        'Duplicate email or master email',
-        'duplicate_email_or_master_email',
+        'Email address already exists',
+        'email_address_already_exists',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if (!NestHelper.getInstance()?.isEmpty(a[0].byMasterEmail)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Master Email address already exists',
+        'master_email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -207,30 +214,15 @@ export class CompanyService {
     }
     if (!NestHelper.getInstance().isEmpty(a[0].byEmail)) {
       ExceptionHelper.getInstance().defaultError(
-        'Duplicate email or master email',
-        'duplicate_email_or_master_email',
+        'Email address already exists',
+        'email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
-  }
-  private async einDuplicateCheck(ein: string) {
-    const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
-    const companyExistByEIN = await this.companyModel.findOne({ ein: hashedEIN }).lean();
-    if (!NestHelper.getInstance()?.isEmpty(companyExistByEIN)) {
+    if (!NestHelper.getInstance()?.isEmpty(a[0].byMasterEmail)) {
       ExceptionHelper.getInstance().defaultError(
-        'EIN must be unique',
-        'EIN_must_be_unique',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-  }
-
-  private async duplicateEmailCheck(email: string, masterEmail: string) {
-    const isCompanyExistByEmail = await this.findOneByEmail(email, masterEmail);
-    if (!NestHelper.getInstance().isEmpty(isCompanyExistByEmail)) {
-      ExceptionHelper.getInstance().defaultError(
-        'Duplicate email or master email',
-        'duplicate_email_or_master_email',
+        'Master Email address already exists',
+        'master_email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -238,11 +230,15 @@ export class CompanyService {
   private async checkDuplicateEmailAndEIN(ein: string, email: string, masterEmail: string) {
     const emailPipeline = [
       {
-        $match: {
-          $or: [{ email: email }, { masterEmail: masterEmail }],
-        },
+        $match: { email: email }
       },
     ];
+    const masterEmailPipeline = [
+      {
+        $match: { masterEmail: masterEmail }
+      },
+    ];
+    
     const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
     const einPipeline = [
       {
@@ -255,6 +251,7 @@ export class CompanyService {
       {
         $facet: {
           byEmail: emailPipeline,
+          byMasterEmail: masterEmailPipeline,
           byEIN: einPipeline,
         },
       },
@@ -263,9 +260,12 @@ export class CompanyService {
   private async checkDuplicateCompanyEmailAndEIN(companyId: Types.ObjectId, ein: string, email: string, masterEmail: string) {
     const emailPipeline = [
       {
-        $match: {
-          $or: [{ _id: { $ne: companyId }, email: email }, { _id: { $ne: companyId }, masterEmail: masterEmail }],
-        },
+        $match: {_id: { $ne: companyId }, email: email},
+      },
+    ];
+    const masterEmailPipeline = [
+      {
+        $match:{ _id: { $ne: companyId }, masterEmail: masterEmail },
       },
     ];
     const hashedEIN = await EINSecureHelper.encrypt(ein, appConfig.einHashedSecret);
@@ -280,6 +280,7 @@ export class CompanyService {
       {
         $facet: {
           byEmail: emailPipeline,
+          byMasterEmail: masterEmailPipeline,
           byEIN: einPipeline,
         },
       },
