@@ -118,7 +118,8 @@ export class CompanyService {
     }
 
     if (trimmedQuery) {
-      const escapedQForPhone = trimmedQuery.replace(/[()\s-]/g, "");
+      const escapedQForPhone = trimmedQuery.replace(/[*]/g, "\\$&");
+      const phoneQuery = escapedQForPhone.replace(/[()\s-]/g, "");
       const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       aggregate.push({
         $match: {
@@ -127,7 +128,7 @@ export class CompanyService {
               name: { $regex: escapedQuery, $options: "i" }
             },
             { email: { $regex: escapedQuery, $options: "i" } },
-            { phone: { $regex: escapedQForPhone, $options: "i" } },
+            { phone: { $regex: phoneQuery, $options: "i" } },
             { "addresses.city": { $regex: escapedQuery, $options: "i" } },
             { "addresses.state": { $regex: escapedQuery, $options: "i" } },
           ]
