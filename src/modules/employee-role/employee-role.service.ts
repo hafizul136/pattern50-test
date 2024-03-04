@@ -9,7 +9,7 @@ import { IListQuery } from '@common/interfaces/list-query.interface';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateEmployeeRolesDto } from './dto/create-employee-role.dto';
 import { UpdateEmployeeRoleDto } from './dto/update-employee-role.dto';
 import { EmployeeRole, EmployeeRoleDocument } from './entities/employee-role.entity';
@@ -49,11 +49,14 @@ export class EmployeeRoleService {
   }
 
   // get list of employee roles
-  async findAll(query: IListQuery): Promise<{ data?: IEmployeeRole[], count?: number }> {
+  async findAll(query: IListQuery, user: IUser): Promise<{ data?: IEmployeeRole[], count?: number }> {
     let aggregate = [];
     let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
     if (!query?.page || parseInt(query?.page) < 1) page = 1;
     if (!query?.size || parseInt(query?.size) < 1) size = 10;
+
+    // filter by client id
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new Types.ObjectId(user?.clientId) }]);
 
     // get the members
     AggregationHelper.lookupForIdForeignKey(aggregate, "employee", "employeeRoleId", "members");

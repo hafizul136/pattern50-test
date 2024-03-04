@@ -20,8 +20,8 @@ export class EmployeeRoleController {
 
   @Get("list")
   @Permissions("company.create")
-  findAll(@Query() query: IListQuery): Promise<{ data?: IEmployeeRole[], count?: number }> {
-    return this.employeeRoleService.findAll(query);
+  findAll(@Query() query: IListQuery, @GetUser() user: IUser): Promise<{ data?: IEmployeeRole[], count?: number }> {
+    return this.employeeRoleService.findAll(query, user);
   }
 
   @Get("list/dropdown")
