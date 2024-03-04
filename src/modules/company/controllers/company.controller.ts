@@ -1,7 +1,7 @@
 import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateCompanyDTO } from '../dto/create-company.dto';
 import { UpdateCompanyDTO } from '../dto/update-company.dto';
 import { ICompany } from '../interfaces/company.interface';
@@ -16,7 +16,7 @@ export class CompanyController {
   async create(@Body() createCompanyDto: CreateCompanyDTO, @GetUser() user: IUser): Promise<ICompany> {
     return await this.companyService.create(createCompanyDto, user);
   }
-  // @Query("page") page: number, @Query("size") size: number, @Query("query") query: string
+
   @Get("list")
   @Permissions('company.view')
   async getCompanies(@Query() query, @GetUser() user: IUser): Promise<{ data?: ICompany[], total?: number }> {
@@ -31,13 +31,13 @@ export class CompanyController {
 
   @Put(':id')
   @Permissions('company.create')
-  async update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDTO,@GetUser() user:IUser): Promise<ICompany> {
-    return await this.companyService.update(id, updateCompanyDto,user);
+  async update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDTO, @GetUser() user: IUser): Promise<ICompany> {
+    return await this.companyService.update(id, updateCompanyDto, user);
   }
 
   // @Delete(':id')
   // async remove(@Param('id') id: string): Promise<ICompany> {
   //   return await this.companyService.remove(id);
   // }
-  
+
 }
