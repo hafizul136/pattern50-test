@@ -48,6 +48,17 @@ export class Utils {
         const randomString = nanoid(length);
         return randomString;
     }
+    static getAppUrl(): string {
+        let url = '';
+        if (process.env['SERVER_TYPE'] == 'test_') {
+            url = 'http://localhost:5000/';
+        } else if (process.env['SERVER_TYPE'] == 'beta_') {
+            url = 'https://beta-app.chargeonsite.com/';
+        } else if (process.env['SERVER_TYPE'] == 'prod_') {
+            url = 'https://app.chargeonsite.com/';
+        }
+        return url;
+    }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static getTimeDifferenceInMinutes(dateOld: any, dateNew: any): number {

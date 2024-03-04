@@ -106,4 +106,7 @@ export class UsersService {
     const res = await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true, projection: { password: 0 } }).exec();
     return res.toObject();
   }
+  async updateResetCode(user: IUser, code: string): Promise<IUser> {
+    return await this.userModel.findByIdAndUpdate({ id: user.id }, { resetCode: code }, { new: true });
+  }
 }
