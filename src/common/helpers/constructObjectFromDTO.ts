@@ -9,7 +9,6 @@ import { CreateTechnologyToolDto } from "@modules/technology-tool/dto/create-tec
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose, { Types } from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
-import { MongooseHelper } from "./mongooseHelper";
 
 export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     static async constructCreateCompanyObject(user: IUser, createCompanyDTO: CreateCompanyDTO, address: any, billingInfo: any) {
@@ -115,10 +114,6 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     }
 
     static constructToolsObj(tool: CreateTechnologyToolDto) {
-        // validate mongo ids
-        MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId);
-        MongooseHelper.getInstance().isValidMongooseId(tool?.typeId);
-
         return {
             name: tool?.name ?? "",
             typeId: new Types.ObjectId(tool?.typeId) ?? "",

@@ -1,5 +1,6 @@
 import { StatusEnum } from '@common/enums/status.enum';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
+import { NestHelper } from '@common/helpers/NestHelper';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -87,8 +88,32 @@ export class TechnologyCategoryService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} technologyCategory`;
+  // find one category
+  async findOne(id: string) {
+    const category = await this.technologyCategoryModel.findById(id);
+    if (NestHelper.getInstance().isEmpty(category)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Category Not Found',
+        'category_not_found',
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    return category;
+  }
+
+  // find one category
+  async findOneToolType(id: string) {
+    const toolType = await this.toolTypeModel.findById(id);
+    if (NestHelper.getInstance().isEmpty(toolType)) {
+      ExceptionHelper.getInstance().defaultError(
+        'Tool Type Not Found',
+        'tool_type_not_found',
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    return toolType;
   }
 
   update(id: number, updateTechnologyCategoryDto: UpdateTechnologyCategoryDto) {
