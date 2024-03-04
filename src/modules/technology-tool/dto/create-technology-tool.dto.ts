@@ -1,4 +1,5 @@
-import { TrimAndValidateString } from "@common/validators/trim-string.validator";
+import { TrimAndValidateString } from '@common/validators/trim-string.validator';
+import { IsUrlWithTld } from '@common/validators/website.validator';
 import { Type } from "class-transformer";
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString, ValidateNested } from "class-validator";
 
@@ -24,6 +25,7 @@ export class CreateTechnologyToolDto {
     @IsNotEmpty()
     @IsString()
     @TrimAndValidateString({ message: 'website is empty' })
+    @IsUrlWithTld()
     website: string;
 
     @IsNotEmpty()
