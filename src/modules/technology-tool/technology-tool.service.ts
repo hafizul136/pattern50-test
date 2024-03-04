@@ -1,7 +1,9 @@
+import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
+import { NestHelper } from '@common/helpers/NestHelper';
 import { AwsServices } from '@common/helpers/aws.service';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { FileTypes } from '@common/helpers/file.type.matcher';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
@@ -18,6 +20,14 @@ export class TechnologyToolService {
 
   // upload logo to aws s3
   async uploadLogo(logo: Express.Multer.File) {
+    if (NestHelper.getInstance().isEmpty(logo)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Logo File Is Empty",
+        "logo_file_is_empty",
+        HttpStatus.BAD_REQUEST
+      )
+    }
+
     const s3Response = await AwsServices.S3.uploadFile(logo, FileTypes.IMAGE);
     if (s3Response == -1) {
       return {
