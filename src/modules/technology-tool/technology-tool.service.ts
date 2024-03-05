@@ -68,7 +68,6 @@ export class TechnologyToolService {
   }
 
   async findAll(categoryId: string, query: IListQuery): Promise<{ data?: any[], count?: number }> {
-    // todo: add validation for category id
     // validate category id
     await this.technologyCategoryService.findOne(categoryId);
 
