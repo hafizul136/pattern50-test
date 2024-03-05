@@ -72,7 +72,7 @@ export class EmployeeService {
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new Types.ObjectId(user?.clientId) }]);
 
     AggregationHelper.lookupForIdForeignKey(aggregate, "employeeroles", "employeeRoleIds", "employeeRoles");
-    AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "employeeRoles");
+    // AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "employeeRoles");
 
     // searching by 
     let trimmedQuery = null;
