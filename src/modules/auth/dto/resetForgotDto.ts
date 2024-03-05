@@ -10,12 +10,12 @@ export class ResetForgotDto {
     @IsNotEmpty({ message: 'password_empty' })
     @NoSpaces()
     @MinLength(8)
-    @IsStrongPassword()
+    @IsStrongPassword({},{ message:'Password must be at least 8 characters long and contain at least one symbol, one uppercase letter, one lowercase letter, and one number, without spaces'})
     password: string;
 
     @IsNotEmpty({ message: 'confirmPassword_empty' })
     @NoSpaces()
     @MinLength(8)
-    @IsStrongPassword()
+    @IsStrongPassword({}, { message: 'Password must be at least 8 characters long and contain at least one symbol, one uppercase letter, one lowercase letter, and one number, without spaces' })
     confirmPassword: string;
 }

@@ -177,12 +177,12 @@ export class AuthService {
       await this.updateResetCode(user, token);
       let link: string = Utils.getAppUrl() + 'auth/forgot-password/reset/' + token;
 
-
+      console.log({ link });
       const iAwsSesSendEmail: IAwsSesSendEmail = {
         to: user?.email,
         from: "hafizul@6sensehq.com",
         subject: "Forgot password",
-        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link),
+        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName = "", user.lastName = '', 'https://test-company.chargeonsite.com/'),
         sendersName: "Pattern50",
         //   attachments: [
         //     {
@@ -259,12 +259,12 @@ export class AuthService {
     } else {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: ['password_inconsistency'],
+        message: ["Password doesn't match"],
       });
     }
   }
   processVerificationToken = async (token: string): Promise<IUser | null> => {
-    console.log({token})
+    console.log({ token })
     const jwtObject = this.jwtService.decode(token);
     if (jwtObject) {
       // const usr = await this.userModel.scan('email').eq(jwtObject['email']).exec();

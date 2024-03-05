@@ -10,7 +10,7 @@ export class NoSpacesConstraint implements ValidatorConstraintInterface {
     }
 
     defaultMessage(args: ValidationArguments) {
-        return `${args.property} must not contain spaces`;
+        return `${args.property} must be at least 8 characters long and contain at least one symbol, one uppercase letter, one lowercase letter, and one number, without spaces.`;
     }
 }
 
