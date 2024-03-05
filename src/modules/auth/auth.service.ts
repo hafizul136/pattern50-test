@@ -1,5 +1,6 @@
 import { Utils } from '@common/helpers/utils';
 import { mainServiceRolePermissions } from '@common/rolePermissions';
+import { EmailService } from '@modules/email/email.service';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 import { IRole } from '@modules/role/interfaces/role.interface';
 import { RoleService } from '@modules/role/role.service';
@@ -23,6 +24,9 @@ import { AuthDto } from './dto/auth.dto';
 import { ForgetPassDto } from './dto/forgetPassDto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
+import { IAwsSesSendEmail } from '@common/helpers/aws.service';
+import { EmailTemplate } from '@common/helpers/email.template';
+import { ResetForgotDto } from './dto/resetForgotDto';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +37,8 @@ export class AuthService {
     private readonly roleService: RoleService,
     private readonly permissionService: PermissionsService,
     @Inject('ACCOUNTING_SERVICE_RMQ')
-    private readonly accountingServiceRMQClient: ClientRMQ
+    private readonly accountingServiceRMQClient: ClientRMQ,
+    private readonly emailService: EmailService
   ) { }
   async signUp(createUserDto: CreateUserDto, clientId: mongoose.Types.ObjectId): Promise<IAuthResponse> {
     //validity check
@@ -158,27 +163,104 @@ export class AuthService {
       const token = this.jwtService.sign(
         { email: user.email, id: user.id },
         {
-          expiresIn: '2d',
+          expiresIn: '30m',
         }
       );
 
       await this.updateResetCode(user, token);
       let link: string = Utils.getAppUrl() + 'forgot-password/reset/' + token;
 
-      // const emailRes = await AwsServices.SimpleEmailService.sendEmail({
-      //   from: process.env.FROM_EMAIL,
-      //   sendersName: 'Charge OnSite',
-      //   subject: 'Forgot password',
-      //   to: user.email,
-      //   text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link),
-      // });
-      // console.log(emailRes);
+
+      const iAwsSesSendEmail: IAwsSesSendEmail = {
+        to: user?.email,
+        from: "hafizul@6sensehq.com",
+        subject: "Forgot password",
+        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link),
+        sendersName: "Pattern50",
+        //   attachments: [
+        //     {
+        //       filename: "document.pdf",
+        //       content: "JVBERi0xLjMKJcfs...",
+        //       contentType: "application/pdf",
+        //       encoding: "base64"
+        //     },
+        //     {
+        //       filename: "image.jpg",
+        //       content: "/9j/4AAQSkZJRgABAQEAYABgAAD/4Q...",
+        //       contentType: "image/jpeg",
+        //       encoding: "base64"
+        //     }
+        //   ]
+      }
+      await this.emailService.sendEmail(iAwsSesSendEmail)
       return {
         user: user,
         forgetPassLink: link,
       };
     }
   }
+  async resetForgottenPassword(
+    resetDto: ResetForgotDto
+  ): Promise<boolean | any[] | IAuthResponse> {
+    const user = await this.getUserByResetCode(resetDto.token);
+    if (!user) {
+      ExceptionHelper.getInstance().throwUserNotFoundException();
+    } else {
+      const jwtObject = this.jwtService.verify(resetDto.token) as object;
+      if (jwtObject) {
+        const res = await this.forgetPassword(resetDto.token, resetDto.password, resetDto.confirmPassword);
+        if (!NestHelper.getInstance().isEmpty(res)) {
+          await this.updateResetCode(user, '');
+          //? email res
+          // await AwsServices.SimpleEmailService.sendEmail({
+          //   from: process.env.FROM_EMAIL,
+          //   sendersName: 'Charge OnSite',
+          //   subject: 'Password reset successful',
+          //   to: user.email,
+          //   text: EmailTemplate.getPasswordResetSuccessEmailHtml(user.fname, user.lname),
+          // });
+        }
+        return res;
+      } else {
+        ExceptionHelper.getInstance().tokenExpired();
+      }
+    }
+  }
+  async getUserByResetCode(resetCode: string): Promise<IUser> {
+    return await this.usersService.getUserByResetCode(resetCode);
+  }
+  async forgetPassword(token: string, password: string, confirmPassword: string): Promise<IAuthResponse> {
+    if (password === confirmPassword) {
+      const vp = await this.validatePassword(password);
+      if (!NestHelper.getInstance().isEmpty(vp)) {
+        ExceptionHelper.getInstance().passwordValidation(vp);
+      } else {
+        const user: IUser = await this.processVerificationToken(token);
+        if (!NestHelper.getInstance().isEmpty(user)) {
+          const pass = await AuthHelper.hashPassword(password);
+          const userData = await this.usersService.updatePassword(user.id,pass );
+          return AuthHelper.getInstance().generateToken(userData, this.jwtService);
+        } else {
+          ExceptionHelper.getInstance().userNotMatched();
+        }
+      }
+    } else {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ['password_inconsistency'],
+      });
+    }
+  }
+  processVerificationToken = async (token: string): Promise<IUser | null> => {
+    const jwtObject = this.jwtService.decode(token);
+    if (jwtObject) {
+      // const usr = await this.userModel.scan('email').eq(jwtObject['email']).exec();
+      const usr = await this.usersService.findOneByEmailSignup(jwtObject['email']);
+      return usr[0];
+    } else {
+      return null;
+    }
+  };
   async updateResetCode(user: IUser, code: string): Promise<IUser> {
     return await this.usersService.updateResetCode(user, code);
   }

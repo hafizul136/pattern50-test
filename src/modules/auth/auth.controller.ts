@@ -17,6 +17,7 @@ import { Request } from 'express';
 import { ForgetPassDto } from './dto/forgetPassDto';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { GetUser } from '@common/decorators/getUser.decorator';
+import { ResetForgotDto } from './dto/resetForgotDto';
 
 @Controller('auth')
 export class AuthController {
@@ -40,6 +41,12 @@ export class AuthController {
     @Post('forgot-password')
     forgotPassword(@Body() forgetDto: ForgetPassDto,@GetUser() user:IUser): Promise<{ user: IUser; forgetPassLink: string }> {
         return this.authService.sendForgetPasswordLink(forgetDto,user);
+    }
+    @Post('forgot-password/reset')
+    resetForgottenPassword(
+        @Body() resetDto: ResetForgotDto
+    ): Promise<boolean | any[] | IAuthResponse> {
+        return this.authService.resetForgottenPassword(resetDto);
     }
     // @Post('sign-in/driver')
     // @UseGuards(ClientCredentialsGuard)

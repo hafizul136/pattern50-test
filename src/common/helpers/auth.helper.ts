@@ -8,6 +8,7 @@ import { ExceptionHelper } from './ExceptionHelper';
 import { NestHelper } from './NestHelper';
 import { SIXTY_DAYS_IN_SECONDS } from './global.constants';
 import { appConfig } from './../../configuration/app.config';
+import { IAuthResponse } from '@modules/auth/interface/auth.interface';
 dotenv.config();
 
 // const SIXTY_DAYS_IN_SECONDS = 60 * 24 * 60 * 60
@@ -24,14 +25,16 @@ export class AuthHelper {
         user: IUser,
         jwt: JwtService,
         company: string = null
-    ): { accessToken: string; refreshToken: string; user: IUser } => {
+    ): IAuthResponse => {
         delete user.password;
 
         const accessToken = AuthHelper.getInstance().generateAccessToken(user, jwt, company);
         const refreshToken = AuthHelper.getInstance().generateRefreshToken(user, jwt, company);
         return {
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+            auth:{
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+            },
             user: user,
         };
     };

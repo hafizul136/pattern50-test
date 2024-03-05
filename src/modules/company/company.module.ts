@@ -6,6 +6,7 @@ import { AddressService } from '@modules/address/services/address.service';
 import { AuthService } from '@modules/auth/auth.service';
 import { BillingInfo, BillingInfoSchema } from '@modules/billing-info/entities/billing-info.entity';
 import { BillingInfoService } from '@modules/billing-info/services/billing-info.service';
+import { EmailService } from '@modules/email/email.service';
 import { Permission } from '@modules/permissions/entities/permission.entity';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 import { RolePermission, RolePermissionSchema } from '@modules/role-permission/entities/role-permission.entity';
@@ -19,6 +20,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CompanyController } from './controllers/company.controller';
 import { Company, CompanySchema } from './entities/company.entity';
 import { CompanyService } from './services/company.service';
+import { EmailModule } from '@modules/email/email.module';
 
 @Module({
   imports: [
@@ -34,6 +36,6 @@ import { CompanyService } from './services/company.service';
     ])],
 
   controllers: [CompanyController],
-  providers: [CompanyService, AddressService, BillingInfoService, JwtService, AuthService, UsersService, RoleService, UserRoleService, PermissionsService]
+  providers: [CompanyService, AddressService, BillingInfoService, JwtService, AuthService, UsersService, RoleService, UserRoleService, PermissionsService, EmailService]
 })
 export class CompanyModule { }

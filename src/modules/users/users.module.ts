@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './entities/user.entity';
 import { UsersService } from './user.service';
 import { UsersController } from './users.controller';
+import { EmailService } from '@modules/email/email.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UsersController } from './users.controller';
       { name: Role.name, schema: RoleSchema },
     ])],
   controllers: [UsersController],
-  providers: [UsersService, AuthService, UserRoleService, RolePermissionService, PermissionsService, RoleService]
+  providers: [UsersService, AuthService, UserRoleService, RolePermissionService, PermissionsService, RoleService, EmailService
+  ]
 })
 export class UsersModule { }

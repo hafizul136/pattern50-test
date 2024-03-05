@@ -1,5 +1,6 @@
 import { AuthService } from '@modules/auth/auth.service';
 import { DatabaseService } from '@modules/db/database.service';
+import { EmailModule } from '@modules/email/email.module';
 import { Permission, PermissionSchema } from '@modules/permissions/entities/permission.entity';
 import { PermissionsService } from '@modules/permissions/permissions.service';
 import { RolePermission, RolePermissionSchema } from '@modules/role-permission/entities/role-permission.entity';
@@ -15,6 +16,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EmployeeRoleController } from './employee-role.controller';
 import { EmployeeRoleService } from './employee-role.service';
 import { EmployeeRole, employeeRoleSchema } from './entities/employee-role.entity';
+import { EmailService } from '@modules/email/email.service';
 
 @Module({
   imports: [
@@ -27,6 +29,6 @@ import { EmployeeRole, employeeRoleSchema } from './entities/employee-role.entit
       { name: RolePermission.name, schema: RolePermissionSchema },
     ])],
   controllers: [EmployeeRoleController],
-  providers: [EmployeeRoleService, DatabaseService, JwtService, UsersService, AuthService, UserRoleService, RoleService, PermissionsService],
+  providers: [EmployeeRoleService, DatabaseService, JwtService, UsersService, AuthService, UserRoleService, RoleService, PermissionsService, EmailService],
 })
 export class EmployeeRoleModule { }

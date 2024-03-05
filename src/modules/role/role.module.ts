@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Role, RoleSchema } from './entities/role.entity';
 import { RoleController } from './role.controller';
 import { RoleService } from './role.service';
+import { EmailService } from '@modules/email/email.service';
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { RoleService } from './role.service';
     ])],
 
   controllers: [RoleController],
-  providers: [RoleService, UsersService, AuthService, UserRoleService, RolePermissionService, PermissionsService]
+  providers: [RoleService, UsersService, AuthService, UserRoleService, RolePermissionService, PermissionsService, EmailService]
 })
 export class RoleModule { }

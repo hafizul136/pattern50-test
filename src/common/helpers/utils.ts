@@ -34,7 +34,7 @@ export class Utils {
             if (rolePermission.permissionId) {
                 idsArray.push(rolePermission.permissionId);
             }
-        }
+        }         
         return idsArray;
     }
 

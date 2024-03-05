@@ -41,6 +41,9 @@ export class User {
     @Prop({ type: mongoose.Types.ObjectId, ref: "Client" })
     clientId: mongoose.Types.ObjectId;
 
+    @Prop({ type: String, default: null })
+    resetCode: string;
+
     @Prop({ type: Boolean, default: true })
     isRegistered: boolean;
 
@@ -52,8 +55,10 @@ export class User {
 
     @Prop({ type: Date, default: new Date() })
     lastLogin: string;
+
     @Prop({ type: String, default: "" })
     phone: string;
+
     @Prop({ type: String, default: "" })
     stripeCustomerId: string;
 

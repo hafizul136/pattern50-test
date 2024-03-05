@@ -71,7 +71,7 @@ export class EmployeeService {
     // filter by client id
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new Types.ObjectId(user?.clientId) }]);
 
-    AggregationHelper.lookupForIdForeignKey(aggregate, "EmployeeRole", "employeeRoleId", "employeeRoles");
+    AggregationHelper.lookupForIdForeignKey(aggregate, "employeeroles", "employeeRoleIds", "employeeRoles");
     AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "employeeRoles");
 
     // searching by 

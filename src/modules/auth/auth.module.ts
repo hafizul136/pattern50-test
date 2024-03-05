@@ -19,6 +19,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
+import { EmailService } from '@modules/email/email.service';
 
 @Module({
     imports: [
@@ -35,6 +36,6 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
         UsersModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService, UsersService, AccessTokenStrategy, RefreshTokenStrategy, UserRoleService, RoleService, RolePermissionService, PermissionsService, ClientService],
+    providers: [AuthService, UsersService, AccessTokenStrategy, RefreshTokenStrategy, UserRoleService, RoleService, RolePermissionService, PermissionsService, ClientService, EmailService],
 })
 export class AuthModule { }

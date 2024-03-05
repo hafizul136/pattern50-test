@@ -17,6 +17,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TechnologyTool, TechnologyToolSchema } from './entities/technology-tool.entity';
 import { TechnologyToolController } from './technology-tool.controller';
 import { TechnologyToolService } from './technology-tool.service';
+import { EmailService } from '@modules/email/email.service';
 
 @Module({
   imports: [
@@ -32,6 +33,6 @@ import { TechnologyToolService } from './technology-tool.service';
     ])
   ],
   controllers: [TechnologyToolController],
-  providers: [TechnologyToolService, JwtService, UsersService, AuthService, UserRoleService, RoleService, PermissionsService, TechnologyCategoryService],
+  providers: [TechnologyToolService, JwtService, UsersService, AuthService, UserRoleService, RoleService, PermissionsService, TechnologyCategoryService, EmailService],
 })
 export class TechnologyToolModule { }

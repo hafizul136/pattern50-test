@@ -15,6 +15,7 @@ import { TechnologyCategory, TechnologyCategorySchema } from './entities/technol
 import { ToolType, ToolTypeSchema } from './entities/tool-type.entity';
 import { TechnologyCategoryController } from './technology-category.controller';
 import { TechnologyCategoryService } from './technology-category.service';
+import { EmailService } from '@modules/email/email.service';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { TechnologyCategoryService } from './technology-category.service';
     ])
   ],
   controllers: [TechnologyCategoryController],
-  providers: [TechnologyCategoryService, JwtService, UsersService, AuthService, UserRoleService, RoleService, PermissionsService],
+  providers: [TechnologyCategoryService, JwtService, UsersService, AuthService, UserRoleService, RoleService, PermissionsService, EmailService],
 })
 export class TechnologyCategoryModule { }

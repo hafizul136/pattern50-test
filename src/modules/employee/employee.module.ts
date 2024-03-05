@@ -17,6 +17,7 @@ import { RoleService } from '@modules/role/role.service';
 import { Role, RoleSchema } from '@modules/role/entities/role.entity';
 import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
 import { EmployeeRole, employeeRoleSchema } from '@modules/employee-role/entities/employee-role.entity';
+import { EmailService } from '@modules/email/email.service';
 
 @Module({
   imports: [
@@ -32,6 +33,6 @@ import { EmployeeRole, employeeRoleSchema } from '@modules/employee-role/entitie
     ])],
 
   controllers: [EmployeeController],
-  providers: [EmployeeService, UsersService, AuthService, RoleService, UserRoleService, RolePermissionService, PermissionsService, EmployeeRoleService]
+  providers: [EmployeeService, UsersService, AuthService, RoleService, UserRoleService, RolePermissionService, PermissionsService, EmployeeRoleService, EmailService]
 })
 export class EmployeeModule { }
