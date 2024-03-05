@@ -1,6 +1,7 @@
 import { StatusEnum } from '@common/enums/status.enum';
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
+import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -90,6 +91,9 @@ export class TechnologyCategoryService {
 
   // find one category
   async findOne(id: string) {
+    // validate id
+    MongooseHelper.getInstance().isValidMongooseId(id, "category");
+
     const category = await this.technologyCategoryModel.findById(id);
     if (NestHelper.getInstance().isEmpty(category)) {
       ExceptionHelper.getInstance().defaultError(
