@@ -1,13 +1,16 @@
 import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { AwsServices } from '@common/helpers/aws.service';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { FileTypes } from '@common/helpers/file.type.matcher';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { Utils } from '@common/helpers/utils';
+import { IListQuery } from '@common/interfaces/list-query.interface';
 import { TechnologyCategoryService } from '@modules/technology-category/technology-category.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
 import { TechnologyTool, TechnologyToolDocument } from './entities/technology-tool.entity';
@@ -64,8 +67,53 @@ export class TechnologyToolService {
     }
   }
 
-  findAll() {
-    // get the category type id
+  async findAll(categoryId: string, query: IListQuery): Promise<{ data?: any[], count?: number }> {
+    // validate category id
+    await this.technologyCategoryService.findOne(categoryId);
+
+    let aggregate = [];
+    let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
+    if (!query?.page || parseInt(query?.page) < 1) page = 1;
+    if (!query?.size || parseInt(query?.size) < 1) size = 10;
+
+    // filter by category
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ categoryId: new Types.ObjectId(categoryId) }]);
+
+    // get the tool type
+    AggregationHelper.lookupForIdForeignKey(aggregate, "tooltypes", "typeId", "type");
+    AggregationHelper.unwindAField(aggregate, "type", true);
+
+    // add new field and assign name there
+    aggregate.push({
+      $addFields: {
+        type: "$type.name"
+      }
+    })
+
+    // searching by 
+    let trimmedQuery = null;
+    if (query.query) {
+      trimmedQuery = query.query.trim();
+    }
+
+    if (trimmedQuery) {
+      const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      aggregate.push({
+        $match: {
+          $or: [
+            { name: { $regex: escapedQuery, $options: "i" } },
+            { "type": { $regex: escapedQuery, $options: "i" } }
+          ]
+        }
+      });
+    }
+
+    // pagination and sorting
+    AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
+
+    const tools = await this.technologyToolModel.aggregate(aggregate).exec();
+
+    return Utils.returnListResponse(tools);
   }
 
   findOne(id: number) {

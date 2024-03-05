@@ -1,5 +1,6 @@
 import { Permissions } from '@common/decorators/permissions.decorator';
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { IListQuery } from '@common/interfaces/list-query.interface';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
@@ -21,10 +22,10 @@ export class TechnologyToolController {
     return this.technologyToolService.create(createTechnologyToolsDto);
   }
 
-  @Get()
+  @Get("list/category/:categoryId")
   @Permissions("company.create")
-  findAll() {
-    return this.technologyToolService.findAll();
+  findAll(@Param("categoryId") categoryId: string, @Query() query: IListQuery) {
+    return this.technologyToolService.findAll(categoryId, query);
   }
 
   @Get(':id')
