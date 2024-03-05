@@ -14,6 +14,7 @@ export interface ICommonConfig {
 }
 export interface IConfig extends ICommonConfig {
     port: number;
+    appURL: string;
     mongodbURL: string
     dbName: string
     jwtAccessToken: string
@@ -42,6 +43,7 @@ const commonConfig = (): ICommonConfig => {
 
 const getAppConfig = (): IConfig => {
     const port = parseInt(process.env.APP_PORT);
+    const appURL = process.env.APP_URL;
     const mongodbURL = process.env.MONGODB_URL;
     const dbName = process.env.DB_NAME;
     const jwtAccessToken = process.env.JWT_ACCESS_SECRET;
@@ -58,6 +60,7 @@ const getAppConfig = (): IConfig => {
     const awsRegion = process.env.AWS_REGION;
 
     if (!port) throw new Error('port must be specified');
+    if (!appURL) throw new Error('appURL must be specified');
     if (!mongodbURL) throw new Error('mongodbURL must be specified');
     if (!dbName) throw new Error('dbName must be specified');
     if (!jwtAccessToken) throw new Error('jwtAccessToken must be specified');
@@ -74,6 +77,7 @@ const getAppConfig = (): IConfig => {
     return {
         ...commonConfig(),
         port,
+        appURL,
         mongodbURL,
         dbName,
         jwtAccessToken,
