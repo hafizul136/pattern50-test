@@ -228,15 +228,15 @@ export class CompanyService {
       );
     }
   }
-  private async checkDuplicateEmailAndEIN(ein: string, email: string, masterEmail: string) {
+  private async checkDuplicateEmailAndEIN(ein: string, emailTemp: string, masterEmailTemp: string) {
     const emailPipeline = [
       {
-        $match: { email: email }
+        $match: { email: emailTemp }
       },
     ];
     const masterEmailPipeline = [
       {
-        $match: { masterEmail: masterEmail }
+        $match: { masterEmail: masterEmailTemp }
       },
     ];
 
@@ -258,21 +258,21 @@ export class CompanyService {
       },
     ])
   }
-  private async checkDuplicateCompanyEmailAndEIN(companyId: Types.ObjectId, ein: string, email: string, masterEmail: string) {
+  private async checkDuplicateCompanyEmailAndEIN(companyId: Types.ObjectId, EIN: string, emailTemp: string, masterEmailTemp: string) {
     const emailPipeline = [
       {
-        $match: { _id: { $ne: companyId }, email: email },
+        $match: { _id: { $ne: companyId }, email: emailTemp },
       },
     ];
     const masterEmailPipeline = [
       {
-        $match: { _id: { $ne: companyId }, masterEmail: masterEmail },
+        $match: { _id: { $ne: companyId }, masterEmail: masterEmailTemp },
       },
     ];
 
     const einPipeline = [
       {
-        $match: { _id: { $ne: companyId }, ein: ein },
+        $match: { _id: { $ne: companyId }, ein: EIN },
       },
 
     ];
