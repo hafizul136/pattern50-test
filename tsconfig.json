@@ -20,7 +20,8 @@
             "@templates/*": ["email-templates/*"],
             "@helpers/*": ["helpers/*"],
             "@classes/*": ["classes/*"],
-            "@common/*": ["common/*"]},
+            "@common/*": ["common/*"]
+        },
         "incremental": true,
         "skipLibCheck": true,
         "strictNullChecks": false,
