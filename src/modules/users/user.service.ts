@@ -107,12 +107,12 @@ export class UsersService {
     return res.toObject();
   }
   async updateResetCode(user: IUser, code: string): Promise<IUser> {
-    return await this.userModel.findByIdAndUpdate({ id: user.id }, { resetCode: code }, { new: true });
+    return await this.userModel.findByIdAndUpdate({ _id: user?._id }, { resetCode: code }, { new: true });
   }
   async getUserByResetCode(resetCode: string): Promise<IUser> {
     return await this.userModel.findOne({ resetCode }).lean();
   }
-  async updatePassword(id:string, pass:string): Promise<IUser> {
-    return await this.userModel.findByIdAndUpdate({ id:id }, { password: pass });
+  async updatePassword(id: mongoose.Types.ObjectId, pass: string): Promise<IUser> {
+    return await this.userModel.findByIdAndUpdate({ _id: id }, { password: pass });
   }
 }

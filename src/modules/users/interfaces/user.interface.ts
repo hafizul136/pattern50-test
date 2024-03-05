@@ -13,7 +13,7 @@ export interface IUserKey {
 }
 
 export interface IUser extends Document {
-    _id?: mongoose.Types.ObjectId;
+    // _id?: mongoose.Types.ObjectId;
     firstName?: string;
     lastName?: string;
     email?: string;

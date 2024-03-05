@@ -14,12 +14,14 @@ export interface ICommonConfig {
 }
 export interface IConfig extends ICommonConfig {
     port: number;
+    appURL: string;
     mongodbURL: string
     dbName: string
     jwtAccessToken: string
     jwtRefreshToken: string
     jwtAccessTokenExpire: string
     jwtRefreshTokenExpire: string
+    jwtResetCodeExpire: string
     serverType: string
     rmqURL: string
     redisURL: string
@@ -41,12 +43,14 @@ const commonConfig = (): ICommonConfig => {
 
 const getAppConfig = (): IConfig => {
     const port = parseInt(process.env.APP_PORT);
+    const appURL = process.env.APP_URL;
     const mongodbURL = process.env.MONGODB_URL;
     const dbName = process.env.DB_NAME;
     const jwtAccessToken = process.env.JWT_ACCESS_SECRET;
     const jwtRefreshToken = process.env.JWT_REFRESH_SECRET;
     const jwtAccessTokenExpire = process.env.JWT_ACCESS_SECRET_EXPIRE;
     const jwtRefreshTokenExpire = process.env.JWT_REFRESH_SECRET_EXPIRE;
+    const jwtResetCodeExpire = process.env.JWT_RESET_CODE_EXPIRE;
     const serverType = process.env.SERVER_TYPE;
     const rmqURL = process.env.RMQ_URL;
     const redisURL = (process.env.REDIS_ENDPOINT)?.split('//')[1];
@@ -56,11 +60,13 @@ const getAppConfig = (): IConfig => {
     const awsRegion = process.env.AWS_REGION;
 
     if (!port) throw new Error('port must be specified');
+    if (!appURL) throw new Error('appURL must be specified');
     if (!mongodbURL) throw new Error('mongodbURL must be specified');
     if (!dbName) throw new Error('dbName must be specified');
     if (!jwtAccessToken) throw new Error('jwtAccessToken must be specified');
     if (!jwtAccessTokenExpire) throw new Error('jwtAccessTokenExpire must be specified');
     if (!jwtRefreshTokenExpire) throw new Error('jwtRefreshTokenExpire must be specified');
+    if (!jwtResetCodeExpire) throw new Error('jwtResetCodeExpire must be specified');
     if (!jwtRefreshToken) throw new Error('jwtRefreshToken must be specified');
     if (!serverType) throw new Error('serverType must be specified');
     if (!rmqURL) throw new Error('rmqURL must be specified');
@@ -71,12 +77,14 @@ const getAppConfig = (): IConfig => {
     return {
         ...commonConfig(),
         port,
+        appURL,
         mongodbURL,
         dbName,
         jwtAccessToken,
         jwtRefreshToken,
         jwtAccessTokenExpire,
         jwtRefreshTokenExpire,
+        jwtResetCodeExpire,
         serverType,
         rmqURL,
         redisURL,

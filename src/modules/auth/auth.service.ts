@@ -1,3 +1,5 @@
+import { IAwsSesSendEmail } from '@common/helpers/aws.service';
+import { EmailTemplate } from '@common/helpers/email.template';
 import { Utils } from '@common/helpers/utils';
 import { mainServiceRolePermissions } from '@common/rolePermissions';
 import { EmailService } from '@modules/email/email.service';
@@ -22,11 +24,9 @@ import { UserRoleService } from '../../modules/user-role/user-role.service';
 import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
 import { ForgetPassDto } from './dto/forgetPassDto';
+import { ResetForgotDto } from './dto/resetForgotDto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
-import { IAwsSesSendEmail } from '@common/helpers/aws.service';
-import { EmailTemplate } from '@common/helpers/email.template';
-import { ResetForgotDto } from './dto/resetForgotDto';
 
 @Injectable()
 export class AuthService {
@@ -151,8 +151,8 @@ export class AuthService {
 
     return { auth: authToken, user };
   }
-  async sendForgetPasswordLink(forgetDto: ForgetPassDto, AuthUser: IUser): Promise<{ user: IUser; forgetPassLink: string }> {
-    const user: IUser = await this.usersService.findOneByEmail(forgetDto.email, AuthUser?.clientId);
+  async sendForgetPasswordLink(forgetDto: ForgetPassDto, clientId: mongoose.Types.ObjectId): Promise<{ user: IUser; forgetPassLink: string }> {
+    const user: IUser = await this.usersService.findOneByEmail(forgetDto.email, clientId);
     if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -161,14 +161,21 @@ export class AuthService {
     } else {
 
       const token = this.jwtService.sign(
-        { email: user.email, id: user.id },
         {
-          expiresIn: '30m',
-        }
+          userId: user._id,
+          userType: user.userType,
+          clientId: user.clientId,
+          email: user.email,
+
+        },
+        {
+          secret: appConfig.jwtAccessToken,
+          expiresIn: appConfig.jwtResetCodeExpire,
+        },
       );
 
       await this.updateResetCode(user, token);
-      let link: string = Utils.getAppUrl() + 'forgot-password/reset/' + token;
+      let link: string = Utils.getAppUrl() + 'auth/forgot-password/reset/' + token;
 
 
       const iAwsSesSendEmail: IAwsSesSendEmail = {
@@ -206,7 +213,12 @@ export class AuthService {
     if (!user) {
       ExceptionHelper.getInstance().throwUserNotFoundException();
     } else {
-      const jwtObject = this.jwtService.verify(resetDto.token) as object;
+      let jwtObject
+      try {
+        jwtObject = this.jwtService.verify(resetDto.token, { secret: appConfig.jwtAccessToken }) as object;
+      } catch (error) {
+        console.log(error);
+      }
       if (jwtObject) {
         const res = await this.forgetPassword(resetDto.token, resetDto.password, resetDto.confirmPassword);
         if (!NestHelper.getInstance().isEmpty(res)) {
@@ -238,7 +250,7 @@ export class AuthService {
         const user: IUser = await this.processVerificationToken(token);
         if (!NestHelper.getInstance().isEmpty(user)) {
           const pass = await AuthHelper.hashPassword(password);
-          const userData = await this.usersService.updatePassword(user.id,pass );
+          const userData = await this.usersService.updatePassword(user._id, pass);
           return AuthHelper.getInstance().generateToken(userData, this.jwtService);
         } else {
           ExceptionHelper.getInstance().userNotMatched();
@@ -252,11 +264,12 @@ export class AuthService {
     }
   }
   processVerificationToken = async (token: string): Promise<IUser | null> => {
+    console.log({token})
     const jwtObject = this.jwtService.decode(token);
     if (jwtObject) {
       // const usr = await this.userModel.scan('email').eq(jwtObject['email']).exec();
       const usr = await this.usersService.findOneByEmailSignup(jwtObject['email']);
-      return usr[0];
+      return usr;
     } else {
       return null;
     }

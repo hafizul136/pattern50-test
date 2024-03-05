@@ -47,7 +47,7 @@ export class AuthHelper {
                 company: company,
                 scopes: user?.scopes ? user.scopes : [],
             },
-            { expiresIn: process.env.TOKEN_VALIDITY }
+            { expiresIn: appConfig.jwtResetCodeExpire, secret: appConfig.jwtAccessToken, }
         );
     };
 
@@ -58,7 +58,7 @@ export class AuthHelper {
                 userId: user['id'],
                 company: company,
             },
-            { expiresIn: SIXTY_DAYS_IN_SECONDS }
+            { expiresIn: appConfig.jwtResetCodeExpire, secret: appConfig.jwtAccessToken, }
         );
     };
 

@@ -1,4 +1,5 @@
 import { IRolePermission } from "@modules/role-permission/interfaces/rolePermission.interface";
+import { appConfig } from "configuration/app.config";
 import mongoose from "mongoose";
 import { nanoid } from 'nanoid';
 import * as util from 'util';
@@ -51,7 +52,7 @@ export class Utils {
     static getAppUrl(): string {
         let url = '';
         if (process.env['SERVER_TYPE'] == 'test_') {
-            url = 'http://localhost:5000/';
+            url = `${appConfig.appURL}`;
         } else if (process.env['SERVER_TYPE'] == 'beta_') {
             url = 'https://beta-app.chargeonsite.com/';
         } else if (process.env['SERVER_TYPE'] == 'prod_') {
