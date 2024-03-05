@@ -20,6 +20,7 @@ export interface IConfig extends ICommonConfig {
     jwtRefreshToken: string
     jwtAccessTokenExpire: string
     jwtRefreshTokenExpire: string
+    jwtResetCodeExpire: string
     serverType: string
     rmqURL: string
     redisURL: string
@@ -47,6 +48,7 @@ const getAppConfig = (): IConfig => {
     const jwtRefreshToken = process.env.JWT_REFRESH_SECRET;
     const jwtAccessTokenExpire = process.env.JWT_ACCESS_SECRET_EXPIRE;
     const jwtRefreshTokenExpire = process.env.JWT_REFRESH_SECRET_EXPIRE;
+    const jwtResetCodeExpire = process.env.JWT_RESET_CODE_EXPIRE;
     const serverType = process.env.SERVER_TYPE;
     const rmqURL = process.env.RMQ_URL;
     const redisURL = (process.env.REDIS_ENDPOINT)?.split('//')[1];
@@ -61,6 +63,7 @@ const getAppConfig = (): IConfig => {
     if (!jwtAccessToken) throw new Error('jwtAccessToken must be specified');
     if (!jwtAccessTokenExpire) throw new Error('jwtAccessTokenExpire must be specified');
     if (!jwtRefreshTokenExpire) throw new Error('jwtRefreshTokenExpire must be specified');
+    if (!jwtResetCodeExpire) throw new Error('jwtResetCodeExpire must be specified');
     if (!jwtRefreshToken) throw new Error('jwtRefreshToken must be specified');
     if (!serverType) throw new Error('serverType must be specified');
     if (!rmqURL) throw new Error('rmqURL must be specified');
@@ -77,6 +80,7 @@ const getAppConfig = (): IConfig => {
         jwtRefreshToken,
         jwtAccessTokenExpire,
         jwtRefreshTokenExpire,
+        jwtResetCodeExpire,
         serverType,
         rmqURL,
         redisURL,

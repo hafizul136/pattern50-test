@@ -39,8 +39,11 @@ export class AuthController {
         return await this.authService.signIn(data, clientObjId);
     }
     @Post('forgot-password')
-    forgotPassword(@Body() forgetDto: ForgetPassDto,@GetUser() user:IUser): Promise<{ user: IUser; forgetPassLink: string }> {
-        return this.authService.sendForgetPasswordLink(forgetDto,user);
+    @UseGuards(ClientCredentialsGuard)
+    async forgotPassword(@Body() forgetDto: ForgetPassDto, @Req() req: Request): Promise<{ user: IUser; forgetPassLink: string }> {
+        const clientId = await ClientIDGetHelper.getClientIdFromRequest(req);
+        const clientObjId = new mongoose.Types.ObjectId(clientId);
+        return this.authService.sendForgetPasswordLink(forgetDto, clientObjId);
     }
     @Post('forgot-password/reset')
     resetForgottenPassword(
