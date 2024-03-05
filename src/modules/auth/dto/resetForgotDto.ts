@@ -1,5 +1,6 @@
+import { NoSpaces } from '@common/decorators/nospace.decorator';
 import {
-    IsNotEmpty
+    IsNotEmpty, IsStrongPassword, MinLength
 } from 'class-validator';
 
 export class ResetForgotDto {
@@ -7,10 +8,14 @@ export class ResetForgotDto {
     token: string;
 
     @IsNotEmpty({ message: 'password_empty' })
-    // @MinLength(8, { message: 'password_invalid' })
+    @NoSpaces()
+    @MinLength(8)
+    @IsStrongPassword()
     password: string;
 
     @IsNotEmpty({ message: 'confirmPassword_empty' })
-    // @MinLength(8, { message: 'confirmPassword_invalid' })
+    @NoSpaces()
+    @MinLength(8)
+    @IsStrongPassword()
     confirmPassword: string;
 }

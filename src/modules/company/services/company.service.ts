@@ -184,8 +184,8 @@ export class CompanyService {
     const a = await this.checkDuplicateEmailAndEIN(createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
     if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
       ExceptionHelper.getInstance().defaultError(
-        'EIN must be unique',
-        'EIN_must_be_unique',
+        'EIN already exists',
+        'EIN _already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -208,8 +208,8 @@ export class CompanyService {
     const a = await this.checkDuplicateCompanyEmailAndEIN(companyId, createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
     if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
       ExceptionHelper.getInstance().defaultError(
-        'EIN must be unique',
-        'EIN_must_be_unique',
+        'EIN already exists',
+        'EIN _already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
