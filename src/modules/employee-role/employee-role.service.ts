@@ -115,8 +115,8 @@ export class EmployeeRoleService {
   }
   async findActiveRole(id: string): Promise<IEmployeeRole> {
     new MongooseHelper().isValidMongooseId(id);
-
-    const employeeRole = await this.employeeRoleModel.findOne({ _id: id, status: StatusEnum.ACTIVE }).lean();
+    const oId = new MongooseHelper().makeMongooseId(id);
+    const employeeRole = await this.employeeRoleModel.findOne({ _id: oId, status: StatusEnum.ACTIVE }).lean();
 
     if (NestHelper.getInstance().isEmpty(employeeRole)) {
       ExceptionHelper.getInstance().defaultError(

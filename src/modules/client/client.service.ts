@@ -21,7 +21,6 @@ export class ClientService {
   ) { }
 
   async validateClientCredentials(clientId: string, clientSecret: string): Promise<Client | null> {
-    console.log('okkkkkk')
     try {
       const clients = await this.clientModel.find({ _id: clientId, secret: clientSecret }).lean();
       const client = NestHelper.getInstance().arrayFirstOrNull(clients);

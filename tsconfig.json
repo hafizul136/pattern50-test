@@ -21,6 +21,7 @@
             "@helpers/*": ["helpers/*"],
             "@classes/*": ["classes/*"],
             "@common/*": ["common/*"]},
+            "@configuration/*": ["configuration/*"]},
         "incremental": true,
         "skipLibCheck": true,
         "strictNullChecks": false,
