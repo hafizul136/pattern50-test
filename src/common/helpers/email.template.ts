@@ -15,7 +15,6 @@ export class EmailTemplate {
       <title>Property Invitation</title>
     </head>
     <body style="background-color: #ffffff; font-family: 'Roboto', sans-serif !important; width: 640px; margin: auto; position: relative; top: 75px">
-    <a href="https://www.w3schools.com">Visit W3Schools.com!2</a>
         <table
       style="margin: auto; padding-left: 32px; width:550px;"
       role="presentation"
@@ -31,9 +30,6 @@ export class EmailTemplate {
           />
         </td>
       </tr>
-      <tr>
-        <a href="https://www.w3schools.com">Visit W3Schools.com!</a>
-      </tr>
     </table>
         <table style="background-color: #F8F9FB; width: 500px; margin: auto; padding: 32px; border-radius: 8px">
           <tr>
@@ -41,7 +37,7 @@ export class EmailTemplate {
           </tr>
           <tr>
             <td colspan="5" style="padding-bottom: 20px;color:#384860;">
-              Hello ${firstName} ${firstName}
+              Hello ${firstName} ${lastName}
             </td>
           </tr>
           <tr>
@@ -65,7 +61,7 @@ export class EmailTemplate {
           </tr>
             <tr>
               <td>
-                <a style="cursor: pointer" href="https://test-company.chargeonsite.com" target="_blank" >
+                <a style="cursor: pointer" href="${resetPasswordLink}" target="_blank" >
                   <button style="display: inline-block !important; background-color: #2969FF; color: white; padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer !important ;">
                     Reset your password
                   </button>
