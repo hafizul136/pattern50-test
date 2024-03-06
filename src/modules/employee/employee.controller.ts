@@ -1,9 +1,9 @@
 import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { CreateEmployeeDTOs } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { UpdateEmployeeDto, UpdateEmployeeStatus } from './dto/update-employee.dto';
 import { EmployeeService } from './employee.service';
 import { IEmployee, IEmployees } from './interfaces/employee.interface';
 
@@ -21,6 +21,11 @@ export class EmployeeController {
   @Permissions('company.view')
   async getCompanies(@Query() query, @GetUser() user: IUser): Promise<{ data?: IEmployee[], total?: number }> {
     return await this.employeesService.findAll(query, user);
+  }
+  @Patch('status/:id')
+  @Permissions('company.view')
+  async updateStatus(@Param('id') id: string, @Body() updateEmployeeStatus: UpdateEmployeeStatus): Promise<IEmployee> {
+    return await this.employeesService.updateStatus(id, updateEmployeeStatus);
   }
   @Get(':id')
   @Permissions('company.view')
