@@ -14,6 +14,7 @@ import { Model, Types } from 'mongoose';
 import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
 import { TechnologyTool, TechnologyToolDocument } from './entities/technology-tool.entity';
+import { ITechnologyTools } from './interfaces/technology-tool.interface';
 
 @Injectable()
 export class TechnologyToolService {
@@ -45,8 +46,7 @@ export class TechnologyToolService {
   }
 
   // create tools under technology
-  async create(createTechnologyToolsDto: CreateTechnologyToolsDto) {
-    // construct objects for multiple creation
+  async create(createTechnologyToolsDto: CreateTechnologyToolsDto): Promise<{ count: number, tools: ITechnologyTools[] }> {
     // construct objects for multiple creation
     const toolsObjs = await Promise.all(createTechnologyToolsDto?.tools?.map(async tool => {
       // validate mongo ids
@@ -59,7 +59,7 @@ export class TechnologyToolService {
     }));
 
 
-    const tools = await this.technologyToolModel.create(toolsObjs);
+    const tools: ITechnologyTools[] = await this.technologyToolModel.create(toolsObjs);
 
     return {
       count: tools?.length ?? 0,
@@ -67,7 +67,7 @@ export class TechnologyToolService {
     }
   }
 
-  async findAll(categoryId: string, query: IListQuery): Promise<{ data?: any[], count?: number }> {
+  async findAll(categoryId: string, query: IListQuery): Promise<{ data?: ITechnologyTools[], count?: number }> {
     // validate category id
     await this.technologyCategoryService.findOne(categoryId);
 
@@ -111,7 +111,7 @@ export class TechnologyToolService {
     // pagination and sorting
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
 
-    const tools = await this.technologyToolModel.aggregate(aggregate).exec();
+    const tools: ITechnologyTools[] = await this.technologyToolModel.aggregate(aggregate).exec();
 
     return Utils.returnListResponse(tools);
   }

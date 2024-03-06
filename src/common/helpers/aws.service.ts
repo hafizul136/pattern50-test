@@ -1,8 +1,8 @@
 import { AWSError, S3, SES } from 'aws-sdk';
 import fs from 'fs';
+import { appConfig } from '../../configuration/app.config';
 import { FileTypeMatcher, FileTypes } from './file.type.matcher';
 import { Utils } from './utils';
-import { appConfig } from 'configuration/app.config';
 
 export interface IAwsSesSendEmail {
     to: string;

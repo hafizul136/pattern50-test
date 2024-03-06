@@ -59,7 +59,13 @@ export class EmployeeRoleService {
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new Types.ObjectId(user?.clientId) }]);
 
     // get the members
-    AggregationHelper.lookupForIdForeignKey(aggregate, "employee", "employeeRoleId", "members");
+    AggregationHelper.lookupForCustomFields(aggregate, "employees", "_id", "employeeRoleIds", "members");
+
+    aggregate.push({
+      $addFields: {
+        members: { $size: "$members" }
+      }
+    })
 
     // searching by 
     let trimmedQuery = null;
