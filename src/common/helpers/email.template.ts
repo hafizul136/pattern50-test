@@ -15,6 +15,7 @@ export class EmailTemplate {
       <title>Property Invitation</title>
     </head>
     <body style="background-color: #ffffff; font-family: 'Roboto', sans-serif !important; width: 640px; margin: auto; position: relative; top: 75px">
+    <a href="https://www.w3schools.com">Visit W3Schools.com!2</a>
         <table
       style="margin: auto; padding-left: 32px; width:550px;"
       role="presentation"
@@ -30,6 +31,9 @@ export class EmailTemplate {
           />
         </td>
       </tr>
+      <tr>
+        <a href="https://www.w3schools.com">Visit W3Schools.com!</a>
+      </tr>
     </table>
         <table style="background-color: #F8F9FB; width: 500px; margin: auto; padding: 32px; border-radius: 8px">
           <tr>
@@ -37,8 +41,7 @@ export class EmailTemplate {
           </tr>
           <tr>
             <td colspan="5" style="padding-bottom: 20px;color:#384860;">
-              Hello ${firstName},
-              Link ${resetPasswordLink},
+              Hello ${firstName} ${firstName}
             </td>
           </tr>
           <tr>
@@ -62,7 +65,7 @@ export class EmailTemplate {
           </tr>
             <tr>
               <td>
-                <a href="${resetPasswordLink}" target="_blank" >
+                <a style="cursor: pointer" href="https://test-company.chargeonsite.com" target="_blank" >
                   <button style="display: inline-block !important; background-color: #2969FF; color: white; padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer !important ;">
                     Reset your password
                   </button>
@@ -72,7 +75,7 @@ export class EmailTemplate {
         </table>
         <table style="width: 500px; margin: 56px auto; padding: 0px;">
           <tr>
-            <td colspan="5" style="padding-bottom: 20px; font-size: 14px; color:#858C95;">Questions or FAQ? Contact us at <a style="color:#0C66E4; text-decoration:none;" href="mailto:support@pattern50.com">support@pattern50.com</a>. For more information about Pattern50, visit <a style="color:#0C66E4; text-decoration:none;" href="https://www.pattern50.com">www.pattern50.com</a>.</td>
+            <td colspan="5" style="padding-bottom: 20px; font-size: 14px; color:#858C95;">Questions or FAQ? Contact us at <a style="color:#0C66E4; text-decoration:none;" href="mailto:support@pattern50.com">support@pattern50.com</a>. For more information about Pattern50, visit <a style="color:#0C66E4; text-decoration:none; cursor: pointer" href="https://www.pattern50.com">www.pattern50.com</a>.</td>
           </tr>
           <tr>
             <td colspan="5" style="padding-bottom: 24px; font-size:14px; color:#858C95;">© 2024 Pattern50.</td>
