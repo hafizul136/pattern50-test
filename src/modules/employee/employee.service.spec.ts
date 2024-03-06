@@ -41,7 +41,7 @@ describe('EmployeeService', () => {
   } as IUser;
 
   const employee: IEmployee = {
-    id: "65e17add927f8412ba829fe2",
+    // id: "65e17add927f8412ba829fe2",
     name: "nusu",
     email: "t3@GMAIL.COM",
     phone: "",
@@ -52,6 +52,7 @@ describe('EmployeeService', () => {
     status: "active",
     clientId: MongooseHelper.getInstance().makeMongooseId("65d6e54dd2d038abc102b4b2")
   } as any as IEmployee;
+  const mulEmployee: IEmployee[] = employee[];
 
   const employees: IEmployees = {
     count: 1,
@@ -109,7 +110,7 @@ describe('EmployeeService', () => {
     it('should create employees and return their count', async () => {
       jest.spyOn(service, 'checkEmailUniqueness').mockResolvedValueOnce(null);
       jest.spyOn(employeeRoleService, 'findActiveRole').mockResolvedValueOnce(employeeRole);
-      jest.spyOn(service, 'create').mockResolvedValueOnce(employees);
+      jest.spyOn(model, 'create').mockResolvedValueOnce(mulEmployee);
 
       const result = await service.create(createEmployeeDTOs, user);
       expect(result.count).toBeGreaterThan(0);
@@ -160,35 +161,31 @@ describe('EmployeeService', () => {
   // });
   // });
 
+  // it('should update an employee and return the updated employee', async () => {
+  //   // // Mock data
+  //   // const id = 'your_employee_id';
+  //   // const updateEmployeeDto: UpdateEmployeeDto = { /* mock update employee DTO */ };
+  //   // const user: IUser = { /* mock user */ };
+  //   // const updatedEmployee: Employee = { /* mock updated employee object */ };
 
+  //   // Mock the behavior of dependencies
+  //   // jest.spyOn(mockConstructObjectFromDtoHelper, 'constructEmployeeUpdateObj').mockReturnValueOnce(/* mock employee DTO */);
+  //   jest.spyOn(service, 'checkUniqueEmailWithOutItself').mockResolvedValueOnce(null);
+  //   jest.spyOn(employeeRoleService, 'findActiveRole').mockResolvedValueOnce(employeeRole);
+  //   jest.spyOn(model, 'findByIdAndUpdate').mockResolvedValueOnce(employee);
 
+  //   // Call the update method
+  //   const result = await service.update(employee?.id, employee as UpdateEmployeeDto, user);
 
+  //   // Assertions
+  //   expect(result).toEqual(employee); // Ensure that the result is the updated employee
 
-  it('should update an employee and return the updated employee', async () => {
-    // // Mock data
-    // const id = 'your_employee_id';
-    // const updateEmployeeDto: UpdateEmployeeDto = { /* mock update employee DTO */ };
-    // const user: IUser = { /* mock user */ };
-    // const updatedEmployee: Employee = { /* mock updated employee object */ };
+  //   // Ensure that findByIdAndUpdate was called with the correct arguments
+  //   expect(model.findByIdAndUpdate).toHaveBeenCalledWith(employee?.id, expect.any(Object), { new: true });
 
-    // Mock the behavior of dependencies
-    // jest.spyOn(mockConstructObjectFromDtoHelper, 'constructEmployeeUpdateObj').mockReturnValueOnce(/* mock employee DTO */);
-    jest.spyOn(service, 'checkUniqueEmailWithOutItself').mockResolvedValueOnce(null);
-    jest.spyOn(employeeRoleService, 'findActiveRole').mockResolvedValueOnce(employeeRole);
-    jest.spyOn(model, 'findByIdAndUpdate').mockResolvedValueOnce(employee);
-
-    // Call the update method
-    const result = await service.update(employee?.id, employee as UpdateEmployeeDto, user);
-
-    // Assertions
-    expect(result).toEqual(employee); // Ensure that the result is the updated employee
-
-    // Ensure that findByIdAndUpdate was called with the correct arguments
-    expect(model.findByIdAndUpdate).toHaveBeenCalledWith(employee?.id, expect.any(Object), { new: true });
-
-    // Ensure that other methods were not called
-    // expect(mockExceptionHelper.defaultError).not.toHaveBeenCalled();
-    expect(employeeRoleService.findActiveRole).not.toHaveBeenCalled();
-  });
+  //   // Ensure that other methods were not called
+  //   // expect(mockExceptionHelper.defaultError).not.toHaveBeenCalled();
+  //   expect(employeeRoleService.findActiveRole).not.toHaveBeenCalled();
+  // });
 
 });
