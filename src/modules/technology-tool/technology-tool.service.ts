@@ -11,7 +11,7 @@ import { TechnologyCategoryService } from '@modules/technology-category/technolo
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
+import { CreateTechnologyToolDto, CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
 import { TechnologyTool, TechnologyToolDocument } from './entities/technology-tool.entity';
 import { ITechnologyTools } from './interfaces/technology-tool.interface';
@@ -45,15 +45,26 @@ export class TechnologyToolService {
     return s3Response;
   }
 
+  // validate technology tool data
+  async validateToolObject(tool: CreateTechnologyToolDto): Promise<void> {
+    // validate mongo ids
+    MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId, "category");
+    MongooseHelper.getInstance().isValidMongooseId(tool?.typeId, "type");
+    await this.technologyCategoryService.findOne(tool?.categoryId);
+    await this.technologyCategoryService.findOneToolType(tool?.typeId);
+  }
+
   // create tools under technology
   async create(createTechnologyToolsDto: CreateTechnologyToolsDto): Promise<{ count: number, tools: ITechnologyTools[] }> {
     // construct objects for multiple creation
     const toolsObjs = await Promise.all(createTechnologyToolsDto?.tools?.map(async tool => {
       // validate mongo ids
-      MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId, "category");
-      MongooseHelper.getInstance().isValidMongooseId(tool?.typeId, "type");
-      await this.technologyCategoryService.findOne(tool?.categoryId);
-      await this.technologyCategoryService.findOneToolType(tool?.typeId);
+      await this.validateToolObject(tool);
+
+      // MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId, "category");
+      // MongooseHelper.getInstance().isValidMongooseId(tool?.typeId, "type");
+      // await this.technologyCategoryService.findOne(tool?.categoryId);
+      // await this.technologyCategoryService.findOneToolType(tool?.typeId);
 
       return ConstructObjectFromDtoHelper.constructToolsObj(tool);
     }));
@@ -147,8 +158,16 @@ export class TechnologyToolService {
     return NestHelper.getInstance().arrayFirstOrNull(tool);
   }
 
-  async update(id: number, updateTechnologyToolDto: UpdateTechnologyToolDto) {
-    return `This action updates a #${id} technologyTool`;
+  async update(id: string, updateTechnologyToolDto: UpdateTechnologyToolDto) {
+    const tool = await this.findOne(id);
+
+    // validate mongo ids
+    await this.validateToolObject(updateTechnologyToolDto);
+
+    // construct object
+    const updateToolObject = ConstructObjectFromDtoHelper.constructToolsObj(tool);
+
+    const updatedTool = await this.technologyToolModel.findByIdAndUpdate(id, updateToolObject, { new: true });
   }
 
   remove(id: number) {

@@ -37,7 +37,7 @@ export class TechnologyToolController {
 
   @Patch('edit/:id')
   update(@Param('id') id: string, @Body() updateTechnologyToolDto: UpdateTechnologyToolDto) {
-    return this.technologyToolService.update(+id, updateTechnologyToolDto);
+    return this.technologyToolService.update(id, updateTechnologyToolDto);
   }
 
   @Delete(':id')
