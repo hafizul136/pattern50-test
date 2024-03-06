@@ -46,6 +46,7 @@ export class AuthController {
         return this.authService.sendForgetPasswordLink(forgetDto, clientObjId);
     }
     @Post('forgot-password/reset')
+    @UseGuards(ClientCredentialsGuard)
     resetForgottenPassword(
         @Body() resetDto: ResetForgotDto
     ): Promise<boolean | any[] | IAuthResponse> {

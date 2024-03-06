@@ -182,7 +182,7 @@ export class AuthService {
         to: user?.email,
         from: "hafizul@6sensehq.com",
         subject: "Forgot password",
-        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName = "", user.lastName = '', 'https://test-company.chargeonsite.com/'),
+        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link),
         sendersName: "Pattern50",
         //   attachments: [
         //     {
@@ -217,7 +217,7 @@ export class AuthService {
       try {
         jwtObject = this.jwtService.verify(resetDto.token, { secret: appConfig.jwtAccessToken }) as object;
       } catch (error) {
-        console.log(error);
+        ExceptionHelper.getInstance().tokenExpired();
       }
       if (jwtObject) {
         const res = await this.forgetPassword(resetDto.token, resetDto.password, resetDto.confirmPassword);
@@ -230,7 +230,7 @@ export class AuthService {
           //   subject: 'Password reset successful',
           //   to: user.email,
           //   text: EmailTemplate.getPasswordResetSuccessEmailHtml(user.fname, user.lname),
-          // });
+          // });l
         }
         return res;
       } else {

@@ -37,8 +37,7 @@ export class EmailTemplate {
           </tr>
           <tr>
             <td colspan="5" style="padding-bottom: 20px;color:#384860;">
-              Hello ${firstName},
-              Link ${resetPasswordLink},
+              Hello ${firstName} ${lastName}
             </td>
           </tr>
           <tr>
@@ -62,7 +61,7 @@ export class EmailTemplate {
           </tr>
             <tr>
               <td>
-                <a href="${resetPasswordLink}" target="_blank" >
+                <a style="cursor: pointer" href="${resetPasswordLink}" target="_blank" >
                   <button style="display: inline-block !important; background-color: #2969FF; color: white; padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer !important ;">
                     Reset your password
                   </button>
@@ -72,7 +71,7 @@ export class EmailTemplate {
         </table>
         <table style="width: 500px; margin: 56px auto; padding: 0px;">
           <tr>
-            <td colspan="5" style="padding-bottom: 20px; font-size: 14px; color:#858C95;">Questions or FAQ? Contact us at <a style="color:#0C66E4; text-decoration:none;" href="mailto:support@pattern50.com">support@pattern50.com</a>. For more information about Pattern50, visit <a style="color:#0C66E4; text-decoration:none;" href="https://www.pattern50.com">www.pattern50.com</a>.</td>
+            <td colspan="5" style="padding-bottom: 20px; font-size: 14px; color:#858C95;">Questions or FAQ? Contact us at <a style="color:#0C66E4; text-decoration:none;" href="mailto:support@pattern50.com">support@pattern50.com</a>. For more information about Pattern50, visit <a style="color:#0C66E4; text-decoration:none; cursor: pointer" href="https://www.pattern50.com">www.pattern50.com</a>.</td>
           </tr>
           <tr>
             <td colspan="5" style="padding-bottom: 24px; font-size:14px; color:#858C95;">© 2024 Pattern50.</td>

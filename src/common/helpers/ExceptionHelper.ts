@@ -97,7 +97,7 @@ export class ExceptionHelper {
         this.postForbiddenException('File Type Unsupported');
     }
     tokenExpired(): void {
-        this.postUnauthorizedException({ message: 'token_expired' });
+        this.postUnauthorizedException({ message: 'The Link has Expired' });
     }
     tokenInvalid(): void {
         this.postUnauthorizedException({ message: 'token_invalid' });
