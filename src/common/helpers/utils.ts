@@ -1,5 +1,5 @@
 import { IRolePermission } from "@modules/role-permission/interfaces/rolePermission.interface";
-import { appConfig } from "configuration/app.config";
+import { appConfig } from "../../configuration/app.config";
 import mongoose from "mongoose";
 import { nanoid } from 'nanoid';
 import * as util from 'util';
