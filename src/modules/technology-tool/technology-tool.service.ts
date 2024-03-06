@@ -14,6 +14,7 @@ import { Model, Types } from 'mongoose';
 import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
 import { TechnologyTool, TechnologyToolDocument } from './entities/technology-tool.entity';
+import { ITechnologyTools } from './interfaces/technology-tool.interface';
 
 @Injectable()
 export class TechnologyToolService {
@@ -45,8 +46,7 @@ export class TechnologyToolService {
   }
 
   // create tools under technology
-  async create(createTechnologyToolsDto: CreateTechnologyToolsDto) {
-    // construct objects for multiple creation
+  async create(createTechnologyToolsDto: CreateTechnologyToolsDto): Promise<{ count: number, tools: ITechnologyTools[] }> {
     // construct objects for multiple creation
     const toolsObjs = await Promise.all(createTechnologyToolsDto?.tools?.map(async tool => {
       // validate mongo ids
@@ -59,7 +59,7 @@ export class TechnologyToolService {
     }));
 
 
-    const tools = await this.technologyToolModel.create(toolsObjs);
+    const tools: ITechnologyTools[] = await this.technologyToolModel.create(toolsObjs);
 
     return {
       count: tools?.length ?? 0,
@@ -67,7 +67,7 @@ export class TechnologyToolService {
     }
   }
 
-  async findAll(categoryId: string, query: IListQuery): Promise<{ data?: any[], count?: number }> {
+  async findAll(categoryId: string, query: IListQuery): Promise<{ data?: ITechnologyTools[], count?: number }> {
     // validate category id
     await this.technologyCategoryService.findOne(categoryId);
 
@@ -111,16 +111,43 @@ export class TechnologyToolService {
     // pagination and sorting
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
 
-    const tools = await this.technologyToolModel.aggregate(aggregate).exec();
+    const tools: ITechnologyTools[] = await this.technologyToolModel.aggregate(aggregate).exec();
 
     return Utils.returnListResponse(tools);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} technologyTool`;
+  async findOne(id: string) {
+    // validate id
+    MongooseHelper.getInstance().isValidMongooseId(id)
+
+    let aggregate = [];
+
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ _id: new Types.ObjectId(id) }]);
+
+    AggregationHelper.lookupForCustomFields(aggregate, "tooltypes", "typeId", "_id", "type");
+    AggregationHelper.unwindAField(aggregate, "type", true);
+
+    AggregationHelper.lookupForCustomFields(aggregate, "technologycategories", "categoryId", "_id", "category");
+    AggregationHelper.unwindAField(aggregate, "category", true);
+
+    // project fields
+    AggregationHelper.projectFields(aggregate, ["typeId", "categoryId"]);
+
+    //find the data
+    const tool = await this.technologyToolModel.aggregate(aggregate).exec();
+
+    if (NestHelper.getInstance().isEmpty(tool)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Tool not found",
+        "tool_not_found",
+        HttpStatus.NOT_FOUND
+      )
+    }
+
+    return NestHelper.getInstance().arrayFirstOrNull(tool);
   }
 
-  update(id: number, updateTechnologyToolDto: UpdateTechnologyToolDto) {
+  async update(id: number, updateTechnologyToolDto: UpdateTechnologyToolDto) {
     return `This action updates a #${id} technologyTool`;
   }
 

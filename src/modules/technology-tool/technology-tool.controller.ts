@@ -4,6 +4,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile,
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
+import { ITechnologyTools } from './interfaces/technology-tool.interface';
 import { TechnologyToolService } from './technology-tool.service';
 
 @Controller('technology-tool')
@@ -18,22 +19,23 @@ export class TechnologyToolController {
 
   @Post("create")
   @Permissions("company.create")
-  create(@Body() createTechnologyToolsDto: CreateTechnologyToolsDto) {
+  create(@Body() createTechnologyToolsDto: CreateTechnologyToolsDto): Promise<{ count: number, tools: ITechnologyTools[] }> {
     return this.technologyToolService.create(createTechnologyToolsDto);
   }
 
   @Get("list/category/:categoryId")
   @Permissions("company.create")
-  findAll(@Param("categoryId") categoryId: string, @Query() query: IListQuery) {
+  findAll(@Param("categoryId") categoryId: string, @Query() query: IListQuery): Promise<{ data?: ITechnologyTools[], count?: number }> {
     return this.technologyToolService.findAll(categoryId, query);
   }
 
-  @Get(':id')
+  @Get('details/:id')
+  @Permissions("company.create")
   findOne(@Param('id') id: string) {
-    return this.technologyToolService.findOne(+id);
+    return this.technologyToolService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('edit/:id')
   update(@Param('id') id: string, @Body() updateTechnologyToolDto: UpdateTechnologyToolDto) {
     return this.technologyToolService.update(+id, updateTechnologyToolDto);
   }
