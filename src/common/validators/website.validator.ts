@@ -5,7 +5,7 @@ import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorC
 @ValidatorConstraint({ name: 'isUrlWithTld', async: false })
 export class IsUrlWithTldConstraint implements ValidatorConstraintInterface {
     validate(url: string, args: ValidationArguments) {
-        const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*\.[^\s]{2,}$/;
+        const urlPattern = /^(https?|ftp):\/\/(www\.[^\s/$.?#]+\.[^\s]{2,}|www\.[^\s]+)$/i;
         return urlPattern.test(url);
     }
 
