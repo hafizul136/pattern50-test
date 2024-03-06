@@ -29,9 +29,10 @@ export class TechnologyToolController {
     return this.technologyToolService.findAll(categoryId, query);
   }
 
-  @Get(':id')
+  @Get('details/:id')
+  @Permissions("company.create")
   findOne(@Param('id') id: string) {
-    return this.technologyToolService.findOne(+id);
+    return this.technologyToolService.findOne(id);
   }
 
   @Patch(':id')
