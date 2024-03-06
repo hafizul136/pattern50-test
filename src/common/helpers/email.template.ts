@@ -38,6 +38,7 @@ export class EmailTemplate {
           <tr>
             <td colspan="5" style="padding-bottom: 20px;color:#384860;">
               Hello ${firstName},
+              Link ${resetPasswordLink},
             </td>
           </tr>
           <tr>
@@ -61,7 +62,7 @@ export class EmailTemplate {
           </tr>
             <tr>
               <td>
-                <a  target="_blank" href=${resetPasswordLink}>
+                <a href="${resetPasswordLink}" target="_blank" >
                   <button style="display: inline-block !important; background-color: #2969FF; color: white; padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer !important ;">
                     Reset your password
                   </button>

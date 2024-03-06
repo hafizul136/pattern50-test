@@ -184,8 +184,8 @@ export class CompanyService {
     const a = await this.checkDuplicateEmailAndEIN(createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
     if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
       ExceptionHelper.getInstance().defaultError(
-        'EIN must be unique',
-        'EIN_must_be_unique',
+        'EIN already exists',
+        'EIN _already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -208,8 +208,8 @@ export class CompanyService {
     const a = await this.checkDuplicateCompanyEmailAndEIN(companyId, createCompanyDTO?.ein, createCompanyDTO?.email, createCompanyDTO?.masterEmail);
     if (!NestHelper.getInstance()?.isEmpty(a[0].byEIN)) {
       ExceptionHelper.getInstance().defaultError(
-        'EIN must be unique',
-        'EIN_must_be_unique',
+        'EIN already exists',
+        'EIN _already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -228,15 +228,15 @@ export class CompanyService {
       );
     }
   }
-  private async checkDuplicateEmailAndEIN(ein: string, email: string, masterEmail: string) {
+  private async checkDuplicateEmailAndEIN(ein: string, emailTemp: string, masterEmailTemp: string) {
     const emailPipeline = [
       {
-        $match: { email: email }
+        $match: { email: emailTemp }
       },
     ];
     const masterEmailPipeline = [
       {
-        $match: { masterEmail: masterEmail }
+        $match: { masterEmail: masterEmailTemp }
       },
     ];
 
@@ -258,21 +258,21 @@ export class CompanyService {
       },
     ])
   }
-  private async checkDuplicateCompanyEmailAndEIN(companyId: Types.ObjectId, ein: string, email: string, masterEmail: string) {
+  private async checkDuplicateCompanyEmailAndEIN(companyId: Types.ObjectId, EIN: string, emailTemp: string, masterEmailTemp: string) {
     const emailPipeline = [
       {
-        $match: { _id: { $ne: companyId }, email: email },
+        $match: { _id: { $ne: companyId }, email: emailTemp },
       },
     ];
     const masterEmailPipeline = [
       {
-        $match: { _id: { $ne: companyId }, masterEmail: masterEmail },
+        $match: { _id: { $ne: companyId }, masterEmail: masterEmailTemp },
       },
     ];
 
     const einPipeline = [
       {
-        $match: { _id: { $ne: companyId }, ein: ein },
+        $match: { _id: { $ne: companyId }, ein: EIN },
       },
 
     ];

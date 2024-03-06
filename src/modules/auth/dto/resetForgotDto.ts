@@ -1,16 +1,20 @@
+import { NoSpaces } from '@common/decorators/nospace.decorator';
 import {
-    IsNotEmpty
+    IsNotEmpty, IsStrongPassword
 } from 'class-validator';
 
 export class ResetForgotDto {
-    @IsNotEmpty({ message: 'token_empty' })
+
+    @IsNotEmpty({ message: 'Token is Required' })
     token: string;
 
-    @IsNotEmpty({ message: 'password_empty' })
-    // @MinLength(8, { message: 'password_invalid' })
+    @IsNotEmpty({ message: 'New password is required' })
+    @NoSpaces({ message: 'Password requirements not fulfilled' })
+    @IsStrongPassword({}, { message: 'Password requirements not fulfilled' })
     password: string;
 
-    @IsNotEmpty({ message: 'confirmPassword_empty' })
-    // @MinLength(8, { message: 'confirmPassword_invalid' })
+    @IsNotEmpty({ message: 'Confirm new password is required' })
+    // @NoSpaces({ message: 'C Password requirements not fulfilled' })
+    // @IsStrongPassword({}, { message: 'Confirm password requirements not fulfilled' })
     confirmPassword: string;
 }

@@ -1,5 +1,5 @@
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
-import { IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString, IsStrongPassword, MinLength } from "class-validator";
 import mongoose from "mongoose";
 import { UserTypeEnum } from "../enum/index.enum";
 
