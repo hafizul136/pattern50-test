@@ -9,7 +9,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
 import { CreateEmployeeDTOs } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeService } from './employee.service';
 import { Employee } from './entities/employee.entity';
 import { IEmployee, IEmployees } from './interfaces/employee.interface';
@@ -40,7 +39,21 @@ describe('EmployeeService', () => {
     stripeCustomerId: ''
   } as IUser;
 
-  const employee: IEmployee = {
+  const employeeRoles = [
+    {
+      name: "DevOps Engineer 20",
+      description: "",
+      startDate: "2024-02-23T07:33:19.088Z",
+      endDate: null,
+      status: "active",
+      isDeleted: false,
+      // created_at: "2024-02-23T07:33:21.069Z",
+      // updated_at: "2024-02-29T12:19:42.527Z",
+
+    }
+  ]
+
+  const employee: Employee = {
     // id: "65e17add927f8412ba829fe2",
     name: "nusu",
     email: "t3@GMAIL.COM",
@@ -48,11 +61,24 @@ describe('EmployeeService', () => {
     employeeRoleIds: [
       MongooseHelper.getInstance().makeMongooseId("65d84a3f3d93b472b2bd9700")
     ],
+    employeeRoles: employeeRoles,
     startDate: "2024-03-01T06:51:05.895Z",
     status: "active",
     clientId: MongooseHelper.getInstance().makeMongooseId("65d6e54dd2d038abc102b4b2")
-  } as any as IEmployee;
-  const mulEmployee: IEmployee[] = employee[];
+  } as any as Employee;
+  const employeesForCreate: any = [{
+    // id: "65e17add927f8412ba829fe2",
+    name: "nusu",
+    email: "t3@GMAIL.COM",
+    phone: "",
+    employeeRoleIds: [
+      MongooseHelper.getInstance().makeMongooseId("65d84a3f3d93b472b2bd9700")
+    ],
+    // employeeRoles: employeeRoles,
+    startDate: "2024-03-01T06:51:05.895Z",
+    status: "active",
+    clientId: MongooseHelper.getInstance().makeMongooseId("65d6e54dd2d038abc102b4b2")
+  }];
 
   const employees: IEmployees = {
     count: 1,
@@ -110,7 +136,7 @@ describe('EmployeeService', () => {
     it('should create employees and return their count', async () => {
       jest.spyOn(service, 'checkEmailUniqueness').mockResolvedValueOnce(null);
       jest.spyOn(employeeRoleService, 'findActiveRole').mockResolvedValueOnce(employeeRole);
-      jest.spyOn(model, 'create').mockResolvedValueOnce(mulEmployee);
+      jest.spyOn(model, 'create').mockResolvedValueOnce(employeesForCreate);
 
       const result = await service.create(createEmployeeDTOs, user);
       expect(result.count).toBeGreaterThan(0);
@@ -120,17 +146,15 @@ describe('EmployeeService', () => {
     it('should throw error if role not found by role id', async () => {
       jest.spyOn(service, 'checkEmailUniqueness').mockResolvedValueOnce(null);
       jest.spyOn(employeeRoleService, 'findActiveRole').mockRejectedValueOnce(new Error('Role not found'));
-      // jest.spyOn(service, 'create').mockRejectedValueOnce(new Error('Role not found'));
-      // Ensure that the create method throws an error
+
       await expect(service.create(createEmployeeDTOs, user)).rejects.toThrowError('Role not found');
     });
 
     it('should throw error if email is duplicate', async () => {
-      jest.spyOn(service, 'checkEmailUniqueness').mockRejectedValueOnce(new Error('email must be unique'));
+      jest.spyOn(service, 'checkEmailUniqueness').mockRejectedValueOnce(new Error('Email address already exists'));
       jest.spyOn(employeeRoleService, 'findActiveRole').mockResolvedValueOnce(employeeRole);
-      // jest.spyOn(service, 'create').mockRejectedValueOnce(new Error('email must be unique'));
-      // Ensure that the create method throws an error
-      await expect(service.create(createEmployeeDTOs, user)).rejects.toThrowError('email must be unique');
+
+      await expect(service.create(createEmployeeDTOs, user)).rejects.toThrowError('Email address already exists');
     });
   });
   // describe('update', () => {

@@ -27,8 +27,8 @@ export class EmployeeService {
       const hasDuplicate = NestHelper.getInstance().hasDuplicateInArrayOfObject(createEmployeeDTOs?.employees, 'email')
       if (hasDuplicate) {
         ExceptionHelper.getInstance().defaultError(
-          'email must be unique',
-          'email_must_be_unique',
+          'Email address already exists',
+          'email_address_already_exists',
           HttpStatus.BAD_REQUEST
         );
       }
@@ -147,8 +147,8 @@ export class EmployeeService {
     const employee = await this.employeeModel.findOne({ email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
-        'email must be unique',
-        'email_must_be_unique',
+        'Email address already exists',
+        'email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -157,8 +157,8 @@ export class EmployeeService {
     const employee = await this.employeeModel.findOne({ _id: { $ne: id }, email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
-        'email must be unique',
-        'email_must_be_unique',
+        'Email address already exists',
+        'email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
