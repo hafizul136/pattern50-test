@@ -116,8 +116,22 @@ export class TechnologyToolService {
     return Utils.returnListResponse(tools);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} technologyTool`;
+  async findOne(id: string) {
+    // validate id
+    MongooseHelper.getInstance().isValidMongooseId(id)
+
+    //find the data
+    const tool = await this.technologyToolModel.findById(id);
+
+    if (NestHelper.getInstance().isEmpty(tool)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Tool not found",
+        "tool_not_found",
+        HttpStatus.NOT_FOUND
+      )
+    }
+
+    return tool;
   }
 
   update(id: number, updateTechnologyToolDto: UpdateTechnologyToolDto) {
