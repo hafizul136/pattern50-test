@@ -1,19 +1,20 @@
 import { NoSpaces } from '@common/decorators/nospace.decorator';
 import {
-    IsNotEmpty
+    IsNotEmpty, IsStrongPassword
 } from 'class-validator';
 
 export class ResetForgotDto {
-    @IsNotEmpty({ message: 'token_empty' })
+
+    @IsNotEmpty({ message: 'Token is Required' })
     token: string;
 
-    @IsNotEmpty({ message: 'password_empty' })
-    @NoSpaces({ message: 'Password must be at least 8 characters long and contain at least one symbol, one uppercase letter, one lowercase letter, and one number, without spaces' })
-    // @IsStrongPassword({},{ message:'Password must be at least 8 characters long and contain at least one symbol, one uppercase letter, one lowercase letter, and one number, without spaces'})
+    @IsNotEmpty({ message: 'New password is required' })
+    @NoSpaces({ message: 'Password requirements not fulfilled' })
+    @IsStrongPassword({}, { message: 'Password requirements not fulfilled' })
     password: string;
 
-    @IsNotEmpty({ message: 'confirmPassword_empty' })
-    @NoSpaces({ message: 'confirmPassword must be at least 8 characters long and contain at least one symbol, one uppercase letter, one lowercase letter, and one number, without spaces' })
-    // @IsStrongPassword({}, { message: 'Password must be at least 8 characters long and contain at least one symbol, one uppercase letter, one lowercase letter, and one number, without spaces' })
+    @IsNotEmpty({ message: 'Confirm new password is required' })
+    // @NoSpaces({ message: 'C Password requirements not fulfilled' })
+    // @IsStrongPassword({}, { message: 'Confirm password requirements not fulfilled' })
     confirmPassword: string;
 }

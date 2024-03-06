@@ -259,12 +259,11 @@ export class AuthService {
     } else {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: ["Password doesn't match"],
+        message: "Password doesn't match",
       });
     }
   }
   processVerificationToken = async (token: string): Promise<IUser | null> => {
-    console.log({ token })
     const jwtObject = this.jwtService.decode(token);
     if (jwtObject) {
       // const usr = await this.userModel.scan('email').eq(jwtObject['email']).exec();
