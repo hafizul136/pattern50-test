@@ -120,8 +120,21 @@ export class TechnologyToolService {
     // validate id
     MongooseHelper.getInstance().isValidMongooseId(id)
 
+    let aggregate = [];
+
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ _id: new Types.ObjectId(id) }]);
+
+    AggregationHelper.lookupForCustomFields(aggregate, "tooltypes", "typeId", "_id", "type");
+    AggregationHelper.unwindAField(aggregate, "type", true);
+
+    AggregationHelper.lookupForCustomFields(aggregate, "technologycategories", "categoryId", "_id", "category");
+    AggregationHelper.unwindAField(aggregate, "category", true);
+
+    // project fields
+    AggregationHelper.projectFields(aggregate, ["typeId", "categoryId"]);
+
     //find the data
-    const tool = await this.technologyToolModel.findById(id);
+    const tool = await this.technologyToolModel.aggregate(aggregate).exec();
 
     if (NestHelper.getInstance().isEmpty(tool)) {
       ExceptionHelper.getInstance().defaultError(
@@ -131,10 +144,10 @@ export class TechnologyToolService {
       )
     }
 
-    return tool;
+    return NestHelper.getInstance().arrayFirstOrNull(tool);
   }
 
-  update(id: number, updateTechnologyToolDto: UpdateTechnologyToolDto) {
+  async update(id: number, updateTechnologyToolDto: UpdateTechnologyToolDto) {
     return `This action updates a #${id} technologyTool`;
   }
 
