@@ -140,10 +140,10 @@ export class EmployeeService {
   }
   async updateStatus(id: string, updateEmployeeStatus: UpdateEmployeeStatus): Promise<IEmployee> {
     // validate if role exists by the id
-    const employeeRole: IEmployee = await this.findOne(id);
-    if (employeeRole?.status === updateEmployeeStatus?.status) {
+    const employee: IEmployee = await this.findOne(id);
+    if (employee?.status === updateEmployeeStatus?.status) {
       ExceptionHelper.getInstance().defaultError(
-        `Role already ${employeeRole.status}`,
+        `Employee already ${employee.status}`,
         "conflicts",
         HttpStatus.BAD_REQUEST
       );
