@@ -179,8 +179,7 @@ export class TechnologyToolService {
 
     // update tool
     const updatedTool: ITechnologyTools = await this.technologyToolModel
-      .findByIdAndUpdate(id, updateToolObject, { new: true })
-      .lean();
+      .findByIdAndUpdate(id, updateToolObject, { new: true });
 
     if (NestHelper.getInstance().isEmpty(updatedTool)) {
       ExceptionHelper.getInstance().defaultError(
