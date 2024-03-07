@@ -26,7 +26,7 @@ export class RolesGuard implements CanActivate {
             try {
                 this.jwt.verify(token[1], { secret: appConfig.jwtAccessToken });
             } catch (err) {
-                ExceptionHelper.getInstance().defaultError('Invalid token', 'invalid_token', HttpStatus.UNAUTHORIZED)
+                ExceptionHelper.getInstance().defaultError('Unauthorized', 'unauthorized', HttpStatus.UNAUTHORIZED)
             }
 
             const payload: any = this.jwt.decode(token[1]);
