@@ -71,4 +71,8 @@ export class Utils {
     static inspect(key: any, val: any): void {
         console.log(key, util.inspect(val, false, null))
     }
+
+    static isEqualIds(prevId: string | mongoose.Types.ObjectId, currId: string): Boolean {
+        return prevId.toString() === currId.toString();
+    }
 }

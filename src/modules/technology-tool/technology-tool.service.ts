@@ -11,10 +11,10 @@ import { TechnologyCategoryService } from '@modules/technology-category/technolo
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
+import { CreateTechnologyToolDto, CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
 import { TechnologyTool, TechnologyToolDocument } from './entities/technology-tool.entity';
-import { ITechnologyTools } from './interfaces/technology-tool.interface';
+import { ITechnologyToolDetails, ITechnologyTools } from './interfaces/technology-tool.interface';
 
 @Injectable()
 export class TechnologyToolService {
@@ -45,16 +45,23 @@ export class TechnologyToolService {
     return s3Response;
   }
 
+  // validate technology tool data and referred ids
+  async validateToolObject(tool: CreateTechnologyToolDto): Promise<void> {
+    // validate mongo ids
+    MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId, "category");
+    MongooseHelper.getInstance().isValidMongooseId(tool?.typeId, "type");
+    await this.technologyCategoryService.findOne(tool?.categoryId);
+    await this.technologyCategoryService.findOneToolType(tool?.typeId);
+  }
+
   // create tools under technology
   async create(createTechnologyToolsDto: CreateTechnologyToolsDto): Promise<{ count: number, tools: ITechnologyTools[] }> {
     // construct objects for multiple creation
     const toolsObjs = await Promise.all(createTechnologyToolsDto?.tools?.map(async tool => {
       // validate mongo ids
-      MongooseHelper.getInstance().isValidMongooseId(tool?.categoryId, "category");
-      MongooseHelper.getInstance().isValidMongooseId(tool?.typeId, "type");
-      await this.technologyCategoryService.findOne(tool?.categoryId);
-      await this.technologyCategoryService.findOneToolType(tool?.typeId);
+      await this.validateToolObject(tool);
 
+      // construct objects
       return ConstructObjectFromDtoHelper.constructToolsObj(tool);
     }));
 
@@ -111,12 +118,14 @@ export class TechnologyToolService {
     // pagination and sorting
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
 
-    const tools: ITechnologyTools[] = await this.technologyToolModel.aggregate(aggregate).exec();
+    const tools: ITechnologyTools[] = await this.technologyToolModel
+      .aggregate(aggregate)
+      .exec();
 
     return Utils.returnListResponse(tools);
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ITechnologyToolDetails> {
     // validate id
     MongooseHelper.getInstance().isValidMongooseId(id)
 
@@ -134,7 +143,9 @@ export class TechnologyToolService {
     AggregationHelper.projectFields(aggregate, ["typeId", "categoryId"]);
 
     //find the data
-    const tool = await this.technologyToolModel.aggregate(aggregate).exec();
+    const tool = await this.technologyToolModel
+      .aggregate(aggregate)
+      .exec();
 
     if (NestHelper.getInstance().isEmpty(tool)) {
       ExceptionHelper.getInstance().defaultError(
@@ -147,8 +158,39 @@ export class TechnologyToolService {
     return NestHelper.getInstance().arrayFirstOrNull(tool);
   }
 
-  async update(id: number, updateTechnologyToolDto: UpdateTechnologyToolDto) {
-    return `This action updates a #${id} technologyTool`;
+  async update(id: string, updateTechnologyToolDto: UpdateTechnologyToolDto): Promise<ITechnologyTools> {
+    // validate toolId
+    const tool: ITechnologyToolDetails = await this.findOne(id);
+
+    // validate mongo reference ids
+    await this.validateToolObject(updateTechnologyToolDto);
+
+    // validate if update category & previous category is same
+    if (!Utils.isEqualIds(tool?.category?._id, updateTechnologyToolDto?.categoryId)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Category id did not match",
+        "forbidden",
+        HttpStatus.BAD_REQUEST
+      )
+    }
+
+    // construct object
+    const updateToolObject = ConstructObjectFromDtoHelper.constructToolsObj(updateTechnologyToolDto);
+
+    // update tool
+    const updatedTool: ITechnologyTools = await this.technologyToolModel
+      .findByIdAndUpdate(id, updateToolObject, { new: true })
+      .lean();
+
+    if (NestHelper.getInstance().isEmpty(updatedTool)) {
+      ExceptionHelper.getInstance().defaultError(
+        "Failed to update",
+        "failed_update",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+
+    return updatedTool;
   }
 
   remove(id: number) {

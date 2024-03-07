@@ -6,6 +6,7 @@ import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employe
 import { CreateEmployeeDTO } from "@modules/employee/dto/create-employee.dto";
 import { UpdateEmployeeDto } from "@modules/employee/dto/update-employee.dto";
 import { CreateTechnologyToolDto } from "@modules/technology-tool/dto/create-technology-tool.dto";
+import { ITechnologyToolDetails, ITechnologyTools } from "@modules/technology-tool/interfaces/technology-tool.interface";
 import { IUser } from "@modules/users/interfaces/user.interface";
 import mongoose, { Types } from "mongoose";
 import { DateHelper, StartAndEndDate } from "./date.helper";
@@ -113,7 +114,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
         }
     }
 
-    static constructToolsObj(tool: CreateTechnologyToolDto) {
+    static constructToolsObj(tool: CreateTechnologyToolDto | ITechnologyTools) {
         return {
             name: tool?.name ?? "",
             typeId: new Types.ObjectId(tool?.typeId) ?? "",
@@ -121,6 +122,17 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             website: tool?.website ?? "",
             logo: tool?.logo ?? "",
             status: StatusEnum.ACTIVE,
+        }
+    }
+
+    static constructUpdateToolsObj(tool: ITechnologyToolDetails) {
+        return {
+            name: tool?.name ?? "",
+            typeId: new Types.ObjectId(tool?.type?._id) ?? "",
+            // categoryId: new Types.ObjectId(tool?.cate) ?? "",
+            website: tool?.website ?? "",
+            logo: tool?.logo ?? "",
+            // status: StatusEnum.ACTIVE,
         }
     }
 }

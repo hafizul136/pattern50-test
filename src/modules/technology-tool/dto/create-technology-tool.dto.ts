@@ -31,7 +31,7 @@ export class CreateTechnologyToolDto {
     @IsNotEmpty()
     @IsString()
     @TrimAndValidateString({ message: 'logo is empty' })
-    logo: Express.Multer.File
+    logo: string;
 
     @IsNotEmpty()
     @IsString()

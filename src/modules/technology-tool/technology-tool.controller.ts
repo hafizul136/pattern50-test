@@ -4,7 +4,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile,
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateTechnologyToolsDto } from './dto/create-technology-tool.dto';
 import { UpdateTechnologyToolDto } from './dto/update-technology-tool.dto';
-import { ITechnologyTools } from './interfaces/technology-tool.interface';
+import { ITechnologyToolDetails, ITechnologyTools } from './interfaces/technology-tool.interface';
 import { TechnologyToolService } from './technology-tool.service';
 
 @Controller('technology-tool')
@@ -31,13 +31,14 @@ export class TechnologyToolController {
 
   @Get('details/:id')
   @Permissions("company.create")
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<ITechnologyToolDetails> {
     return this.technologyToolService.findOne(id);
   }
 
   @Patch('edit/:id')
-  update(@Param('id') id: string, @Body() updateTechnologyToolDto: UpdateTechnologyToolDto) {
-    return this.technologyToolService.update(+id, updateTechnologyToolDto);
+  @Permissions("company.create")
+  update(@Param('id') id: string, @Body() updateTechnologyToolDto: UpdateTechnologyToolDto): Promise<ITechnologyTools> {
+    return this.technologyToolService.update(id, updateTechnologyToolDto);
   }
 
   @Delete(':id')
