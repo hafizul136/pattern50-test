@@ -10,7 +10,7 @@ import mongoose, { Model, Types } from 'mongoose';
 import { ExceptionHelper } from '../../common/helpers/ExceptionHelper';
 import { NestHelper } from '../../common/helpers/NestHelper';
 import { CreateEmployeeDTOs } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { UpdateEmployeeDto, UpdateEmployeeStatus } from './dto/update-employee.dto';
 import { Employee, EmployeeDocument } from './entities/employee.entity';
 import { IEmployee, IEmployees } from './interfaces/employee.interface';
 @Injectable()
@@ -27,8 +27,8 @@ export class EmployeeService {
       const hasDuplicate = NestHelper.getInstance().hasDuplicateInArrayOfObject(createEmployeeDTOs?.employees, 'email')
       if (hasDuplicate) {
         ExceptionHelper.getInstance().defaultError(
-          'email must be unique',
-          'email_must_be_unique',
+          'Email address already exists',
+          'email_address_already_exists',
           HttpStatus.BAD_REQUEST
         );
       }
@@ -138,6 +138,19 @@ export class EmployeeService {
     }
     return employee;
   }
+  async updateStatus(id: string, updateEmployeeStatus: UpdateEmployeeStatus): Promise<IEmployee> {
+    // validate if role exists by the id
+    const employeeRole: IEmployee = await this.findOne(id);
+    if (employeeRole?.status === updateEmployeeStatus?.status) {
+      ExceptionHelper.getInstance().defaultError(
+        `Role already ${employeeRole.status}`,
+        "conflicts",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const updatedEmployee = await this.employeeModel.findByIdAndUpdate(id, { status: updateEmployeeStatus.status.trim() }, { new: true });
+    return updatedEmployee;
+  }
 
   async remove(id: string): Promise<IEmployee> {
     return await this.employeeModel.findByIdAndRemove(id).lean();
@@ -147,8 +160,8 @@ export class EmployeeService {
     const employee = await this.employeeModel.findOne({ email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
-        'email must be unique',
-        'email_must_be_unique',
+        'Email address already exists',
+        'email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -157,8 +170,8 @@ export class EmployeeService {
     const employee = await this.employeeModel.findOne({ _id: { $ne: id }, email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
-        'email must be unique',
-        'email_must_be_unique',
+        'Email address already exists',
+        'email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
     }
