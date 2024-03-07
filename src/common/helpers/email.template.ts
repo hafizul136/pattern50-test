@@ -37,7 +37,8 @@ export class EmailTemplate {
           </tr>
           <tr>
             <td colspan="5" style="padding-bottom: 20px;color:#384860;">
-              Hello ${firstName} ${lastName}
+              Hello ${firstName} ${lastName},
+              Link <a style="cursor: pointer" href="${resetPasswordLink}" target="_blank" >Reset</a>
             </td>
           </tr>
           <tr>

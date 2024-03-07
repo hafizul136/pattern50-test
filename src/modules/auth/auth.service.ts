@@ -182,7 +182,7 @@ export class AuthService {
         to: user?.email,
         from: "hafizul@6sensehq.com",
         subject: "Forgot password",
-        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link),
+        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link = 'http://192.168.0.168:3000/login'),
         sendersName: "Pattern50",
         //   attachments: [
         //     {
