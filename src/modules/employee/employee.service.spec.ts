@@ -79,6 +79,19 @@ describe('EmployeeService', () => {
     status: "active",
     clientId: MongooseHelper.getInstance().makeMongooseId("65d6e54dd2d038abc102b4b2")
   }];
+  const employeeFindOneResponse: any = {
+    id: "65e17add927f8412ba829fe2",
+    name: "nusu",
+    email: "t3@GMAIL.COM",
+    phone: "",
+    employeeRoleIds: [
+      MongooseHelper.getInstance().makeMongooseId("65d84a3f3d93b472b2bd9700")
+    ],
+    employeeRoles: employeeRoles,
+    startDate: "2024-03-01T06:51:05.895Z",
+    status: "active",
+    clientId: MongooseHelper.getInstance().makeMongooseId("65d6e54dd2d038abc102b4b2")
+  };
 
   const employees: IEmployees = {
     count: 1,
@@ -212,4 +225,32 @@ describe('EmployeeService', () => {
   //   expect(employeeRoleService.findActiveRole).not.toHaveBeenCalled();
   // });
 
+
+  describe('updateStatus', () => {
+    it('should update employee status and return the updated employee', async () => {
+      // Mock data
+      const updateEmployeeStatus = { status: StatusEnum.INACTIVE };
+      // Mock findOne method
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(employeeFindOneResponse);
+      // Mock findByIdAndUpdate method
+      jest.spyOn(model, 'findByIdAndUpdate').mockResolvedValueOnce({ ...employeeFindOneResponse, status: StatusEnum.INACTIVE });
+
+      // Call the method being tested
+      const result = await service.updateStatus(employeeFindOneResponse.id, updateEmployeeStatus);
+
+      // Assert the result
+      expect(result.id).toBe(employeeFindOneResponse.id);
+      expect(result.status).toBe(StatusEnum.INACTIVE);
+    });
+
+    it('should throw an error if employee status is already the same', async () => {
+      const updateEmployeeStatus = { status: StatusEnum.ACTIVE };
+      // Mock findOne method to return an employee with the same status
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(employeeFindOneResponse);
+
+      // Call the method being tested and expect it to throw an error
+      await expect(service.updateStatus(employeeFindOneResponse.id, updateEmployeeStatus)).rejects.toThrowError(`Employee already ${updateEmployeeStatus.status}`);
+    });
+
+  });
 });
