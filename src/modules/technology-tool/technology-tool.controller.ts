@@ -36,6 +36,7 @@ export class TechnologyToolController {
   }
 
   @Patch('edit/:id')
+  @Permissions("company.create")
   update(@Param('id') id: string, @Body() updateTechnologyToolDto: UpdateTechnologyToolDto): Promise<ITechnologyTools> {
     return this.technologyToolService.update(id, updateTechnologyToolDto);
   }

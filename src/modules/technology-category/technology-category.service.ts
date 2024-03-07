@@ -90,7 +90,7 @@ export class TechnologyCategoryService {
   }
 
   // find one category
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ITechnologyCategory> {
     // validate id
     MongooseHelper.getInstance().isValidMongooseId(id, "category");
 
@@ -107,7 +107,7 @@ export class TechnologyCategoryService {
   }
 
   // find one category
-  async findOneToolType(id: string) {
+  async findOneToolType(id: string): Promise<IToolType> {
     const toolType = await this.toolTypeModel.findById(id);
     if (NestHelper.getInstance().isEmpty(toolType)) {
       ExceptionHelper.getInstance().defaultError(
