@@ -65,7 +65,7 @@ export class AwsServices {
                 region: process.env.AWS_REGION,
             });
 
-            const params = { Bucket: 'chargeonsite', Key: key };
+            const params = { Bucket: 'pattern50', Key: key };
             return new Promise((resolve) => {
                 s3.deleteObject(params, (err, data) => {
                     if (err) {
