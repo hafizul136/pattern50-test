@@ -179,7 +179,7 @@ export class TechnologyToolService {
     const updateToolObject = ConstructObjectFromDtoHelper.constructToolsObj(updateTechnologyToolDto);
 
     // remove previous logo
-    const deleteFile = await AwsServices.S3.deleteFile(tool?.logoKey);
+    await AwsServices.S3.deleteFile(tool?.logoKey);
 
     // update tool
     const updatedTool: ITechnologyTools = await this.technologyToolModel
