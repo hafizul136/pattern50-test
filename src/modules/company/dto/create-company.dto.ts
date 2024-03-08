@@ -8,7 +8,6 @@ export class CreateCompanyDTO extends CreateAddressDto {
     // @IsNotEmpty({ message: 'name should not be empty' })
     @TrimAndValidateString({ message: "name should not be empty" })
     @IsString({ message: "name must be string" })
-    @NoSpecialCharacters({ message: "Invalid format: avoid using special characters" })
     readonly name: string;
 
     @IsNotEmpty({ message: 'email should not be empty' })
@@ -44,7 +43,7 @@ export class CreateCompanyDTO extends CreateAddressDto {
     //     @TrimAndValidateString({ message: 'address is empty' })
     //     readonly addressLine: string;
 
-    
+
     //     @IsNotEmpty({ message: 'country_empty' })
     //     @IsString({ message: "country_must_be_string" })
     //     @TrimAndValidateString({ message: 'country is empty' })
