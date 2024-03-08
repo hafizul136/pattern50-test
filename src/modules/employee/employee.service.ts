@@ -109,7 +109,7 @@ export class EmployeeService {
     const employee = await this.employeeModel.findOne({ _id: oId }).populate('employeeRoleIds').lean();
     if (NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
-        'no employee found',
+        'No employee found',
         'no_employee_found',
         HttpStatus.BAD_REQUEST
       );

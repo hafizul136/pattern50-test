@@ -37,7 +37,9 @@ export class EmailTemplate {
           </tr>
           <tr>
             <td colspan="5" style="padding-bottom: 20px;color:#384860;">
-              Hello ${firstName} ${lastName}
+              Hello ${firstName} ${lastName},
+              Link: ${resetPasswordLink},
+              Link <a style="cursor: pointer" href="${resetPasswordLink}" target="_blank" >Reset</a>
             </td>
           </tr>
           <tr>
@@ -61,7 +63,7 @@ export class EmailTemplate {
           </tr>
             <tr>
               <td>
-                <a style="cursor: pointer" href="${resetPasswordLink}" target="_blank" >
+                <a style="cursor: pointer" href="{{resetPasswordLink}" target="_blank" >
                   <button style="display: inline-block !important; background-color: #2969FF; color: white; padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer !important ;">
                     Reset your password
                   </button>
