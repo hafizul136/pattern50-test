@@ -296,7 +296,6 @@ export class CompanyService {
       dateFormat
     );
     const today = new DateHelper().formatDateWithoutTime(new Date())
-    console.log({ today, startDate, formattedStartDate })
     const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(today, formattedStartDate);
     if (!isStartDateGreater) {
       ExceptionHelper.getInstance().defaultError(
@@ -311,7 +310,6 @@ export class CompanyService {
         endDate,
         dateFormat
       );
-      console.log({ endDate, formattedEndDate })
       const isEndDateGreater = new DateHelper().isSecondDateGreaterOrEqual(formattedStartDate, formattedEndDate);
       if (!isEndDateGreater) {
         ExceptionHelper.getInstance().defaultError(
