@@ -13,7 +13,7 @@ export function NoSpecialCharacters(validationOptions?: ValidationOptions) {
                         return true; // Validation succeeds if the value is not a string
                     }
                     // Regular expression to match any special characters excluding spaces
-                    const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+                    const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?-]/;
                     return !regex.test(value);
                 },
                 defaultMessage(args: ValidationArguments) {
