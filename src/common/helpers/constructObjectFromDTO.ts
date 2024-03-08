@@ -5,6 +5,7 @@ import { ICompany } from "@modules/company/interfaces/company.interface";
 import { CreateEmployeeRoleDto } from "@modules/employee-role/dto/create-employee-role.dto";
 import { CreateEmployeeDTO } from "@modules/employee/dto/create-employee.dto";
 import { UpdateEmployeeDto } from "@modules/employee/dto/update-employee.dto";
+import { CreateRateSheetDto, CreateTeamStructureDto } from "@modules/rate-sheet/dto/create-rate-sheet.dto";
 import { CreateTechnologyToolDto } from "@modules/technology-tool/dto/create-technology-tool.dto";
 import { ITechnologyToolDetails, ITechnologyTools } from "@modules/technology-tool/interfaces/technology-tool.interface";
 import { IUser } from "@modules/users/interfaces/user.interface";
@@ -134,6 +135,22 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             website: tool?.website ?? "",
             logo: tool?.logo ?? "",
             // status: StatusEnum.ACTIVE,
+        }
+    }
+
+    static constructRateSheetObj(createRateSheetDto: CreateRateSheetDto) {
+        return {
+            name: createRateSheetDto?.name ?? "",
+            startDate: new DateHelper().now("UTC"),
+        }
+    }
+
+    static constructTeamStructureObj(structure: CreateTeamStructureDto, rateSheetId: string) {
+        return {
+            rateSheetId: new Types.ObjectId(rateSheetId),
+            employeeRoleId: structure?.role ?? "",
+            internalRate: structure?.internalRate ?? "",
+            billRate: structure?.billRate ?? "",
         }
     }
 }
