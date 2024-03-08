@@ -1,3 +1,4 @@
+import { NoSpecialCharacters } from "@common/validators/noSpecialCharacter.decorator";
 import { IsPhoneNumberValidator } from "@common/validators/phone-number.validator";
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
 import { CreateAddressDto } from "@modules/address/dto/create-address.dto";
@@ -7,6 +8,7 @@ export class CreateCompanyDTO extends CreateAddressDto {
     // @IsNotEmpty({ message: 'name should not be empty' })
     @TrimAndValidateString({ message: "name should not be empty" })
     @IsString({ message: "name must be string" })
+    @NoSpecialCharacters({ message: "Invalid format: avoid using special characters" })
     readonly name: string;
 
     @IsNotEmpty({ message: 'email should not be empty' })
@@ -19,7 +21,7 @@ export class CreateCompanyDTO extends CreateAddressDto {
 
     @IsNotEmpty()
     @Validate(IsPhoneNumberValidator, {
-        message: 'Invalid phone number format. It should start with "+" and contain only digits.',
+        message: 'Invalid phone number format. It should start with "+" and contain only digits',
     })
     readonly phone: string;
 
