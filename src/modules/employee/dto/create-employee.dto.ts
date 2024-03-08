@@ -1,3 +1,4 @@
+import { NoSpecialCharacters } from "@common/validators/noSpecialCharacter.decorator";
 import { IsPhoneNumberValidator } from "@common/validators/phone-number.validator";
 import { TrimAndValidateString } from "@common/validators/trim-string.validator";
 import { Type } from "class-transformer";
@@ -7,6 +8,7 @@ import mongoose from "mongoose";
 export class CreateEmployeeDTO {
     @TrimAndValidateString({ message: "name should not be empty" })
     @IsString({ message: "name must be string" })
+    @NoSpecialCharacters({ message: "Invalid format: avoid using special characters" })
     name: string;
 
     @IsNotEmpty({ message: 'email should not be empty' })

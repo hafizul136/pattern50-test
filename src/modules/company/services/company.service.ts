@@ -290,7 +290,13 @@ export class CompanyService {
   }
 
   private validDateCheck(startDate: string, endDate: string) {
-    const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(new Date().toISOString(), startDate);
+    const dateFormat = 'yyyy-MM-dd';
+    const formattedStartDate = new DateHelper().formatDateAccordingToHour(
+      startDate,
+      dateFormat
+    );
+    const today = new DateHelper().formatDateWithoutTime(new Date())
+    const isStartDateGreater = new DateHelper().isSecondDateGreaterOrEqual(today, formattedStartDate);
     if (!isStartDateGreater) {
       ExceptionHelper.getInstance().defaultError(
         'StartDate must be greater than Today',
@@ -298,8 +304,13 @@ export class CompanyService {
         HttpStatus.BAD_REQUEST
       );
     }
+
     if (!NestHelper.getInstance().isEmpty(endDate)) {
-      const isEndDateGreater = new DateHelper().isSecondDateGreater(startDate, endDate);
+      const formattedEndDate = new DateHelper().formatDateAccordingToHour(
+        endDate,
+        dateFormat
+      );
+      const isEndDateGreater = new DateHelper().isSecondDateGreaterOrEqual(formattedStartDate, formattedEndDate);
       if (!isEndDateGreater) {
         ExceptionHelper.getInstance().defaultError(
           'EndDate must be greater than StartDate',

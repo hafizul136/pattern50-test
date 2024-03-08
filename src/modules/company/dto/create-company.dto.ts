@@ -8,7 +8,6 @@ export class CreateCompanyDTO extends CreateAddressDto {
     // @IsNotEmpty({ message: 'name should not be empty' })
     @TrimAndValidateString({ message: "name should not be empty" })
     @IsString({ message: "name must be string" })
-    @NoSpecialCharacters({ message: "Invalid format: avoid using special characters" })
     readonly name: string;
 
     @IsNotEmpty({ message: 'email should not be empty' })
