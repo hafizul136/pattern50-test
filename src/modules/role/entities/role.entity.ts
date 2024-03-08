@@ -9,7 +9,6 @@ export type RoleDocument = Role & Document;
     toObject: { virtuals: true }
 })
 export class Role {
-
     @Prop({ type: String, required: true })
     name: string;
 

@@ -44,7 +44,7 @@ export class CreateCompanyDTO extends CreateAddressDto {
     //     @TrimAndValidateString({ message: 'address is empty' })
     //     readonly addressLine: string;
 
-    
+
     //     @IsNotEmpty({ message: 'country_empty' })
     //     @IsString({ message: "country_must_be_string" })
     //     @TrimAndValidateString({ message: 'country is empty' })

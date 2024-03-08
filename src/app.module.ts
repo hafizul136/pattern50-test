@@ -18,14 +18,16 @@ import { BillingInfoModule } from './modules/billing-info/billing-info.module';
 import { EmailModule } from './modules/email/email.module';
 import { EmployeeRoleModule } from './modules/employee-role/employee-role.module';
 import { RolePermissionModule } from './modules/role-permission/role-permission.module';
+import { TeamRatesModule } from './modules/team-rates/team-rates.module';
 import { TechnologyCategoryModule } from './modules/technology-category/technology-category.module';
 import { TechnologyToolModule } from './modules/technology-tool/technology-tool.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { UserRoleModule } from './modules/user-role/user-role.module';
+import { RateSheetModule } from './modules/rate-sheet/rate-sheet.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(`${appConfig.mongodbURL}${appConfig.serverType}${appConfig.dbName}`), DatabaseModule, GeoModule,
-    AccountingRMQClientModule, EmailRMQClientModule, PermissionsModule, RoleModule, UsersModule, AuthModule, RolePermissionModule, UserRoleModule, ClientModule, UploadModule, CompanyModule, AddressModule, BillingInfoModule, EmployeeRoleModule, EmailModule, TechnologyCategoryModule, TechnologyToolModule, EmployeeModule, EmailModule],
+    AccountingRMQClientModule, EmailRMQClientModule, PermissionsModule, RoleModule, UsersModule, AuthModule, RolePermissionModule, UserRoleModule, ClientModule, UploadModule, CompanyModule, AddressModule, BillingInfoModule, EmployeeRoleModule, EmailModule, TechnologyCategoryModule, TechnologyToolModule, EmployeeModule, EmailModule, TeamRatesModule, RateSheetModule],
 })
 export class AppModule { }
