@@ -330,8 +330,43 @@ export class DateHelper {
     isSecondDateGreater(startDate: string, endDate: string): boolean {
         return endDate > startDate;
     }
-    isSecondDateGreaterOrEqual(startDate: string, endDate: string): boolean {
-        return endDate >= startDate;
+    // isSecondDateGreaterOrEqual(startDate: string, endDate: string): boolean {
+    //     return endDate >= startDate;
+    // }
+    formatDateWithoutTime(date) {
+        // new Date() to  '2024-04-01' formate
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    compareDates(date1, date2) {
+        // formate: '2024-04-01'
+        const [year1, month1, day1] = date1.split('-').map(Number);
+        const [year2, month2, day2] = date2.split('-').map(Number);
+
+        // Compare years
+        if (year1 !== year2) {
+            return year1 - year2;
+        }
+
+        // Compare months
+        if (month1 !== month2) {
+            return month1 - month2;
+        }
+
+        // Compare days
+        if (day1 !== day2) {
+            return day1 - day2;
+        }
+
+        // Both dates are equal
+        return 0;
+    }
+
+    isSecondDateGreaterOrEqual(date1, date2) {
+        const result = this.compareDates(date1, date2);
+        return result <= 0;
     }
 
 }
