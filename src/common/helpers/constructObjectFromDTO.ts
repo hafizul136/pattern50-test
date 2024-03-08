@@ -121,6 +121,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             categoryId: new Types.ObjectId(tool?.categoryId) ?? "",
             website: tool?.website ?? "",
             logo: tool?.logo ?? "",
+            logoKey: tool?.logoKey ?? "",
             status: StatusEnum.ACTIVE,
         }
     }

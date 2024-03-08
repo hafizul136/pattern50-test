@@ -35,6 +35,11 @@ export class CreateTechnologyToolDto {
 
     @IsNotEmpty()
     @IsString()
+    @TrimAndValidateString({ message: 'logoKey is empty' })
+    logoKey: string;
+
+    @IsNotEmpty()
+    @IsString()
     @TrimAndValidateString({ message: 'categoryId is empty' })
     categoryId: string
 }

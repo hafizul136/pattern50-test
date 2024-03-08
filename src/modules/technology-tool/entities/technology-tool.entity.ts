@@ -15,6 +15,9 @@ export class TechnologyTool {
     @Prop({ type: String, required: true, defaultValue: "" })
     logo: string;
 
+    @Prop({ type: String, required: true, defaultValue: "" })
+    logoKey: string;
+
     @Prop({ type: String, enum: [StatusEnum.ACTIVE, StatusEnum.DEACTIVATED], required: true })
     status: StatusEnum;
 

@@ -45,6 +45,7 @@ export class TechnologyToolService {
     return s3Response;
   }
 
+
   // validate technology tool data and referred ids
   async validateToolObject(tool: CreateTechnologyToolDto): Promise<void> {
     // validate mongo ids
@@ -177,10 +178,12 @@ export class TechnologyToolService {
     // construct object
     const updateToolObject = ConstructObjectFromDtoHelper.constructToolsObj(updateTechnologyToolDto);
 
+    // remove previous logo
+    await AwsServices.S3.deleteFile(tool?.logoKey);
+
     // update tool
     const updatedTool: ITechnologyTools = await this.technologyToolModel
-      .findByIdAndUpdate(id, updateToolObject, { new: true })
-      .lean();
+      .findByIdAndUpdate(id, updateToolObject, { new: true });
 
     if (NestHelper.getInstance().isEmpty(updatedTool)) {
       ExceptionHelper.getInstance().defaultError(

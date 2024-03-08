@@ -7,6 +7,7 @@ export interface ITechnologyTools extends Document {
     name: string;
     website: string;
     logo: string;
+    logoKey: string;
     status: StatusEnum;
     categoryId: mongoose.Types.ObjectId | string;
     typeId: mongoose.Types.ObjectId | string;
@@ -16,6 +17,7 @@ export interface ITechnologyToolDetails extends Document {
     name: string;
     website: string;
     logo: string;
+    logoKey: string;
     status: StatusEnum;
     category: ITechnologyCategory;
     type: IToolType;
