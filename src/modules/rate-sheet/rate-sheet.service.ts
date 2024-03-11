@@ -1,9 +1,12 @@
+import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
+import { NestHelper } from '@common/helpers/NestHelper';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
+import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { DatabaseService } from '@modules/db/database.service';
 import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
 import { TeamRatesService } from '@modules/team-rates/team-rates.service';
 import { IUser } from '@modules/users/interfaces/user.interface';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
@@ -58,26 +61,46 @@ export class RateSheetService {
     return `This action returns all rateSheet`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} rateSheet`;
+  async findOne(id: string) {
+    MongooseHelper.getInstance().isValidMongooseId(id);
+
+    const rateSheet = await this.rateSheetModel.findById(id);
+
+    if (NestHelper.getInstance().isEmpty(rateSheet)) {
+      ExceptionHelper.getInstance().defaultError(
+        "No rateSheet found",
+        "rateSheet_not_found",
+        HttpStatus.NOT_FOUND
+      )
+    }
+
+    return rateSheet;
   }
 
   // toggle active/inactive
-  async update(id: number, updateRateSheetDto: UpdateRateSheetDto) {
+  async update(id: string, updateRateSheetDto: UpdateRateSheetDto, user: IUser) {
     // validate if role exists by the id
-    // const rateSheet = await this.findOne(id);
+    const rateSheet = await this.findOne(id);
 
-    // if (rateSheet?.status === updateEmployeeRoleDto?.status) {
-    //   ExceptionHelper.getInstance().defaultError(
-    //     `Role already ${employeeRole.status}`,
-    //     "conflicts",
-    //     HttpStatus.BAD_REQUEST
-    //   );
-    // }
+    if (!(rateSheet?.clientId).equals(user?.clientId)) {
+      ExceptionHelper.getInstance().defaultError(
+        `You cannot update this rateSheet`,
+        "forbidden",
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
-    // const updatedRole = await this.employeeRoleModel.findByIdAndUpdate(id, { status: updateEmployeeRoleDto.status.trim() }, { new: true });
+    if (rateSheet?.status === updateRateSheetDto?.status) {
+      ExceptionHelper.getInstance().defaultError(
+        `Rate Sheet already ${rateSheet.status}`,
+        "conflicts",
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
-    // return updatedRole;
+    const updatedSheet = await this.rateSheetModel.findByIdAndUpdate(id, { status: updateRateSheetDto.status.trim() }, { new: true });
+
+    return updatedSheet;
   }
 
   remove(id: number) {
