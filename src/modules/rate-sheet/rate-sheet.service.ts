@@ -83,6 +83,7 @@ export class RateSheetService {
     const rateSheet = await this.findOne(id);
 
     if (!(rateSheet?.clientId).equals(user?.clientId)) {
+
       ExceptionHelper.getInstance().defaultError(
         `You cannot update this rateSheet`,
         "forbidden",

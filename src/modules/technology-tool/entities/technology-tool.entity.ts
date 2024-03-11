@@ -26,6 +26,9 @@ export class TechnologyTool {
 
     @Prop({ type: mongoose.Types.ObjectId, ref: 'ToolType', required: true, index: true })
     typeId: mongoose.Types.ObjectId;
+
+    @Prop({ type: mongoose.Types.ObjectId, ref: 'Client', required: true, index: true })
+    clientId: mongoose.Types.ObjectId;
 }
 
 export const TechnologyToolSchema = SchemaFactory.createForClass(TechnologyTool);

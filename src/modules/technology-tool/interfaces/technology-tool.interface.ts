@@ -11,6 +11,7 @@ export interface ITechnologyTools extends Document {
     status: StatusEnum;
     categoryId: mongoose.Types.ObjectId | string;
     typeId: mongoose.Types.ObjectId | string;
+    clientId?: any;
 }
 
 export interface ITechnologyToolDetails extends Document {
@@ -21,4 +22,5 @@ export interface ITechnologyToolDetails extends Document {
     status: StatusEnum;
     category: ITechnologyCategory;
     type: IToolType;
+    clientId?: any
 }
