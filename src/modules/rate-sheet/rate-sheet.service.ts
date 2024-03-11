@@ -4,10 +4,14 @@ import { EmployeeRoleService } from '@modules/employee-role/employee-role.servic
 import { TeamRatesService } from '@modules/team-rates/team-rates.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
 import { RateSheet, RateSheetDocument } from './entities/rate-sheet.entity';
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
+import { IUser } from '@modules/users/interfaces/user.interface';
+import { Utils } from '@common/helpers/utils';
+import { IRateSheet } from './interfaces/ratesheet.interface';
 
 @Injectable()
 export class RateSheetService {
@@ -53,10 +57,46 @@ export class RateSheetService {
 
 
 
-  findAll() {
-    return `This action returns all rateSheet`;
-  }
+  async getRateSheets(query: { page: string, size: string, query?: string }, user: IUser): Promise<{ data?: IRateSheet[], count?: number }> {
+    let aggregate = [];
+    let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
+    if (!query?.page || parseInt(query?.page) < 1) page = 1;
+    if (!query?.size || parseInt(query?.size) < 1) size = 10;
 
+    // filter by client id
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new mongoose.Types.ObjectId(user?.clientId) }]);
+
+    AggregationHelper.lookupForIdForeignKey(aggregate, "teamrates", "teamrates", "teamRates");
+    // AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "employeeRoles");
+
+    // searching by 
+    let trimmedQuery = null;
+    if (query.query) {
+      trimmedQuery = query.query.trim();
+    }
+
+    if (trimmedQuery) {
+
+      const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      aggregate.push({
+        $match: {
+          $or: [
+            {
+              name: { $regex: escapedQuery, $options: "i" }
+            },
+            // { email: { $regex: escapedQuery, $options: "i" } },
+            // { "employeeRoles.name": { $regex: escapedQuery, $options: "i" } },
+          ]
+        }
+      });
+    }
+
+    AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
+
+    const companies = await this.rateSheetModel.aggregate(aggregate).exec();
+
+    return Utils.returnListResponse(companies);
+  }
   findOne(id: number) {
     return `This action returns a #${id} rateSheet`;
   }
