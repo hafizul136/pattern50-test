@@ -21,7 +21,7 @@ export class RateSheetController {
     return this.rateSheetService.findAll();
   }
 
-  @Get(':id')
+  @Get('/details/:id')
   findOne(@Param('id') id: string) {
     return this.rateSheetService.findOne(id);
   }
