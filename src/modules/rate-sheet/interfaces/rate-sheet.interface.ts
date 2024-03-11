@@ -6,7 +6,7 @@ export interface IRateSheet extends Document {
     endDate?: Date | null;
     status: string;
     clientId: ObjectId;
-    teamRatesCount?: number;
+    roleCount?: number;
     assignCompanyCount?: number;
 }
 

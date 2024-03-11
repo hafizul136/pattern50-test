@@ -96,7 +96,7 @@ export class RateSheetService {
         created_at: { $first: '$created_at' },
         updated_at: { $first: '$updated_at' },
         // teamRates: { $first: '$teamRates' } ,
-        teamRatesCount: { $sum: { $size: '$teamRates' } }
+        roleCount: { $sum: { $size: '$teamRates' } }
       }
     })
     aggregate.push({
@@ -107,6 +107,7 @@ export class RateSheetService {
 
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
     const companies = await this.rateSheetModel.aggregate(aggregate).exec();
+    console.log({ companies})
     return Utils.returnListResponse(companies);
 
   }

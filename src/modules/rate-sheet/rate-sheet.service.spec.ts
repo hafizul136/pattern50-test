@@ -1,4 +1,5 @@
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
+import { Utils } from '@common/helpers/utils';
 import { DatabaseService } from '@modules/db/database.service';
 import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
 import { TeamRatesService } from '@modules/team-rates/team-rates.service';
@@ -9,7 +10,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
 import { RateSheet } from './entities/rate-sheet.entity';
 import { RateSheetService } from './rate-sheet.service';
-import { Utils } from '@common/helpers/utils';
 
 describe('RateSheetService', () => {
   // mock values
@@ -34,7 +34,7 @@ describe('RateSheetService', () => {
         "status": "active",
         "created_at": "2024-03-11T07:49:57.677Z",
         "updated_at": "2024-03-11T07:49:57.677Z",
-        "teamRatesCount": 3,
+        "roleCount": 3,
         "assignCompanyCount": 0
       },
       {
@@ -45,7 +45,7 @@ describe('RateSheetService', () => {
         "status": "active",
         "created_at": "2024-03-11T07:49:37.443Z",
         "updated_at": "2024-03-11T07:49:37.443Z",
-        "teamRatesCount": 2,
+        "roleCount": 2,
         "assignCompanyCount": 0
       }
     ],
@@ -96,11 +96,8 @@ describe('RateSheetService', () => {
   describe('getRateSheets', () => {
     it('should return rate sheets with count of team rates', async () => {
       // Mock input data
-      const query = { page: '1', size: '2', query: '002' };
-
-
+      const query = { page: '1', size: '3', query: 'test' };
       // Mock the aggregate method of the model
-      // jest.spyOn(model, 'aggregate').mockResolvedValue(rateSheetListRes?.data);
       aggregateMock.mockReturnValueOnce({
         exec: jest.fn().mockResolvedValueOnce(rateSheetListRes?.data),
       });
@@ -110,10 +107,36 @@ describe('RateSheetService', () => {
       returnListResponseMock.mockReturnValueOnce(mockedResponse);
       // Call the function and await the result
       const result = await service.getRateSheets(query, user);
+      console.log({ result: JSON.stringify(result) });
       // Verify the result
       expect(result).toBeDefined();
       expect(result).toEqual(rateSheetListRes);
       expect(model.aggregate).toHaveBeenCalledWith(expect.any(Array));
     });
+
+
+    it('should return rate sheets with count  and data property', async () => {
+      // Mock input data
+      const query = { page: '1', size: '3', query: 'test' };
+      // Mock the aggregate method of the model
+      aggregateMock.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(rateSheetListRes?.data),
+      });
+      // Mock Utils.returnListResponse function
+      const returnListResponseMock = jest.spyOn(Utils, 'returnListResponse');
+      const mockedResponse = { data: rateSheetListRes?.data, count: rateSheetListRes?.count }; // Mocked response
+      returnListResponseMock.mockReturnValueOnce(mockedResponse);
+      // Call the function and await the result
+      const result = await service.getRateSheets(query, user);
+      console.log({ result: JSON.stringify(result) });
+      // Verify the result
+      expect(result).toBeDefined();
+      expect(result).toEqual(expect.objectContaining({
+        data: expect.any(Array),
+        count: expect.any(Number), // Check that count property is present and is a number
+      }));
+      expect(model.aggregate).toHaveBeenCalledWith(expect.any(Array));
+    });
   });
+
 });
