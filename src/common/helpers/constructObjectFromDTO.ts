@@ -149,7 +149,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
     static constructTeamStructureObj(structure: CreateTeamStructureDto, rateSheetId: string) {
         return {
             rateSheetId: new Types.ObjectId(rateSheetId),
-            employeeRoleId: structure?.role ?? "",
+            employeeRoleId: new Types.ObjectId(structure?.role) ?? "",
             internalRate: structure?.internalRate ?? "",
             billRate: structure?.billRate ?? "",
         }

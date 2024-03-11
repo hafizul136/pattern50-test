@@ -1,4 +1,6 @@
+import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
+import { Utils } from '@common/helpers/utils';
 import { DatabaseService } from '@modules/db/database.service';
 import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
 import { TeamRatesService } from '@modules/team-rates/team-rates.service';
@@ -9,10 +11,7 @@ import mongoose, { Model } from 'mongoose';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
 import { RateSheet, RateSheetDocument } from './entities/rate-sheet.entity';
-import { AggregationHelper } from '@common/helpers/aggregation.helper';
-import { IUser } from '@modules/users/interfaces/user.interface';
-import { Utils } from '@common/helpers/utils';
-import { IRateSheet } from './interfaces/ratesheet.interface';
+import { IRateSheet } from './interfaces/rate-sheet.interface';
 
 @Injectable()
 export class RateSheetService {
@@ -66,9 +65,7 @@ export class RateSheetService {
 
     // filter by client id
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new mongoose.Types.ObjectId(user?.clientId) }]);
-
-    AggregationHelper.lookupForIdForeignKey(aggregate, "teamrates", "teamrates", "teamRates");
-    // AggregationHelper.unwindWithPreserveNullAndEmptyArrays(aggregate, "employeeRoles");
+    AggregationHelper.lookupForIdLocalKey(aggregate, "teamrates", "rateSheetId", "teamRates")
 
     // searching by 
     let trimmedQuery = null;
@@ -84,19 +81,34 @@ export class RateSheetService {
           $or: [
             {
               name: { $regex: escapedQuery, $options: "i" }
-            },
-            // { email: { $regex: escapedQuery, $options: "i" } },
-            // { "employeeRoles.name": { $regex: escapedQuery, $options: "i" } },
+            }
           ]
         }
       });
     }
+    aggregate.push({
+      $group: {
+        _id: '$_id',
+        name: { $first: '$name' },
+        startDate: { $first: '$startDate' },
+        endDate: { $first: '$endDate' },
+        status: { $first: '$status' },
+        created_at: { $first: '$created_at' },
+        updated_at: { $first: '$updated_at' },
+        // teamRates: { $first: '$teamRates' } ,
+        teamRatesCount: { $sum: { $size: '$teamRates' } }
+      }
+    })
+    aggregate.push({
+      $addFields: {
+        assignCompanyCount: { $literal: 0 } // Add the assignCompanyCount field with a default value of 0
+      }
+    })
 
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
-
     const companies = await this.rateSheetModel.aggregate(aggregate).exec();
-
     return Utils.returnListResponse(companies);
+
   }
   findOne(id: number) {
     return `This action returns a #${id} rateSheet`;
