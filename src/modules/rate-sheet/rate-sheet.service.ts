@@ -2,6 +2,7 @@ import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFro
 import { DatabaseService } from '@modules/db/database.service';
 import { EmployeeRoleService } from '@modules/employee-role/employee-role.service';
 import { TeamRatesService } from '@modules/team-rates/team-rates.service';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -23,12 +24,12 @@ export class RateSheetService {
     private readonly teamRateService: TeamRatesService
   ) { }
 
-  async create(createRateSheetDto: CreateRateSheetDto) {
+  async create(createRateSheetDto: CreateRateSheetDto, user: IUser) {
     const session = await this.databaseService.startSession();
     let rateSheet, teamStructures;
     await session.withTransaction(async () => {
       // construct object
-      const rateSheetObj = ConstructObjectFromDtoHelper.constructRateSheetObj(createRateSheetDto);
+      const rateSheetObj = ConstructObjectFromDtoHelper.constructRateSheetObj(createRateSheetDto, user);
 
       // create rate sheet
       rateSheet = await this.rateSheetModel.create([rateSheetObj], { session });
@@ -101,8 +102,22 @@ export class RateSheetService {
     return `This action returns a #${id} rateSheet`;
   }
 
-  update(id: number, updateRateSheetDto: UpdateRateSheetDto) {
-    return `This action updates a #${id} rateSheet`;
+  // toggle active/inactive
+  async update(id: number, updateRateSheetDto: UpdateRateSheetDto) {
+    // validate if role exists by the id
+    // const rateSheet = await this.findOne(id);
+
+    // if (rateSheet?.status === updateEmployeeRoleDto?.status) {
+    //   ExceptionHelper.getInstance().defaultError(
+    //     `Role already ${employeeRole.status}`,
+    //     "conflicts",
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
+
+    // const updatedRole = await this.employeeRoleModel.findByIdAndUpdate(id, { status: updateEmployeeRoleDto.status.trim() }, { new: true });
+
+    // return updatedRole;
   }
 
   remove(id: number) {

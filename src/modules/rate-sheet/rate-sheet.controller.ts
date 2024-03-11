@@ -1,12 +1,11 @@
+import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
+import { IRateSheet } from './interfaces/rate-sheet.interface';
 import { RateSheetService } from './rate-sheet.service';
-import { GetUser } from '@common/decorators/getUser.decorator';
-import { IEmployee } from '@modules/employee/interfaces/employee.interface';
-import { IUser } from '@modules/users/interfaces/user.interface';
-import { IRateSheet } from './interfaces/ratesheet.interface';
 
 @Controller('rate-sheet')
 export class RateSheetController {
@@ -14,8 +13,8 @@ export class RateSheetController {
 
   @Post("create")
   @Permissions('company.create')
-  create(@Body() createRateSheetDto: CreateRateSheetDto) {
-    return this.rateSheetService.create(createRateSheetDto);
+  create(@Body() createRateSheetDto: CreateRateSheetDto, @GetUser() user: IUser) {
+    return this.rateSheetService.create(createRateSheetDto, user);
   }
 
   @Get("list")
