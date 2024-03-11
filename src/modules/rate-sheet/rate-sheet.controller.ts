@@ -1,4 +1,6 @@
+import { GetUser } from '@common/decorators/getUser.decorator';
 import { Permissions } from '@common/decorators/permissions.decorator';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
@@ -10,8 +12,8 @@ export class RateSheetController {
 
   @Post("create")
   @Permissions('company.create')
-  create(@Body() createRateSheetDto: CreateRateSheetDto) {
-    return this.rateSheetService.create(createRateSheetDto);
+  create(@Body() createRateSheetDto: CreateRateSheetDto, @GetUser() user: IUser) {
+    return this.rateSheetService.create(createRateSheetDto, user);
   }
 
   @Get()

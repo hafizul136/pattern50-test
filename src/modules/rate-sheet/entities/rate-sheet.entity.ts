@@ -1,6 +1,6 @@
 import { StatusEnum } from "@common/enums/status.enum";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export type RateSheetDocument = RateSheet & Document;
 
@@ -21,6 +21,9 @@ export class RateSheet {
         default: StatusEnum.ACTIVE
     })
     status: string;
+
+    @Prop({ type: mongoose.Types.ObjectId, ref: 'Client', required: true, index: true })
+    clientId: mongoose.Types.ObjectId;
 }
 
 export const RateSheetSchema = SchemaFactory.createForClass(RateSheet);
