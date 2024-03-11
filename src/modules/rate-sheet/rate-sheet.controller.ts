@@ -23,12 +23,13 @@ export class RateSheetController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.rateSheetService.findOne(+id);
+    return this.rateSheetService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRateSheetDto: UpdateRateSheetDto) {
-    return this.rateSheetService.update(+id, updateRateSheetDto);
+  @Patch(':id/status')
+  @Permissions('company.create')
+  update(@Param('id') id: string, @Body() updateRateSheetDto: UpdateRateSheetDto, @GetUser() user: IUser) {
+    return this.rateSheetService.update(id, updateRateSheetDto, user);
   }
 
   @Delete(':id')
