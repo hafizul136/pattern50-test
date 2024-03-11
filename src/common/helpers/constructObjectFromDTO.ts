@@ -138,10 +138,11 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
         }
     }
 
-    static constructRateSheetObj(createRateSheetDto: CreateRateSheetDto) {
+    static constructRateSheetObj(createRateSheetDto: CreateRateSheetDto, user: IUser) {
         return {
             name: createRateSheetDto?.name ?? "",
             startDate: new DateHelper().now("UTC"),
+            clientId: new Types.ObjectId(user?.clientId)
         }
     }
 

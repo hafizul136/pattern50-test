@@ -1,5 +1,4 @@
 import { StatusEnum } from '@common/enums/status.enum';
-import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
 import { Utils } from '@common/helpers/utils';
 import { TechnologyCategory } from '@modules/technology-category/entities/technology-category.entity';
 import { ToolType } from '@modules/technology-category/entities/tool-type.entity';
@@ -8,6 +7,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
 import { TechnologyTool } from './entities/technology-tool.entity';
+import { ITechnologyTools } from './interfaces/technology-tool.interface';
 import { TechnologyToolService } from './technology-tool.service';
 
 
@@ -36,7 +36,8 @@ describe('TechnologyToolService', () => {
               "created_at": "2024-03-05T11:19:46.284Z",
               "updated_at": "2024-03-07T07:29:39.875Z",
               "__v": 0,
-              "type": "Cloud Server"
+              "type": "Cloud Server",
+
             }),
             validateToolObject: jest.fn(),
             findByIdAndUpdate: jest.fn().mockResolvedValueOnce({
@@ -86,6 +87,7 @@ describe('TechnologyToolService', () => {
       categoryId: '65defa6da6823419f7d45f51',
       website: 'https://www.aws.com/',
       logo: 'https://pattern50.s3.amazonaws.com/6dfdf72b-85f1-46fa-8587-5a701cbb00d2',
+      logoKey: 'https://pattern50.s3.amazonaws.com/'
     };
 
     const mockToolType: any = {
@@ -111,20 +113,41 @@ describe('TechnologyToolService', () => {
 
       jest.spyOn(service, 'validateToolObject').mockImplementationOnce(async () => { });
       jest.spyOn(Utils, "isEqualIds").mockReturnValueOnce(true);
-      jest.spyOn(ConstructObjectFromDtoHelper, "constructToolsObj").mockReturnValueOnce({
-        "name": "AQS",
-        "website": "https://www.aws.com/",
-        "logo": "https://pattern50.s3.amazonaws.com/6dfdf72b-85f1-46fa-8587-5a701cbb00d2",
-        "status": StatusEnum.ACTIVE,
-        "categoryId": "65defa6da6823419f7d45f51",
-        "typeId": "65defec2bc66fa021e8930b4"
-      });
+      // jest.spyOn(ConstructObjectFromDtoHelper, "constructToolsObj").mockReturnValueOnce({
+      //   "name": "AQS",
+      //   "website": "https://www.aws.com/",
+      //   "logo": "https://pattern50.s3.amazonaws.com/6dfdf72b-85f1-46fa-8587-5a701cbb00d2",
+      //   "status": StatusEnum.ACTIVE,
+      //   "categoryId": "65defa6da6823419f7d45f51",
+      //   "typeId": "65defec2bc66fa021e8930b4"
+      // });
 
-      await service.update("a56sd4fas4df65a4sdf64as6", demoTool);
+      await service.update("a56sd4fas4df65a4sdf64as6", demoTool as any);
 
       expect(service.findOne).toHaveBeenCalledWith("a56sd4fas4df65a4sdf64as6");
       expect(service.validateToolObject).toHaveBeenCalledWith(demoTool);
       expect(Utils.isEqualIds).toHaveReturnedWith(true);
     });
   });
+
+  describe("list", () => {
+    it('should find all technology tools', async () => {
+      const categoryId = 'category123';
+      const query = { page: '1', size: '10' };
+      const technologyTools: ITechnologyTools[] = [
+        // Add sample technology tools data here
+      ];
+
+      jest.spyOn(technologyCategoryService, 'findOne').mockResolvedValueOnce(null);
+      // jest.spyOn(model, 'aggregate').mockReturnValueOnce({
+      //   exec: jest.fn().mockResolvedValueOnce(technologyTools)
+      // } as any);
+
+      const result = await service.findAll(categoryId, query);
+
+      expect(technologyCategoryService.findOne).toHaveBeenCalledWith(categoryId);
+      expect(model.aggregate).toHaveBeenCalled();
+      expect(result).toEqual({ data: technologyTools, count: technologyTools.length });
+    });
+  })
 });
