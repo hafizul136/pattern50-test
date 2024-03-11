@@ -107,7 +107,6 @@ export class RateSheetService {
 
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
     const companies = await this.rateSheetModel.aggregate(aggregate).exec();
-    console.log({ companies})
     return Utils.returnListResponse(companies);
 
   }

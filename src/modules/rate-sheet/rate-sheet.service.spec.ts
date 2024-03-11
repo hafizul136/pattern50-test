@@ -94,7 +94,7 @@ describe('RateSheetService', () => {
   });
 
   describe('getRateSheets', () => {
-    it('should return rate sheets with count of team rates', async () => {
+    it('should return list of rate sheets', async () => {
       // Mock input data
       const query = { page: '1', size: '3', query: 'test' };
       // Mock the aggregate method of the model
@@ -106,16 +106,13 @@ describe('RateSheetService', () => {
       const mockedResponse = { data: rateSheetListRes?.data, count: rateSheetListRes?.count }; // Mocked response
       returnListResponseMock.mockReturnValueOnce(mockedResponse);
       // Call the function and await the result
-      const result = await service.getRateSheets(query, user);
-      console.log({ result: JSON.stringify(result) });
+      const result = await service.getRateSheets(query, user);;
       // Verify the result
       expect(result).toBeDefined();
       expect(result).toEqual(rateSheetListRes);
       expect(model.aggregate).toHaveBeenCalledWith(expect.any(Array));
     });
-
-
-    it('should return rate sheets with count  and data property', async () => {
+    it('should return rate sheets with count and data property', async () => {
       // Mock input data
       const query = { page: '1', size: '3', query: 'test' };
       // Mock the aggregate method of the model
@@ -128,13 +125,54 @@ describe('RateSheetService', () => {
       returnListResponseMock.mockReturnValueOnce(mockedResponse);
       // Call the function and await the result
       const result = await service.getRateSheets(query, user);
-      console.log({ result: JSON.stringify(result) });
       // Verify the result
       expect(result).toBeDefined();
       expect(result).toEqual(expect.objectContaining({
         data: expect.any(Array),
         count: expect.any(Number), // Check that count property is present and is a number
       }));
+      expect(model.aggregate).toHaveBeenCalledWith(expect.any(Array));
+    });
+    it('should return data=[] and count=0 if no rate sheet found', async () => {
+      // Mock input data
+      const query = { page: '1', size: '2', query: '002' };
+      // Mock the aggregate method of the model
+      const emptyRateSheetListRes = { data: [], count: 0 };
+      aggregateMock.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(emptyRateSheetListRes?.data),
+      });
+      // Mock Utils.returnListResponse function
+      const returnListResponseMock = jest.spyOn(Utils, 'returnListResponse');
+      const mockedResponse = { data: emptyRateSheetListRes?.data, count: emptyRateSheetListRes?.count }; // Mocked response
+      returnListResponseMock.mockReturnValueOnce(mockedResponse);
+      // Call the function and await the result
+      const result = await service.getRateSheets(query, user);
+      console.log({ result: JSON.stringify(result) });
+      // Verify the result
+      expect(result).toBeDefined();
+      expect(result.data).toEqual([]);
+      expect(result.count).toEqual(0);
+      expect(model.aggregate).toHaveBeenCalledWith(expect.any(Array));
+    });
+    it('if query.size is 2 then total data count will be 2', async () => {
+      // Mock input data
+      const query = { page: '1', size: '2', query: '002' };
+      // Mock the aggregate method of the model
+
+      aggregateMock.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(rateSheetListRes?.data),
+      });
+      // Mock Utils.returnListResponse function
+      const returnListResponseMock = jest.spyOn(Utils, 'returnListResponse');
+      const mockedResponse = { data: rateSheetListRes?.data, count: rateSheetListRes?.count }; // Mocked response
+      returnListResponseMock.mockReturnValueOnce(mockedResponse);
+      // Call the function and await the result
+      const result = await service.getRateSheets(query, user);
+      console.log({ result: JSON.stringify(result) });
+      // Verify the result
+      expect(result).toBeDefined();
+      expect(result).toEqual(mockedResponse);
+      expect(result.data.length).toEqual(Number(query?.size));
       expect(model.aggregate).toHaveBeenCalledWith(expect.any(Array));
     });
   });
