@@ -115,7 +115,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
         }
     }
 
-    static constructToolsObj(tool: CreateTechnologyToolDto | ITechnologyTools) {
+    static constructToolsObj(tool: CreateTechnologyToolDto | ITechnologyTools, user: IUser) {
         return {
             name: tool?.name ?? "",
             typeId: new Types.ObjectId(tool?.typeId) ?? "",
@@ -124,6 +124,7 @@ export class ConstructObjectFromDtoHelper extends StartAndEndDate {
             logo: tool?.logo ?? "",
             logoKey: tool?.logoKey ?? "",
             status: StatusEnum.ACTIVE,
+            clientId: new Types.ObjectId(user?.clientId)
         }
     }
 

@@ -122,7 +122,7 @@ describe('TechnologyToolService', () => {
       //   "typeId": "65defec2bc66fa021e8930b4"
       // });
 
-      await service.update("a56sd4fas4df65a4sdf64as6", demoTool as any);
+      await service.update("a56sd4fas4df65a4sdf64as6", demoTool as any, {} as IUser);
 
       expect(service.findOne).toHaveBeenCalledWith("a56sd4fas4df65a4sdf64as6");
       expect(service.validateToolObject).toHaveBeenCalledWith(demoTool);

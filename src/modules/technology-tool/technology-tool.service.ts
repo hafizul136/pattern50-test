@@ -8,6 +8,7 @@ import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { Utils } from '@common/helpers/utils';
 import { IListQuery } from '@common/interfaces/list-query.interface';
 import { TechnologyCategoryService } from '@modules/technology-category/technology-category.service';
+import { IUser } from '@modules/users/interfaces/user.interface';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -56,14 +57,14 @@ export class TechnologyToolService {
   }
 
   // create tools under technology
-  async create(createTechnologyToolsDto: CreateTechnologyToolsDto): Promise<{ count: number, tools: ITechnologyTools[] }> {
+  async create(createTechnologyToolsDto: CreateTechnologyToolsDto, user: IUser): Promise<{ count: number, tools: ITechnologyTools[] }> {
     // construct objects for multiple creation
     const toolsObjs = await Promise.all(createTechnologyToolsDto?.tools?.map(async tool => {
       // validate mongo ids
       await this.validateToolObject(tool);
 
       // construct objects
-      return ConstructObjectFromDtoHelper.constructToolsObj(tool);
+      return ConstructObjectFromDtoHelper.constructToolsObj(tool, user);
     }));
 
 
@@ -75,7 +76,7 @@ export class TechnologyToolService {
     }
   }
 
-  async findAll(categoryId: string, query: IListQuery): Promise<{ data?: ITechnologyTools[], count?: number }> {
+  async findAll(categoryId: string, query: IListQuery, user: IUser): Promise<{ data?: ITechnologyTools[], count?: number }> {
     // validate category id
     await this.technologyCategoryService.findOne(categoryId);
 
@@ -83,6 +84,9 @@ export class TechnologyToolService {
     let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
     if (!query?.page || parseInt(query?.page) < 1) page = 1;
     if (!query?.size || parseInt(query?.size) < 1) size = 10;
+
+    // filter by client id
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new Types.ObjectId(user?.clientId) }]);
 
     // filter by category
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ categoryId: new Types.ObjectId(categoryId) }]);
@@ -159,9 +163,18 @@ export class TechnologyToolService {
     return NestHelper.getInstance().arrayFirstOrNull(tool);
   }
 
-  async update(id: string, updateTechnologyToolDto: UpdateTechnologyToolDto): Promise<ITechnologyTools> {
+  async update(id: string, updateTechnologyToolDto: UpdateTechnologyToolDto, user: IUser): Promise<ITechnologyTools> {
     // validate toolId
     const tool: ITechnologyToolDetails = await this.findOne(id);
+
+    // validate client id
+    if (!tool.clientId.equals(user.clientId)) {
+      ExceptionHelper.getInstance().defaultError(
+        "You are not allowed to update this tool",
+        "forbidden",
+        HttpStatus.BAD_REQUEST
+      )
+    }
 
     // validate mongo reference ids
     await this.validateToolObject(updateTechnologyToolDto);
@@ -176,7 +189,7 @@ export class TechnologyToolService {
     }
 
     // construct object
-    const updateToolObject = ConstructObjectFromDtoHelper.constructToolsObj(updateTechnologyToolDto);
+    const updateToolObject = ConstructObjectFromDtoHelper.constructToolsObj(updateTechnologyToolDto, user);
 
     // remove previous logo
     await AwsServices.S3.deleteFile(tool?.logoKey);
