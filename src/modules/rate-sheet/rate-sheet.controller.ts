@@ -4,7 +4,7 @@ import { IUser } from '@modules/users/interfaces/user.interface';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
-import { IRateSheet } from './interfaces/rate-sheet.interface';
+import { IRateSheet, IRateSheetPagination } from './interfaces/rate-sheet.interface';
 import { RateSheetService } from './rate-sheet.service';
 
 @Controller('rate-sheet')
@@ -19,7 +19,7 @@ export class RateSheetController {
 
   @Get("list")
   @Permissions('company.view')
-  async getRateSheets(@Query() query, @GetUser() user: IUser): Promise<{ data?: IRateSheet[], total?: number }> {
+  async getRateSheets(@Query() query, @GetUser() user: IUser): Promise<IRateSheetPagination> {
     return await this.rateSheetService.getRateSheets(query, user);
   }
 

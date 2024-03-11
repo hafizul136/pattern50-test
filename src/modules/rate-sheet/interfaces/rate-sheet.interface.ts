@@ -9,3 +9,8 @@ export interface IRateSheet extends Document {
     teamRatesCount?: number;
     assignCompanyCount?: number;
 }
+
+export interface IRateSheetPagination{
+     data ?: IRateSheet[],
+    count ?: number 
+}
