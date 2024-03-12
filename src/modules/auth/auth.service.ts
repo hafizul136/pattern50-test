@@ -156,7 +156,7 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: ['user_not_found'],
+        message: 'User not found',
       });
     } else {
 
@@ -175,29 +175,14 @@ export class AuthService {
       );
 
       await this.updateResetCode(user, token);
-      let link: string = Utils.getAppUrl() + 'auth/forgot-password/reset/' + token;
+      let link: string = Utils.getAppUrl() + 'forgot-password/verify/' + token;
 
-      console.log({ link });
       const iAwsSesSendEmail: IAwsSesSendEmail = {
         to: user?.email,
         from: "hafizul@6sensehq.com",
         subject: "Forgot password",
-        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link = 'http://192.168.0.168:3000/login'),
-        sendersName: "Pattern50",
-        //   attachments: [
-        //     {
-        //       filename: "document.pdf",
-        //       content: "JVBERi0xLjMKJcfs...",
-        //       contentType: "application/pdf",
-        //       encoding: "base64"
-        //     },
-        //     {
-        //       filename: "image.jpg",
-        //       content: "/9j/4AAQSkZJRgABAQEAYABgAAD/4Q...",
-        //       contentType: "image/jpeg",
-        //       encoding: "base64"
-        //     }
-        //   ]
+        text: EmailTemplate.getForgetPasswordEmailHtml(user.firstName, user.lastName, link),
+        sendersName: "Pattern50"
       }
       await this.emailService.sendEmail(iAwsSesSendEmail)
       return {
@@ -206,6 +191,7 @@ export class AuthService {
       };
     }
   }
+
   async resetForgottenPassword(
     resetDto: ResetForgotDto
   ): Promise<boolean | any[] | IAuthResponse> {
