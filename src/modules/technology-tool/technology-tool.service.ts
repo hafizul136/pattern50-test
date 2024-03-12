@@ -36,7 +36,17 @@ export class TechnologyToolService {
       )
     }
 
+    // // validate if the logo is png file
+    // if (!FileTypeMatcher.isPng(logo?.mimetype)) {
+    //   ExceptionHelper.getInstance().defaultError(
+    //     "File type must be PNG",
+    //     "file_type_not_supported",
+    //     HttpStatus.BAD_REQUEST
+    //   )
+    // }
+
     const s3Response = await AwsServices.S3.uploadFile(logo, FileTypes.IMAGE);
+
     if (s3Response == -1) {
       return {
         error: 'FILE TYPE NOT ALLOWED',

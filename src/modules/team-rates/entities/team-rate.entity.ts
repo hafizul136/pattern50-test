@@ -22,8 +22,8 @@ export class TeamRate {
     })
     status: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, required: true, ref: "EmployeeRole" })
-    employeeRoleId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: "EmployeeRole" })
+    employeeRoleId: mongoose.Schema.Types.ObjectId;
 
     @Prop({ type: Number, required: true })
     internalRate: number
