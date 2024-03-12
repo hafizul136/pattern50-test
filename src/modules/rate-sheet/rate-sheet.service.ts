@@ -14,7 +14,7 @@ import mongoose, { Model } from 'mongoose';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
 import { RateSheet, RateSheetDocument } from './entities/rate-sheet.entity';
-import { IRateSheet } from './interfaces/rate-sheet.interface';
+import { IRateSheetPagination } from './interfaces/rate-sheet.interface';
 
 @Injectable()
 export class RateSheetService {
@@ -58,9 +58,7 @@ export class RateSheetService {
     };
   }
 
-
-
-  async getRateSheets(query: { page: string, size: string, query?: string }, user: IUser): Promise<{ data?: IRateSheet[], count?: number }> {
+  async getRateSheets(query: { page: string, size: string, query?: string }, user: IUser): Promise<IRateSheetPagination> {
     let aggregate = [];
     let page: number = parseInt(query?.page), size: number = parseInt(query?.size);
     if (!query?.page || parseInt(query?.page) < 1) page = 1;
@@ -77,7 +75,6 @@ export class RateSheetService {
     }
 
     if (trimmedQuery) {
-
       const escapedQuery = trimmedQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       aggregate.push({
         $match: {
@@ -99,12 +96,12 @@ export class RateSheetService {
         created_at: { $first: '$created_at' },
         updated_at: { $first: '$updated_at' },
         // teamRates: { $first: '$teamRates' } ,
-        teamRatesCount: { $sum: { $size: '$teamRates' } }
+        roleCount: { $sum: { $size: '$teamRates' } }
       }
     })
     aggregate.push({
       $addFields: {
-        assignCompanyCount: { $literal: 0 } // Add the assignCompanyCount field with a default value of 0
+        assignCompanyCount: { $literal: 0 } // TODO: Need to when contact will be added
       }
     })
 
