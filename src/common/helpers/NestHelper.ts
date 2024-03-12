@@ -90,7 +90,7 @@ export class NestHelper {
         for (const item of array) {
             const value = item[property];
             if (seen.has(value)) {
-                return true; // Duplicate found
+                return value; // Duplicate found
             }
             seen.add(value);
         }
