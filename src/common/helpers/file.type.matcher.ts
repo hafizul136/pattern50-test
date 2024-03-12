@@ -19,4 +19,8 @@ export class FileTypeMatcher {
     static isDoc(mimetype: string): boolean {
         return match(mimetype, FileTypes.DOC);
     }
+
+    static isPng(mimeType: string): boolean {
+        return match(mimeType, 'image/png')
+    }
 }

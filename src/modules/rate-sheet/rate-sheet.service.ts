@@ -14,7 +14,7 @@ import mongoose, { Model } from 'mongoose';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
 import { RateSheet, RateSheetDocument } from './entities/rate-sheet.entity';
-import { IRateSheetPagination } from './interfaces/rate-sheet.interface';
+import { IRateSheet, IRateSheetPagination } from './interfaces/rate-sheet.interface';
 
 @Injectable()
 export class RateSheetService {
@@ -68,6 +68,19 @@ export class RateSheetService {
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new mongoose.Types.ObjectId(user?.clientId) }]);
     AggregationHelper.lookupForIdLocalKey(aggregate, "teamrates", "rateSheetId", "teamRates")
 
+    // filter only active team rates
+    aggregate.push({
+      $addFields: {
+        teamRates: {
+          $filter: {
+            input: "$teamRates",
+            as: "teamRate",
+            cond: { $eq: ["$$teamRate.status", "active"] }
+          }
+        }
+      }
+    });
+
     // searching by 
     let trimmedQuery = null;
     if (query.query) {
@@ -108,13 +121,67 @@ export class RateSheetService {
     AggregationHelper.getCountAndDataByFacet(aggregate, +page, +size);
     const companies = await this.rateSheetModel.aggregate(aggregate).exec();
     return Utils.returnListResponse(companies);
-
   }
 
-  async findOne(id: string) {
+  // get details of a rate sheet
+  async findOne(id: string, user: IUser): Promise<IRateSheet> {
     MongooseHelper.getInstance().isValidMongooseId(id);
 
-    const rateSheet = await this.rateSheetModel.findById(id);
+    let aggregate = [];
+
+    // filter by client id
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ _id: new mongoose.Types.ObjectId(id) }]);
+    AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new mongoose.Types.ObjectId(user?.clientId) }]);
+
+    AggregationHelper.lookupForIdLocalKey(aggregate, "teamrates", "rateSheetId", "teamRates");
+
+    // filter only active team rates
+    aggregate.push({
+      $addFields: {
+        teamRates: {
+          $filter: {
+            input: "$teamRates",
+            as: "teamRate",
+            cond: { $eq: ["$$teamRate.status", "active"] }
+          }
+        }
+      }
+    });
+
+    // get roles data
+    AggregationHelper.lookupForCustomFields(aggregate, "employeeroles", "teamRates.employeeRoleId", "_id", "roles");
+
+    // merge role to the equivalent teamRates
+    aggregate.push({
+      $addFields: {
+        teamRates: {
+          $map: {
+            input: "$teamRates",
+            as: "teamRate",
+            in: {
+              $mergeObjects: [
+                "$$teamRate",
+                {
+                  role: {
+                    $arrayElemAt: [{
+                      $filter: {
+                        input: "$roles",
+                        as: "role",
+                        cond: { $eq: ["$$role._id", "$$teamRate.employeeRoleId"] }
+                      }
+                    }, 0],
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    });
+
+    AggregationHelper.projectFields(aggregate, ["roles"]);
+
+    const rateSheet = await this.rateSheetModel.aggregate(aggregate);
 
     if (NestHelper.getInstance().isEmpty(rateSheet)) {
       ExceptionHelper.getInstance().defaultError(
@@ -124,16 +191,15 @@ export class RateSheetService {
       )
     }
 
-    return rateSheet;
+    return NestHelper.getInstance().arrayFirstOrNull(rateSheet);
   }
 
   // toggle active/inactive
   async update(id: string, updateRateSheetDto: UpdateRateSheetDto, user: IUser) {
     // validate if role exists by the id
-    const rateSheet = await this.findOne(id);
+    const rateSheet = await this.findOne(id, user);
 
     if (!(rateSheet?.clientId).equals(user?.clientId)) {
-
       ExceptionHelper.getInstance().defaultError(
         `You cannot update this rateSheet`,
         "forbidden",

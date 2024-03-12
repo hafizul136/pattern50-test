@@ -4,7 +4,7 @@ import { IUser } from '@modules/users/interfaces/user.interface';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateRateSheetDto } from './dto/create-rate-sheet.dto';
 import { UpdateRateSheetDto } from './dto/update-rate-sheet.dto';
-import { IRateSheet, IRateSheetPagination } from './interfaces/rate-sheet.interface';
+import { IRateSheetPagination } from './interfaces/rate-sheet.interface';
 import { RateSheetService } from './rate-sheet.service';
 
 @Controller('rate-sheet')
@@ -24,8 +24,9 @@ export class RateSheetController {
   }
 
   @Get('/details/:id')
-  findOne(@Param('id') id: string) {
-    return this.rateSheetService.findOne(id);
+  @Permissions('company.create')
+  findOne(@Param('id') id: string, @GetUser() user: IUser) {
+    return this.rateSheetService.findOne(id, user);
   }
 
   @Patch(':id/status')
