@@ -3,7 +3,7 @@ import { NestHelper } from '@common/helpers/NestHelper';
 import { AggregationHelper } from '@common/helpers/aggregation.helper';
 import { AwsServices } from '@common/helpers/aws.service';
 import { ConstructObjectFromDtoHelper } from '@common/helpers/constructObjectFromDTO';
-import { FileTypeMatcher, FileTypes } from '@common/helpers/file.type.matcher';
+import { FileTypes } from '@common/helpers/file.type.matcher';
 import { MongooseHelper } from '@common/helpers/mongooseHelper';
 import { Utils } from '@common/helpers/utils';
 import { IListQuery } from '@common/interfaces/list-query.interface';
@@ -36,14 +36,14 @@ export class TechnologyToolService {
       )
     }
 
-    // validate if the logo is png file
-    if (!FileTypeMatcher.isPng(logo?.mimetype)) {
-      ExceptionHelper.getInstance().defaultError(
-        "File type must be PNG",
-        "file_type_not_supported",
-        HttpStatus.BAD_REQUEST
-      )
-    }
+    // // validate if the logo is png file
+    // if (!FileTypeMatcher.isPng(logo?.mimetype)) {
+    //   ExceptionHelper.getInstance().defaultError(
+    //     "File type must be PNG",
+    //     "file_type_not_supported",
+    //     HttpStatus.BAD_REQUEST
+    //   )
+    // }
 
     const s3Response = await AwsServices.S3.uploadFile(logo, FileTypes.IMAGE);
 
