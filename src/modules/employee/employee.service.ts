@@ -27,7 +27,7 @@ export class EmployeeService {
       const hasDuplicateEmail = NestHelper.getInstance().hasDuplicateInArrayOfObject(createEmployeeDTOs?.employees, 'email')
       if (hasDuplicateEmail) {
         ExceptionHelper.getInstance().defaultError(
-          `Email address already exists # ${hasDuplicateEmail}`,
+          `Email address already exists #${hasDuplicateEmail}`,
           'email_address_already_exists',
           HttpStatus.BAD_REQUEST
         );
@@ -160,7 +160,7 @@ export class EmployeeService {
     const employee = await this.employeeModel.findOne({ email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
-        `Email address already exists # ${email}`,
+        `Email address already exists #${email}`,
         'email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
@@ -170,7 +170,7 @@ export class EmployeeService {
     const employee = await this.employeeModel.findOne({ _id: { $ne: id }, email: email }).lean();
     if (!NestHelper.getInstance().isEmpty(employee)) {
       ExceptionHelper.getInstance().defaultError(
-        `Email address already exists # ${email}`,
+        `Email address already exists #${email}`,
         'email_address_already_exists',
         HttpStatus.BAD_REQUEST
       );
