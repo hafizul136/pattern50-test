@@ -2,7 +2,7 @@ import { ExceptionHelper } from '@common/helpers/ExceptionHelper';
 import { NestHelper } from '@common/helpers/NestHelper';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { CreateBillingInfoDto } from '../dto/create-billing-info.dto';
 import { UpdateBillingInfoDTO } from '../dto/update-billing-info.dto';
 import { BillingInfo, BillingInfoDocument } from '../entities/billing-info.entity';
@@ -36,7 +36,7 @@ export class BillingInfoService {
     return `This action returns a #${id} billingInfo`;
   }
 
-  async update(id: Types.ObjectId, updateBillingInfoDto: UpdateBillingInfoDTO): Promise<IBillingInfo> {
+  async update(id: Types.ObjectId | mongoose.Schema.Types.ObjectId, updateBillingInfoDto: UpdateBillingInfoDTO): Promise<IBillingInfo> {
     return await this.billingInfoModel.findOneAndUpdate(id, updateBillingInfoDto).lean()
   }
 

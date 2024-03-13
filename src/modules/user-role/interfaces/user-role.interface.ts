@@ -1,12 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
-export interface IUserRole {
-    _id?: mongoose.Types.ObjectId;
-    userId?: mongoose.Types.ObjectId;
-    roleId?: mongoose.Types.ObjectId;
-    clientId?: mongoose.Types.ObjectId;
+export interface IUserRole extends Document {
+    userId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
+    roleId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
+    clientId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
     status?: string;
-    created_at?: Date;
-    updated_at?: Date;
-    __v?: number;
 }

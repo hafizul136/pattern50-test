@@ -29,8 +29,8 @@ export class EmployeeRole {
     @Prop({ type: Boolean, required: true, default: false })
     isDeleted: boolean;
 
-    @Prop({ type: mongoose.Types.ObjectId })
-    clientId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true, index: true })
+    clientId: mongoose.Schema.Types.ObjectId;
 }
 
 export const employeeRoleSchema = SchemaFactory.createForClass(EmployeeRole);

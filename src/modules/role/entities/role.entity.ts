@@ -22,8 +22,8 @@ export class Role {
     @Prop({ type: String, default: '' })
     details: string;
 
-    @Prop({ type: mongoose.Types.ObjectId })
-    clientId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true, index: true })
+    clientId: mongoose.Schema.Types.ObjectId;
 
     // Define the virtual field rolePermission
     // get rolePermission(): string {

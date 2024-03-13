@@ -22,8 +22,8 @@ export class RateSheet {
     })
     status: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: 'Client', required: true, index: true })
-    clientId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true, index: true })
+    clientId: mongoose.Schema.Types.ObjectId;
 }
 
 export const RateSheetSchema = SchemaFactory.createForClass(RateSheet);
