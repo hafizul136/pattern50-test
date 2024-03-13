@@ -132,6 +132,10 @@ describe('EmployeeService', () => {
             create: jest.fn(),
           },
         },
+        // {
+        //   provide: MongooseHelper,
+        //   useValue: MongooseHelperMock,
+        // },
       ],
     }).compile();
 
@@ -253,4 +257,23 @@ describe('EmployeeService', () => {
     });
 
   });
+
+  describe('findOne', () => {
+    it('should mock isValidMongooseId', () => {
+      // Setup: Call the mocked method with a sample ID
+      const id = '65e17add927f8412ba829fe2';
+      const isValid = MongooseHelper.getInstance().isValidMongooseId(id);
+      expect(isValid).toBe(undefined)
+    });
+    it('should throw if id is invalid', () => {
+      // Setup: Call the mocked method with a sample ID
+      const id = 'invalid-id';
+      const isValid = MongooseHelper.getInstance().isValidMongooseId(id);
+      expect(isValid).rejects.toThrowError()
+    });
+    it('should update one employee', () => {
+
+    })
+  })
+
 });
