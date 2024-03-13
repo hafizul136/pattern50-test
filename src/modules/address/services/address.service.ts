@@ -17,7 +17,7 @@ export class AddressService {
   async create(createAddressDto: CreateAddressDto, session?: any): Promise<IAddress> {
     try {
       const addresses = await this.addressModel.create([createAddressDto], { session });
-      const address =NestHelper.getInstance().arrayFirstOrNull(addresses)
+      const address = NestHelper.getInstance().arrayFirstOrNull(addresses)
       return address
     } catch (error) {
       ExceptionHelper.getInstance().defaultError(
@@ -42,7 +42,7 @@ export class AddressService {
     return Address
   }
 
-  async update(id: Types.ObjectId, updateAddressDto: UpdateAddressDto): Promise<IAddress> {
+  async update(id: Types.ObjectId | mongoose.Schema.Types.ObjectId, updateAddressDto: UpdateAddressDto): Promise<IAddress> {
     return await this.addressModel.findByIdAndUpdate(id, updateAddressDto, { new: true }).lean();
   }
 

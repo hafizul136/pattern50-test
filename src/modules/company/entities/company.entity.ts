@@ -18,8 +18,8 @@ export class Company {
     @Prop({ type: String, required: true })
     phone: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: 'User', required: true, index: true })
-    userId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true })
+    userId: mongoose.Schema.Types.ObjectId;
 
     @Prop({ type: String, required: true, index: true, unique: true })
     ein: string;
@@ -27,14 +27,14 @@ export class Company {
     // @Prop({ type: String })
     // logoUrl: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: 'Address', required: true })
-    addressId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Address', required: true })
+    addressId: mongoose.Schema.Types.ObjectId;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: 'Client', required: true, index: true })
-    clientId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true, index: true })
+    clientId: mongoose.Schema.Types.ObjectId;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: 'BillingInfo', required: true })
-    billingInfoId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'BillingInfo', required: true })
+    billingInfoId: mongoose.Schema.Types.ObjectId;
 
     @Prop({
         type: String,

@@ -15,9 +15,9 @@ import mongoose, { Document } from "mongoose";
 // }
 export interface ICompany extends Document {
     name?: string;
-    addressId?: mongoose.Types.ObjectId
+    addressId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
     address?: IAddress;
-    billingInfoId?: mongoose.Types.ObjectId;
+    billingInfoId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
     billingInfo?: IBillingInfo;
     email?: string;
     masterEmail?: string;
@@ -25,12 +25,8 @@ export interface ICompany extends Document {
     website?: string;
     ein?: string;
     logoUrl?: string;
-    clientId?: mongoose.Types.ObjectId;
+    clientId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
     status?: string;
-    _id?: mongoose.Types.ObjectId;
-    created_at?: string;
-    updated_at?: string;
-    __v?: number;
-    entityId?: mongoose.Types.ObjectId;
+    entityId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
     stripeAccountId?: string;
 }

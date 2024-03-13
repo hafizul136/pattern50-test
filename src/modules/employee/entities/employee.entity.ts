@@ -19,8 +19,8 @@ export class Employee {
     @Prop({ type: String })
     phone: string;
 
-    @Prop({ type: [mongoose.Types.ObjectId], ref: "EmployeeRole", required: true })
-    employeeRoleIds: mongoose.Types.ObjectId[];
+    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: "EmployeeRole", required: true })
+    employeeRoleIds: mongoose.Schema.Types.ObjectId[];
 
     @Prop({ type: Date, default: new DateHelper().now('UTC') })
     startDate: Date;
@@ -41,8 +41,8 @@ export class Employee {
     // @Prop({ type: String })
     // image: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, required: true })
-    clientId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
+    clientId: mongoose.Schema.Types.ObjectId;
 }
 
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
