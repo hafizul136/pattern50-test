@@ -17,7 +17,7 @@ import { Request } from 'express';
 import { ForgetPassDto } from './dto/forgetPassDto';
 import { IUser } from '@modules/users/interfaces/user.interface';
 import { GetUser } from '@common/decorators/getUser.decorator';
-import { ResetForgotDto } from './dto/resetForgotDto';
+import { ResetForgotDto, VerifyTokenDto } from './dto/resetForgotDto';
 
 @Controller('auth')
 export class AuthController {
@@ -51,6 +51,13 @@ export class AuthController {
         @Body() resetDto: ResetForgotDto
     ): Promise<boolean | any[] | IAuthResponse> {
         return this.authService.resetForgottenPassword(resetDto);
+    }
+    @Post('token/verify')
+    // @UseGuards(ClientCredentialsGuard)
+    tokenVerify(
+        @Body() verifyTokenDto: VerifyTokenDto
+    ): Promise<boolean | any[] | IUser> {
+        return this.authService.tokenVerify(verifyTokenDto);
     }
     // @Post('sign-in/driver')
     // @UseGuards(ClientCredentialsGuard)

@@ -24,7 +24,7 @@ import { UserRoleService } from '../../modules/user-role/user-role.service';
 import { UsersService } from '../../modules/users/user.service';
 import { AuthDto } from './dto/auth.dto';
 import { ForgetPassDto } from './dto/forgetPassDto';
-import { ResetForgotDto } from './dto/resetForgotDto';
+import { ResetForgotDto, VerifyTokenDto } from './dto/resetForgotDto';
 import { GrantType } from './enum/auth.enum';
 import { IAuthResponse, IAuthToken } from './interface/auth.interface';
 
@@ -222,6 +222,23 @@ export class AuthService {
       } else {
         ExceptionHelper.getInstance().tokenExpired();
       }
+    }
+  }
+  async tokenVerify(
+    verifyTokenDto: VerifyTokenDto
+  ): Promise<boolean | any[] | IUser> {
+    const user = await this.getUserByResetCode(verifyTokenDto.token);
+    if (!user) {
+      ExceptionHelper.getInstance().throwUserNotFoundException();
+    } else {
+      
+      try {
+        this.jwtService.verify(verifyTokenDto.token, { secret: appConfig.jwtAccessToken }) as object;
+        return true
+      } catch (error) {
+        ExceptionHelper.getInstance().tokenExpired();
+      }
+    
     }
   }
   async getUserByResetCode(resetCode: string): Promise<IUser> {

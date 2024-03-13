@@ -64,7 +64,7 @@ export class ExceptionHelper {
     }
 
     throwUserNotFoundException(): void {
-        this.postNotFoundException('user_not_found');
+        this.postNotFoundException('User not found');
     }
     throwMemberNotFoundException(): void {
         this.postNotFoundException('member_not_found');

@@ -18,3 +18,8 @@ export class ResetForgotDto {
     // @IsStrongPassword({}, { message: 'Confirm password requirements not fulfilled' })
     confirmPassword: string;
 }
+
+export class VerifyTokenDto {
+    @IsNotEmpty({ message: 'Token is Required' })
+    token: string;
+}
