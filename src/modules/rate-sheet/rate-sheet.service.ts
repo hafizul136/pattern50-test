@@ -54,7 +54,7 @@ export class RateSheetService {
 
     return {
       rateSheet: rateSheet?.length ? rateSheet[0] : [],
-      roles: teamStructures
+      teamStructures: teamStructures
     };
   }
 
@@ -133,14 +133,14 @@ export class RateSheetService {
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ _id: new mongoose.Types.ObjectId(id) }]);
     AggregationHelper.filterByMatchAndQueriesAll(aggregate, [{ clientId: new mongoose.Types.ObjectId(user?.clientId) }]);
 
-    AggregationHelper.lookupForIdLocalKey(aggregate, "teamrates", "rateSheetId", "teamRates");
+    AggregationHelper.lookupForIdLocalKey(aggregate, "teamrates", "rateSheetId", "teamStructures");
 
     // filter only active team rates
     aggregate.push({
       $addFields: {
-        teamRates: {
+        teamStructures: {
           $filter: {
-            input: "$teamRates",
+            input: "$teamStructures",
             as: "teamRate",
             cond: { $eq: ["$$teamRate.status", "active"] }
           }
@@ -149,25 +149,25 @@ export class RateSheetService {
     });
 
     // get roles data
-    AggregationHelper.lookupForCustomFields(aggregate, "employeeroles", "teamRates.employeeRoleId", "_id", "roles");
+    AggregationHelper.lookupForCustomFields(aggregate, "employeeroles", "teamStructures.employeeRoleId", "_id", "roles");
 
-    // merge role to the equivalent teamRates
+    // merge role to the equivalent teamStructures
     aggregate.push({
       $addFields: {
-        teamRates: {
+        teamStructures: {
           $map: {
-            input: "$teamRates",
-            as: "teamRate",
+            input: "$teamStructures",
+            as: "teamStructure",
             in: {
               $mergeObjects: [
-                "$$teamRate",
+                "$$teamStructure",
                 {
                   role: {
                     $arrayElemAt: [{
                       $filter: {
                         input: "$roles",
                         as: "role",
-                        cond: { $eq: ["$$role._id", "$$teamRate.employeeRoleId"] }
+                        cond: { $eq: ["$$role._id", "$$teamStructure.employeeRoleId"] }
                       }
                     }, 0],
                   }
