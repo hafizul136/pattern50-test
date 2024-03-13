@@ -23,8 +23,7 @@ export class UploadController {
       },
     }),
   }))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    // Logic to handle the uploaded file
+  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<{ filename: string; }> {
     return { filename: file.filename }; // Return the uploaded file name
   }
 
@@ -39,7 +38,7 @@ export class UploadController {
       },
     }),
   }))
-  async uploadFiles(@UploadedFiles() files: Array<Express.Multer.File>, @Body() uploadDto: UploadDto) {
+  async uploadFiles(@UploadedFiles() files: Array<Express.Multer.File>, @Body() uploadDto: UploadDto): Promise<{ filenames: string[]; }> {
     // Logic to handle the uploaded files
     Utils.inspect('files', files)
     Utils.inspect('uploadDto', uploadDto)
@@ -48,7 +47,7 @@ export class UploadController {
   }
 
   @Delete('clear')
-  clearUploadsFolder() {
+  clearUploadsFolder(): { message: string; } {
     const uploadsFolder = './uploads';
 
     // Check if the uploads folder exists
