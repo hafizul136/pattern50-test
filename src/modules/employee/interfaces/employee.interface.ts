@@ -5,11 +5,11 @@ export interface IEmployee extends Document {
     name?: string;
     email?: string;
     phone?: string;
-    employeeRoleIds?: mongoose.Types.ObjectId[];
+    employeeRoleIds?: mongoose.Types.ObjectId[] | mongoose.Schema.Types.ObjectId[];
     employeeRoles?: IEmployeeRole[];
     startDate?: Date;
     status?: string;
-    clientId?: mongoose.Types.ObjectId;
+    clientId?: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
 }
 export interface IEmployees {
     count: number;

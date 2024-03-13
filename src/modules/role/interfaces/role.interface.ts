@@ -5,7 +5,7 @@ export interface IRole extends Document {
     name: string;
     status: string;
     details: string;
-    clientId: mongoose.Types.ObjectId;
+    clientId: mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
 }
 
 export interface IPermissionData {

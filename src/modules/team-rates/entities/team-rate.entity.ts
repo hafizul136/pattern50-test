@@ -6,8 +6,8 @@ export type TeamRateDocument = TeamRate & Document;
 
 @Schema({ timestamps: { createdAt: "created_at", updatedAt: "updated_at" } })
 export class TeamRate {
-    @Prop({ type: mongoose.Types.ObjectId, ref: "RateSheet", required: true })
-    rateSheetId: mongoose.Types.ObjectId;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "RateSheet", required: true })
+    rateSheetId: mongoose.Schema.Types.ObjectId;
 
     @Prop({ type: Date, default: new Date() })
     startDate: Date;
