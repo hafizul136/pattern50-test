@@ -1,3 +1,4 @@
+import { EmailService } from '@modules/email/email.service';
 import { JwtService } from '@nestjs/jwt';
 import { ClientRMQ } from '@nestjs/microservices';
 import { getModelToken } from '@nestjs/mongoose';
@@ -129,7 +130,9 @@ describe('AuthService', () => {
                 { provide: getModelToken(UserRole.name), useValue: userRoleModel },
                 { provide: getModelToken(RolePermission.name), useValue: rolePermissionModel },
                 { provide: getModelToken(Permission.name), useValue: permissionModel },
-                { provide: getModelToken(Role.name), useValue: roleModel }],
+                { provide: getModelToken(Role.name), useValue: roleModel },
+                { provide: EmailService, useValue: {} }
+            ],
         }).compile();
         //services
         authService = module.get<AuthService>(AuthService);
@@ -170,14 +173,8 @@ describe('AuthService', () => {
         });
 
         it('should return BadRequestException if no user found', async () => {
-            const mockLoginUser = {
-                "grantType": "password",
-                "email": "60senseev@gmail.com",
-                "password": "EV12345678",
-                "refreshToken": "kljadsfkl",
-            }
 
-            jest.spyOn(userService, 'findOneByEmail').mockResolvedValueOnce(mockUser);
+            jest.spyOn(userService, 'findOneByEmail').mockResolvedValueOnce(null);
 
             await expect(authService.signIn(mockLoginUser, clientId)).rejects.toThrowError();
         });
@@ -209,43 +206,37 @@ describe('AuthService', () => {
             const res = await authService.signIn(mockLoginUser as AuthDto, clientId)
             expect(res).toEqual(mockAuthUser)
         });
-        // it('should password match', async () => {
-        //     const mockLoginUser = {
-        //         "grantType": "password",
-        //         "email": "pattern50@gmail.com",
-        //         "password": "EV12345678"
-        //     }
-        //     jest.spyOn(AuthHelper, 'isPasswordMatched').mockImplementationOnce(() => Promise.resolve(true));
 
-        //     const hashedPass = await bcrypt.hash(mockLoginUser.password, 10)
+        it('should password match', async () => {
+            const mockLoginUser = {
+                "grantType": "password",
+                "email": "pattern50@gmail.com",
+                "password": "EV12345678"
+            }
+            jest.spyOn(AuthHelper, 'isPasswordMatched').mockImplementationOnce(() => Promise.resolve(true));
 
-        //     const match = await bcrypt.compare(mockLoginUser.password, hashedPass)
+            const hashedPass = await bcrypt.hash(mockLoginUser.password, 10)
 
-        //     expect(match).toEqual(true)
+            const match = await bcrypt.compare(mockLoginUser.password, hashedPass)
 
-        // });
-        // it('should not password match', async () => {
-        //     const mockLoginUser = {
-        //         "grantType": "password",
-        //         "email": "pattern50@gmail.com",
-        //         "password": "EV12345678"
-        //     }
-        //     const email = "600senseev@gmail.com"
-        //     const hashedPass = await bcrypt.hash(email, 10)
+            expect(match).toEqual(true)
+        });
 
-        //     const match = await bcrypt.compare(mockLoginUser.password, hashedPass)
-        //     expect(match).toEqual(false)
+        it('should not password match', async () => {
+            const mockLoginUser = {
+                "grantType": "password",
+                "email": "pattern50@gmail.com",
+                "password": "EV12345678"
+            }
+            const email = "600senseev@gmail.com"
+            jest.spyOn(AuthHelper, 'isPasswordMatched').mockImplementationOnce(() => Promise.resolve(false));
+            const hashedPass = await bcrypt.hash(email, 10)
 
-        // });
+            const match = await bcrypt.compare(mockLoginUser.password, hashedPass)
+            expect(match).toEqual(false)
 
-        // it('should call getPermissionsByUserRoleId for getting scopes', async () => {
-        //     const mockPermissions = ["p1", "p2", "p3", "p4"]
-        //     jest.spyOn(authService, 'getPermissionsByUserRoleId')
-        //         .mockImplementationOnce(() => Promise.resolve(mockPermissions));
+        });
 
-        //     expect(await authService.getPermissionsByUserRoleId(mockUser)).toEqual(mockPermissions)
-
-        // });
         it('should call getTokens and get access_token and refresh_token', async () => {
 
             const tokens = {
@@ -280,39 +271,39 @@ describe('AuthService', () => {
 
 
 
-        // it("Should let the user sign in", async () => {
-        //     const mockLoginUser: any = {
-        //         "grantType": "password",
-        //         "email": "pattern50@gmail.com",
-        //         "password": "EV@123456789"
-        //     }
+        it("Should let the user sign in", async () => {
+            const mockLoginUser: any = {
+                "grantType": "password",
+                "email": "pattern50@gmail.com",
+                "password": "EV@123456789"
+            }
 
-        //     const tokens = "kljadfkljasdlfkjlasdkfj"
+            const tokens = "kljadfkljasdlfkjlasdkfj"
 
-        //     const permissions: any = [{
-        //         "_id": "650180a2087ee9519412427e",
-        //         "name": "role.create",
-        //         "status": "active",
-        //         "details": "General User",
-        //         "clientId": "650307ae3b81447e5d793425",
-        //         "created_at": "2023-09-13T09:28:02.895+00:00",
-        //         "updated_at": "2023-09-13T09:28:02.895+00:00",
-        //         "__v": 0
-        //     }
-        //     ]
+            const permissions: any = [{
+                "_id": "650180a2087ee9519412427e",
+                "name": "role.create",
+                "status": "active",
+                "details": "General User",
+                "clientId": "650307ae3b81447e5d793425",
+                "created_at": "2023-09-13T09:28:02.895+00:00",
+                "updated_at": "2023-09-13T09:28:02.895+00:00",
+                "__v": 0
+            }
+            ]
 
-        //     jest.spyOn(userService, 'findOneByEmail').mockResolvedValueOnce(mockUser);
-        //     jest.spyOn(jwtService, "verify").mockImplementationOnce(mockLoginUser)
+            jest.spyOn(userService, 'findOneByEmail').mockResolvedValueOnce(mockUser);
+            jest.spyOn(jwtService, "verify").mockImplementationOnce(mockLoginUser)
 
-        //     const res = await authService.signIn(mockLoginUser, clientId);
+            const res = await authService.signIn(mockLoginUser, clientId);
 
-        //     expect(res.auth).toHaveProperty("accessToken")
-        //     expect(res.auth).toHaveProperty("refreshToken")
-        //     expect(res).toHaveProperty("user")
-        //     expect(res).toHaveProperty("auth")
-        //     expect(res.user).toHaveProperty("scopes")
-        //     expect(userService.findOneByEmail).toHaveBeenCalledWith(mockLoginUser.email)
-        // })
+            expect(res.auth).toHaveProperty("accessToken")
+            expect(res.auth).toHaveProperty("refreshToken")
+            expect(res).toHaveProperty("user")
+            expect(res).toHaveProperty("auth")
+            expect(res.user).toHaveProperty("scopes")
+            expect(userService.findOneByEmail).toHaveBeenCalledWith(mockLoginUser.email)
+        })
 
         it("Should throw exception if password does not match", async () => {
 
