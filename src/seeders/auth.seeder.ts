@@ -1,7 +1,7 @@
 import { Seeder } from "nestjs-seeder";
 
 export class AuthSeeder implements Seeder {
-    constructor(
+    // constructor(
         // @InjectModel(Role.name)
         // private readonly roleModel: Model<RoleDocument>,
 
@@ -12,7 +12,7 @@ export class AuthSeeder implements Seeder {
         // private readonly rolePermissionModel: Model<RolePermissionDocument>,
         // private readonly roleService: RolesService,
         // private readonly permissionService: PermissionsService,
-    ) { }
+    // ) { }
 
     async seed(): Promise<any> {
         // const rolePermissions = mainServiceRolePermissions();
